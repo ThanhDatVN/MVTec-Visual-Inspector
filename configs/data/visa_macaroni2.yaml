@@ -1,0 +1,8 @@
+# VisA :: macaroni2
+# Multiple instances with high variance in normal arrangement, subtle defects.
+# The FALSE-POSITIVE axis, and the hardest VisA category in the original paper.
+
+_base_: visa_base.yaml
+
+data:
+  category: macaroni2

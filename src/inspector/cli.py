@@ -84,7 +84,7 @@ def cmd_audit(args) -> int:
     The same checks run in CI on synthetic fixtures; this is how they reach the
     real dataset, which CI can never see.
     """
-    from .data import discover_category, ensure_validation
+    from .data import ensure_validation, load_category
     from .data.integrity import audit
 
     cfg = _resolve(args)
@@ -97,7 +97,9 @@ def cmd_audit(args) -> int:
         )
         return 2
 
-    indices = discover_category(data["root"], data["category"], layout=data["layout"])
+    indices = load_category(
+        data["root"], data["category"], layout=data["layout"], split_csv=data.get("split_csv")
+    )
     indices, assignment = ensure_validation(
         indices,
         val_fraction=data.get("val_carve_fraction", 0.15),
@@ -138,7 +140,7 @@ def cmd_eda(args) -> int:
     Answers the question that gates the whole study: what input resolution do
     these defects permit? Run it before fitting anything.
     """
-    from .data import discover_category, ensure_validation
+    from .data import ensure_validation, load_category
     from .eda import analyse_category
     from .report import write_eda_report
 
@@ -151,7 +153,9 @@ def cmd_eda(args) -> int:
     categories = args.categories or [data["category"]]
     reports = []
     for category in categories:
-        indices = discover_category(data["root"], category, layout=data["layout"])
+        indices = load_category(
+            data["root"], category, layout=data["layout"], split_csv=data.get("split_csv")
+        )
         indices, _ = ensure_validation(
             indices,
             val_fraction=data.get("val_carve_fraction", 0.15),
@@ -185,7 +189,7 @@ def cmd_run(args) -> int:
     import tempfile
 
     from .config import config_hash
-    from .data import discover_category, ensure_validation
+    from .data import ensure_validation, load_category
     from .data.transforms import ImageTransform
     from .models import TIER0_MODELS
     from .pipeline import run_experiment
@@ -219,7 +223,9 @@ def cmd_run(args) -> int:
     info = git_info()
     results = []
     for category in categories:
-        indices = discover_category(data["root"], category, layout=data["layout"])
+        indices = load_category(
+            data["root"], category, layout=data["layout"], split_csv=data.get("split_csv")
+        )
         indices, _ = ensure_validation(
             indices,
             val_fraction=data.get("val_carve_fraction", 0.15),
@@ -274,6 +280,45 @@ def cmd_run(args) -> int:
     return 0
 
 
+def cmd_fetch(args) -> int:
+    """Download a dataset that does not require an account."""
+    from .fetch import REGISTRY, fetch, verify
+
+    if args.verify:
+        status = verify(args.dataset, args.out)
+        for name, ok in status.items():
+            print(f"  {'OK  ' if ok else 'FAIL'} {name}")
+        return 0 if all(status.values()) else 1
+
+    spec = REGISTRY.get(args.dataset)
+    if spec is None:
+        print(f"error: unknown dataset {args.dataset!r}; available: {sorted(REGISTRY)}", file=sys.stderr)
+        return 2
+
+    last = [-1]
+
+    def progress(done: int, total: int) -> None:
+        pct = int(100 * done / total) if total else 0
+        if pct != last[0] and pct % 5 == 0:
+            last[0] = pct
+            print(f"  {pct:3d}%  {done / 1e9:.2f} / {total / 1e9:.2f} GB", file=sys.stderr)
+
+    manifest = fetch(
+        args.dataset,
+        args.out,
+        extract=not args.no_extract,
+        force=args.force,
+        progress=progress,
+    )
+    print(f"\n{args.dataset}: {manifest.action}")
+    print(f"extracted to : {manifest.extracted_to}")
+    for name, digest in manifest.files.items():
+        print(f"  {name:24s} sha256={digest[:16]}")
+    print(f"\nlicense  : {manifest.license_note}")
+    print(f"cite     : {manifest.citation}")
+    return 0
+
+
 def cmd_not_implemented(args) -> int:
     print(
         f"`inspector {args.command}` is not implemented yet; it lands with its "
@@ -319,6 +364,14 @@ def build_parser() -> argparse.ArgumentParser:
     p_eda.add_argument("--candidates", nargs="+", type=int, default=[256, 320, 448, 512, 1024])
     p_eda.add_argument("--out", default="reports/eda")
     p_eda.set_defaults(func=cmd_eda)
+
+    p_fetch = sub.add_parser("fetch", help="download a dataset that needs no account (e.g. visa)")
+    p_fetch.add_argument("dataset", choices=["visa"])
+    p_fetch.add_argument("--out", default="data/raw")
+    p_fetch.add_argument("--no-extract", action="store_true")
+    p_fetch.add_argument("--force", action="store_true")
+    p_fetch.add_argument("--verify", action="store_true", help="re-hash against the recorded manifest")
+    p_fetch.set_defaults(func=cmd_fetch)
 
     p_run = sub.add_parser("run", help="fit and evaluate models through the protocol pipeline")
     _add_config_args(p_run)

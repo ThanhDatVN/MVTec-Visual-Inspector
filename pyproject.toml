@@ -88,6 +88,7 @@ select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "RUF", "NPY"]
 ignore = [
     "E501",    # line length is handled by the formatter
     "B905",    # zip strict= is py310+, we set it explicitly where it matters
+    "N812",    # `import torch.nn.functional as F` is the universal torch idiom
 ]
 
 [tool.ruff.lint.per-file-ignores]

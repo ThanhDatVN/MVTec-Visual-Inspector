@@ -1,0 +1,7 @@
+# VisA :: pcb1
+# Complex structure: many small components. Tiny structural defects -> the RESOLUTION axis.
+
+_base_: visa_base.yaml
+
+data:
+  category: pcb1

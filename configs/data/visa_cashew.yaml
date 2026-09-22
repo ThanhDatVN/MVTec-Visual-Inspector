@@ -1,0 +1,7 @@
+# VisA :: cashew
+# Single instance with alignment. Easiest group; useful as a sanity contrast.
+
+_base_: visa_base.yaml
+
+data:
+  category: cashew

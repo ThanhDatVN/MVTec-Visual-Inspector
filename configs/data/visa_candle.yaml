@@ -1,0 +1,7 @@
+# VisA :: candle
+# Multiple instances, regular layout. Easier control category.
+
+_base_: visa_base.yaml
+
+data:
+  category: candle

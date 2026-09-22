@@ -17,6 +17,16 @@ MVTec AD and MVTec AD 2, (c) MVTec Software GmbH
   the same license. No dataset images are redistributed in this repository.
   Full citations: see ATTRIBUTION.md.
 
+VisA (Visual Anomaly), (c) Amazon.com, Inc.
+  License: CC BY 4.0  https://creativecommons.org/licenses/by/4.0/
+  Attribution required; no non-commercial or share-alike clause under the AWS
+  Open Data registry's stated license. A third-party source states CC BY-NC-SA;
+  this project follows the stricter reading until that is resolved.
+  Zou et al., "SPot-the-Difference Self-Supervised Pre-training for Anomaly
+  Detection and Segmentation", ECCV 2022, arXiv:2207.14315.
+  Accessed from https://registry.opendata.aws/visa
+  No VisA images are redistributed in this repository.
+
   Artifacts derived from this data -- trained weights, PatchCore memory banks,
   anomaly heatmaps rendered over dataset images, case-book figures -- are
   treated as adapted material and inherit CC BY-NC-SA 4.0. The MIT license in

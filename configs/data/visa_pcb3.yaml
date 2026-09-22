@@ -1,0 +1,7 @@
+# VisA :: pcb3
+# Complex structure, alternative to pcb1 for a within-group control.
+
+_base_: visa_base.yaml
+
+data:
+  category: pcb3

@@ -1,0 +1,8 @@
+# VisA :: capsules
+# Multiple instances, transparent/reflective shells. The OPTICS axis.
+# Smallest train split of the three (542), so the fastest to iterate on.
+
+_base_: visa_base.yaml
+
+data:
+  category: capsules

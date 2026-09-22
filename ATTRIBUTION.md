@@ -31,6 +31,32 @@ for robustness evaluation; model-generated anomaly heatmaps are overlaid on some
 
 ---
 
+## VisA (Visual Anomaly)
+
+This project also uses the VisA dataset, provided by Amazon under the
+**Creative Commons Attribution 4.0 International License (CC BY 4.0)**:
+https://creativecommons.org/licenses/by/4.0/
+
+> Yang Zou, Jongheon Jeong, Latha Pemula, Dongqing Zhang, Onkar Dabeer.
+> "SPot-the-Difference Self-Supervised Pre-training for Anomaly Detection
+> and Segmentation." ECCV 2022. arXiv:2207.14315
+
+Accessed 2026-09-22 from https://registry.opendata.aws/visa
+
+**Changes made:** images were resized and photometrically/geometrically corrupted for
+robustness evaluation; model-generated anomaly heatmaps are overlaid on some images.
+
+> **Licence discrepancy, recorded rather than resolved.** The AWS Open Data registry and
+> the source paper state CC BY 4.0. Some third-party documentation states CC BY-NC-SA 4.0.
+> Until that is settled this project behaves as if the stricter reading applied: it stays
+> non-commercial and redistributes no images. See
+> [docs/10-datasets.md](docs/10-datasets.md) §2.
+
+**No VisA images are redistributed in this repository.**
+
+
+---
+
 > ⚠ **Verification pending (Gate P1).** The MVTec AD 2 author list and page numbers above were
 > taken from the official dataset page and secondary sources. Confirm them against the published
 > IJCV article before this file is published anywhere. An attribution block with the wrong authors

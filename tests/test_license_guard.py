@@ -91,6 +91,8 @@ def test_attribution_file_is_present_and_complete():
         "MVTec",
         "10.1007/s11263-026-02743-0",  # AD 2
         "10.1109/CVPR.2019.00982",  # AD classic
+        "arXiv:2207.14315",  # VisA
+        "CC BY 4.0",
         "non-commercial",
     ):
         assert required in text, f"ATTRIBUTION.md is missing {required!r}"

@@ -1,0 +1,14 @@
+# VisA (Visual Anomaly), Amazon / AWS Open Data.
+# Directly downloadable, CC BY 4.0. See docs/10-datasets.md.
+#
+# VisA ships NO validation split: `train` is normal-only and `test` holds both
+# classes, so validation is carved from train with a recorded seed (§3.4).
+
+_base_: ../base.yaml
+
+data:
+  layout: visa
+  split_csv: null          # defaults to <root>/split_csv/1cls.csv
+  test_split: test
+  val_carve_fraction: 0.15
+  val_carve_seed: 0
