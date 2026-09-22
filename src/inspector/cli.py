@@ -180,6 +180,100 @@ def cmd_eda(args) -> int:
     return 0
 
 
+def cmd_run(args) -> int:
+    """Fit and evaluate models through the protocol pipeline."""
+    import tempfile
+
+    from .config import config_hash
+    from .data import discover_category, ensure_validation
+    from .data.transforms import ImageTransform
+    from .models import TIER0_MODELS
+    from .pipeline import run_experiment
+    from .results import append_results, render_markdown
+    from .utils.env import git_info
+    from .utils.seed import seed_everything
+
+    cfg = _resolve(args)
+    data: dict = cfg["data"]
+    if not data.get("root"):
+        print(
+            "error: no data root. Pass --data-root or export INSPECTOR_DATA_ROOT.",
+            file=sys.stderr,
+        )
+        return 2
+
+    pre = cfg.get("preprocess", {})
+    configured = cfg.get("model", {}).get("name")
+    methods = args.methods or ([configured] if configured else list(TIER0_MODELS))
+    categories = args.categories or [data["category"]]
+    seeds = args.seeds if args.seeds is not None else [cfg.get("run", {}).get("seed", 0)]
+
+    unknown = [m for m in methods if m not in TIER0_MODELS]
+    if unknown:
+        print(
+            f"error: unknown method(s) {unknown}; available: {sorted(TIER0_MODELS)}",
+            file=sys.stderr,
+        )
+        return 2
+
+    info = git_info()
+    results = []
+    for category in categories:
+        indices = discover_category(data["root"], category, layout=data["layout"])
+        indices, _ = ensure_validation(
+            indices,
+            val_fraction=data.get("val_carve_fraction", 0.15),
+            seed=data.get("val_carve_seed", 0),
+        )
+        transform = ImageTransform(
+            mode=pre.get("resize_mode", "aspect_preserving"),
+            long_side=pre.get("long_side"),
+            interpolation_down=pre.get("interpolation_down", "area"),
+            interpolation_up=pre.get("interpolation_up", "linear"),
+            normalize=pre.get("normalize", "imagenet"),
+        )
+
+        for method in methods:
+            cls = TIER0_MODELS[method]
+            for seed in seeds:
+                seed_everything(seed, deterministic=cfg.get("run", {}).get("deterministic", True))
+                kwargs = {"seed": seed} if cls.stochastic else {}
+                model = cls(
+                    transform,
+                    smoothing_sigma=cfg.get("postproc", {}).get("gaussian_sigma", 0.0),
+                    **kwargs,
+                )
+                with tempfile.TemporaryDirectory(prefix="inspector-") as tmp:
+                    result = run_experiment(
+                        model,
+                        indices,
+                        workdir=tmp,
+                        seed=seed,
+                        test_split=data.get("test_split", "test_public"),
+                        fpr1_percentile=cfg.get("thresholds", {}).get("op_fpr1_percentile", 99.0),
+                        sigma_n=cfg.get("thresholds", {}).get("op_sigma_n", 3.0),
+                        aupro_num_thresholds=cfg.get("metrics", {}).get(
+                            "aupro_num_thresholds", 512
+                        ),
+                    )
+                result.config_hash = config_hash(cfg)[:16]
+                result.git_sha = (info["git_sha"] or "unknown")[:12]
+                result.dirty = info["dirty"]
+                results.append(result)
+                print("  " + result.summary(), file=sys.stderr)
+
+    path = append_results(results, args.results)
+    print(f"\nappended {len(results)} rows -> {path}\n")
+    print(render_markdown(results))
+    if any(r.dirty for r in results):
+        print(
+            "NOTE: the working tree was dirty, so these runs are tagged dirty and may not "
+            "enter the headline table (docs/06 section 2).",
+            file=sys.stderr,
+        )
+    return 0
+
+
 def cmd_not_implemented(args) -> int:
     print(
         f"`inspector {args.command}` is not implemented yet; it lands with its "
@@ -225,6 +319,14 @@ def build_parser() -> argparse.ArgumentParser:
     p_eda.add_argument("--candidates", nargs="+", type=int, default=[256, 320, 448, 512, 1024])
     p_eda.add_argument("--out", default="reports/eda")
     p_eda.set_defaults(func=cmd_eda)
+
+    p_run = sub.add_parser("run", help="fit and evaluate models through the protocol pipeline")
+    _add_config_args(p_run)
+    p_run.add_argument("--methods", nargs="+", default=None, help="model names; default = all of tier 0")
+    p_run.add_argument("--categories", nargs="+", default=None)
+    p_run.add_argument("--seeds", nargs="+", type=int, default=None)
+    p_run.add_argument("--results", default="reports/results.csv")
+    p_run.set_defaults(func=cmd_run)
 
     for name, help_text in (
         ("fit", "fit a model on the train split (P3+)"),

@@ -123,6 +123,50 @@ measured answer instead of an assumption.
 
 ---
 
+### ADR-7 — `OP-FPR1` targets the achievable rate, not 1%
+**Status:** Accepted (P2). **Supersedes** the 1% figure in the original protocol §4.4.
+
+**Context.** The protocol defined the primary operating point as "the 99th percentile of scores
+over `validation/good`", targeting 1% false alarms. Implementing it at P2 exposed that the target
+is not reachable. For a threshold set as the k-th largest of `n` exchangeable validation scores, a
+fresh normal sample exceeds it with probability `k/(n+1)` — a distribution-free result. The most
+extreme available choice, `k = 1` (the sample maximum), therefore floors the achievable
+false-alarm rate at `1/(n+1)`.
+
+MVTec AD 2's validation splits hold 19–48 normal images per category, so the floors are:
+
+| category | validation `n` | minimum achievable FPR |
+|----------|----------------|------------------------|
+| `sheet_metal` | 19 | 5.0% |
+| `fruit_jelly` | 37 | 2.6% |
+| `walnuts` | 48 | 2.0% |
+
+A simulation over 19 validation draws confirms the realized rate of the nominal "p99" threshold is
+about 5%, not 1%. Nothing errors: `numpy.percentile` happily interpolates between the top two
+order statistics and returns a number, and the report would have claimed 1% while the system
+delivered five times that.
+
+**Decision.**
+1. The operating point is set **per category at its achievable floor**, not at a fixed 1%.
+2. Thresholds are computed from the **order statistic** `k = ceil(target * (n+1))`, which is
+   distribution-free, rather than from an interpolated percentile that assumes a tail shape 19
+   points cannot support.
+3. `from_validation_fpr(..., strict=True)` **raises** on an unachievable target. Clamping silently
+   would reproduce the original failure.
+4. The expected rate, the chosen `k`, `n`, and the floor are all recorded in the threshold's
+   provenance and carried into the results table.
+
+**Consequences.** (+) The reported target and the delivered rate agree, and the gap between
+expected and realized FPR now measures genuine distribution shift rather than an estimator
+artifact. (+) The constraint is visible: buying a lower false-alarm rate requires more normal
+validation images, which is an actionable statement to make in the model card. (−) Operating
+points differ across categories, so the per-category table cannot be collapsed into one FPR
+column without stating each category's target. (−) `sheet_metal` is calibratable only to 5%,
+which will look poor next to published work that quotes 1% without checking whether it was
+achievable.
+
+---
+
 ### Open decisions (resolve before the stated gate)
 
 | # | Question | Resolve by |

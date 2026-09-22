@@ -176,9 +176,27 @@ This table is the protocol. Violating it is a bug, and §5 lists the tests that 
 The factory question is not "what is your AUROC", it is "at the alarm rate I can staff, how many
 defects escape?" So every reported model carries defined operating points:
 
-1. **`OP-FPR1` (primary)** — `tau` is the 99th percentile of `s(x)` over `validation/good`,
-   targeting 1% false alarms on normal parts. Report the *realized* FPR on `test_public` normals
-   and the recall at that point.
+1. **`OP-FPR1` (primary)** — `tau` targets a stated false-alarm rate on normal parts, set from
+   `validation/good` only. Report the *realized* FPR on `test_public` normals and the recall at
+   that point.
+
+   > **Revised at P2 — the 1% target is not achievable.** See
+   > [ADR-7](07-risks-and-decisions.md#adr-7--op-fpr1-targets-the-achievable-rate-not-1).
+   > A threshold taken as the k-th largest of `n` validation scores is exceeded by a fresh normal
+   > sample with probability `k/(n+1)`, for any continuous score distribution. The most extreme
+   > choice, `k = 1`, floors the achievable false-alarm rate at **`1/(n+1)`**:
+   >
+   > | category | validation `n` | minimum achievable FPR |
+   > |----------|----------------|------------------------|
+   > | `sheet_metal` | 19 | **5.0%** |
+   > | `fruit_jelly` | 37 | **2.6%** |
+   > | `walnuts` | 48 | **2.0%** |
+   >
+   > Asking for the 99th percentile of 19 numbers does not fail — it silently returns a threshold
+   > producing roughly 5% false alarms while the report claims 1%. The operating point is
+   > therefore set **per category at its achievable floor**, the expected rate is recorded in the
+   > threshold's provenance, and `from_validation_fpr(..., strict=True)` refuses an unachievable
+   > target instead of clamping it.
 2. **`OP-3SIGMA` (official AD 2)** — `tau_pix = mean + 3·std` of anomaly-map values over the
    validation set, as the AD 2 benchmark specifies. Used for thresholded `SegF1` so our numbers
    stay comparable to the leaderboard.
