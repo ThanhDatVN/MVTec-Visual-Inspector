@@ -3,6 +3,14 @@
 **Planning assumption:** ~12–15 focused hours per week over 12 weeks (~160 hours total).
 A compressed 8-week lane is given in §4. Adjust the calendar, keep the gate order.
 
+> **Two dataset tracks.** MVTec AD 2 is behind a registration and a ~30 GB download, so
+> [ADR-8](07-risks-and-decisions.md) added **VisA** as the dataset the project runs on now
+> (1.93 GB, CC BY 4.0, no account). The phase structure and every gate below are unchanged; only
+> the data they operate on differs. The concrete VisA run register is
+> [11-experiment-plan.md](11-experiment-plan.md). AD 2 remains the headline benchmark, and one
+> thing only it can deliver: the Phase P7 check on whether synthetic corruption predicts real
+> lighting shift.
+
 **The gate rule.** A phase is not finished when the code runs. It is finished when its gate
 passes. A gate is a binary, externally checkable condition — not "looks good". If a gate fails,
 you fix it before moving on; you do not carry a known-broken foundation into the next phase,
@@ -143,7 +151,7 @@ of the study and belongs in the final report.
 **Feature caching is the key engineering decision here.** Extract once per (category, backbone,
 layer, resolution), store as fp16 `.npy` memmaps, and let every Tier 2–3 model read from cache.
 This converts the rest of the project from GPU-bound to IO-bound and is what makes ~350 runs
-affordable on a laptop plus Colab.
+affordable on a laptop plus Kaggle.
 
 **Gate G4**
 - [ ] Tier 2 beats Tier 1 with p < 0.05 (paired, corrected) — or, if not, the anomaly is
@@ -162,7 +170,7 @@ affordable on a laptop plus Colab.
 | 5.3 | kNN scoring with the paper's image-score re-weighting | same |
 | 5.4 | **Reproduction gate on classic AD fixture categories** | `reports/reproduction.md` |
 | 5.5 | Reference config on all three AD 2 categories, 3 seeds | MLflow |
-| 5.6 | Staged ablation sweep (backbone → layers → resolution → coreset → k → sigma) | MLflow, Colab |
+| 5.6 | Staged ablation sweep (backbone → layers → resolution → coreset → k → sigma) | MLflow, Kaggle |
 | 5.7 | Coreset ratio vs accuracy vs latency vs memory **Pareto figure** | `reports/figures/pareto.png` |
 | 5.8 | Investigate the AU-PRO / SegF1 divergence | `reports/patchcore_calibration.md` |
 
@@ -257,7 +265,7 @@ grade evidence about a practice the field relies on.
 
 **Gate G9**
 - [ ] `docker run` → documented `curl` → correct JSON with a base64 heatmap.
-- [ ] p50/p95/p99 reported for laptop GPU, Colab GPU, and CPU.
+- [ ] p50/p95/p99 reported for laptop GPU, Kaggle GPU, and CPU.
 - [ ] Container image size recorded; cold-start time measured.
 - [ ] The container runs with **no network access at inference time** (no weight download at
       startup — bake weights into the image, or fail loudly).
@@ -299,26 +307,35 @@ a generalization check, or a short write-up of the PatchCore calibration finding
 | Tier 0–2 + feature caching | Laptop (4 GB) | 8 |
 | Tier 1 training, 3 seeds, ablations | Laptop | 20 |
 | PatchCore ≤ 448² | Laptop | 12 |
-| PatchCore ≥ 512², tiled, sweep | **Colab T4** | 35 |
-| Tier 4 comparators | **Colab T4/A100** | 25 |
-| Tier 5 techniques | **Colab** | 20 |
+| PatchCore ≥ 512², tiled, sweep | **Kaggle P100** | 35 |
+| Tier 4 comparators | **Kaggle P100/T4x2** | 25 |
+| Tier 5 techniques | **Kaggle** | 20 |
 | Robustness (inference only, cached features) | Laptop | 10 |
 | Serving benchmarks | Both | 4 |
-| **Total** | | **~134 GPU-hours** (~100 on Colab) |
+| **Total** | | **~134 GPU-hours** (~100 on Kaggle) |
 
-**Colab discipline — non-negotiable rules:**
+**Kaggle discipline — non-negotiable rules:**
 
-1. Notebooks are **thin drivers only**: mount Drive, `pip install -e .` from the repo, call the
-   same CLI the laptop calls. No model code in a notebook, ever. Code that exists only in a
-   notebook cannot be tested, reviewed, or reproduced.
-2. Every run is **checkpointed and resumable**; assume the session dies at any moment.
-3. Cap any single run at ~2 hours. Split sweeps into queued chunks.
-4. Each machine logs to its own `mlruns/` directory; merge with `mlflow-export-import` rather than
-   writing concurrently to one SQLite backend over Drive (which will corrupt).
-5. Track Colab hours in `reports/compute_ledger.md`. The `walnuts` → `can` swap rule in the
-   protocol triggers off this ledger.
-6. Re-verify dataset hashes after any Drive sync. Drive sync corruption is silent and will cost
-   you a week if it goes unnoticed.
+Kaggle replaced Colab as the remote venue: a P100 with 16 GB, ~30 GPU-hours per week, a 12-hour
+interactive session (~9 h on commit) and a 20 GB working directory. The binding constraint is the
+**weekly quota**, not the session limit.
+
+1. Notebooks are **thin drivers only**: install the package, call the same API the laptop calls.
+   No model code in a notebook, ever — code that exists only in a notebook cannot be tested,
+   reviewed, or reproduced. Enforced by a test that fails on a class definition, an `nn.Module`
+   or a `torch.optim` call in any cell.
+2. Every run is **checkpointed to a JSONL file keyed by run ID** and resumes on restart. Without
+   this the session limit turns a 25-hour sweep into a gamble.
+3. Size every stage to finish inside ~4 hours so none straddles a session boundary.
+4. Each machine logs to its own `mlruns/`; merge with `mlflow-export-import` rather than writing
+   concurrently to one SQLite backend over a synced folder, which will corrupt.
+5. Track Kaggle hours in `reports/compute_ledger.md`. The category swap rules trigger off it.
+6. **Download `runs.jsonl` and `results_*.csv` before the session ends.** Kaggle discards
+   `/kaggle/working` unless the notebook is committed or outputs are saved.
+7. Re-verify dataset hashes after any sync. Sync corruption is silent and costs a week if it goes
+   unnoticed.
+
+See [12-running-the-notebooks.md](12-running-the-notebooks.md) for the operational detail.
 
 ---
 

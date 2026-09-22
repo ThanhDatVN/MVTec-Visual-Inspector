@@ -108,7 +108,7 @@ Counts are taken from the AD 2 paper and **must be re-verified against the downl
 Gate P1 (`tests/data/test_dataset_shape.py`). The private and private-mixed splits add roughly
 142–276 images per category with withheld ground truth.
 
-**Documented swap rule.** If at Gate P5 the Colab GPU-hours spent exceed 60% of budget, swap
+**Documented swap rule.** If at Gate P5 the Kaggle GPU-hours spent exceed 60% of budget, swap
 `walnuts` → `can` (2232×1024, 412 train images, back-lit, ~45% fewer pixels). Record the swap as
 an ADR. Do not swap for any other reason, and never mid-phase.
 

@@ -196,10 +196,10 @@ Run IDs follow `{tier}-{method}-{category}-{res}-{seed}`, e.g. `T3-patchcore-she
 | T0 | 4 | 3 | 1 | 1 | 12 | Laptop |
 | T1 | 5 (+ ablations) | 3 | 2 | 3 | ~120 | Laptop |
 | T2 | 3 (+ ablations) | 3 | 2 | 1–3 | ~60 | Laptop |
-| T3 reference | 1 | 3 | 4 | 3 | 36 | Laptop ≤448², Colab above |
-| T3 ablations | staged sweep | 3 | varies | 1 (then 3 for winners) | ~60 | Colab |
-| T4 | 4 | 3 | 1–2 | 1 | ~18 | Colab |
-| T5 | 7 techniques | 3 | best | 1 (then 3 for winners) | ~45 | Colab |
+| T3 reference | 1 | 3 | 4 | 3 | 36 | Laptop ≤448², Kaggle above |
+| T3 ablations | staged sweep | 3 | varies | 1 (then 3 for winners) | ~60 | Kaggle |
+| T4 | 4 | 3 | 1–2 | 1 | ~18 | Kaggle |
+| T5 | 7 techniques | 3 | best | 1 (then 3 for winners) | ~45 | Kaggle |
 | Robustness | best 3 models | 3 | best | 1 | 6 corruptions × 5 severities × 3 × 3 = 270 evaluations (inference only) | Laptop (eval is cheap) |
 
 **Total: roughly 350 fitted runs and ~300 inference-only evaluations.** This is affordable only

@@ -29,7 +29,7 @@ MVTec Visual Inspector/
 │   ├── stats.py       # bootstrap CIs, paired Wilcoxon, Holm-Bonferroni
 │   └── cli.py         # `inspector fit|predict|evaluate|bench|report`
 ├── scripts/           # sweep drivers, results generation, benchmarks
-├── notebooks/         # THIN Colab drivers only — no model code
+├── notebooks/         # THIN Kaggle drivers only — no model code
 ├── tests/
 │   ├── fixtures/      # synthetic images + masks (committed, license-safe)
 │   ├── data/ metrics/ models/ robustness/ api/ integration/
@@ -40,7 +40,7 @@ MVTec Visual Inspector/
 ```
 
 **One principle above all: everything runs through `inspector` CLI + a YAML config.** The laptop
-and Colab execute the *same* code path with the same configs. A result that can only be produced
+and Kaggle execute the *same* code path with the same configs. A result that can only be produced
 by a notebook cell is not a result; it cannot be re-run, reviewed, or trusted six weeks later.
 
 ---

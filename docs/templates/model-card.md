@@ -79,7 +79,7 @@ fact that one defect class is missed entirely, which is precisely what a user ne
 | Device | Precision | Resolution | p50 | p95 | p99 | Peak VRAM | Peak RSS |
 |--------|-----------|-----------|-----|-----|-----|-----------|----------|
 | RTX 3050 Laptop (4 GB) | | | | | | | |
-| Colab T4 | | | | | | | |
+| Kaggle P100 | | | | | | | |
 | CPU | | | | | | | |
 
 ## Training data

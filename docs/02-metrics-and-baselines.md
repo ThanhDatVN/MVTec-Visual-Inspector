@@ -49,7 +49,7 @@ record the grid size as part of the metric config.
 | **Fit wall-clock** | End-to-end time to build the model from raw images. | s |
 | **Cold-start time** | Process start to first served prediction. | s (matters for the container) |
 
-Latency is measured on **both** devices (laptop RTX 3050 and Colab T4) and on **CPU**, because
+Latency is measured on **both** devices (laptop RTX 3050 and Kaggle P100) and on **CPU**, because
 "can this run without a GPU" is a real deployment question and the answer changes the
 architecture choice.
 
