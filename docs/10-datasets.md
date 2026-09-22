@@ -11,16 +11,38 @@ paper. Sizes are the actual `Content-Length` returned.
 
 ## 1. Candidates
 
-| Dataset | Venue / origin | Images | Size | Access | License | Pixel masks |
-|---------|----------------|--------|------|--------|---------|-------------|
-| **VisA** | ECCV 2022, Amazon Science | 10,821 (9,621 normal / 1,200 anomalous), 12 categories | **1.80 GB** | **Direct HTTPS, no account** (AWS Open Data) | **CC BY 4.0** | yes |
-| MVTec AD 2 | IJCV 2026, MVTec | >8,000, 8 categories | ~30 GB | Registration + MVLogin | CC BY-NC-SA 4.0 | public split only |
-| MVTec AD (classic) | CVPR 2019 / IJCV 2021 | >5,000, 15 categories | ~4.9 GB | Registration (Kaggle/HF mirrors exist) | CC BY-NC-SA 4.0 | yes |
-| BTAD | beanTech, 2021 | 2,830, 3 products | **1.23 GB** | Direct HTTPS | check with authors | yes |
-| KolektorSDD2 | ViCoS, 2021 | ~3,335 | **0.85 GB** | Direct HTTPS | CC BY-NC-SA | yes |
-| MPDD | 2021 | 1,346, 6 metal parts | small | Direct (GitHub) | check repo | yes |
-| DAGM 2007 | DAGM competition | ~16,100 synthetic | moderate | Direct | research use | weak (ellipse) |
-| Real-IAD | CVPR 2024 | 150,000+ | large | Application form | restricted | yes |
+Sizes are decimal GB from the `Content-Length` actually returned, probed 2026-09-22. The
+**Access** column is the finding that matters: most of the field's headline datasets cannot be
+fetched today without an account or an application, which is what makes the shortlist short.
+
+### Verified downloadable without an account
+
+| Dataset | Venue / origin | Images | Size | HTTP | License | Pixel masks |
+|---------|----------------|--------|------|------|---------|-------------|
+| **VisA** | ECCV 2022, Amazon Science | 10,821 (9,621 normal / 1,200 anomalous), 12 categories | **1.93 GB** | 200 | **CC BY 4.0** | yes |
+| **BTAD** | beanTech, 2021 | 2,830, 3 products | **1.23 GB** | 200 | not stated on the download page — ask the authors before any redistribution | yes |
+| **KolektorSDD2** | ViCoS Ljubljana, 2021 | ~3,335 | **0.85 GB** | 200 | CC BY-NC-SA 4.0 | yes |
+| **KolektorSDD** | ViCoS Ljubljana, 2019 | 399 | **0.10 GB** | 200 | CC BY-NC-SA 4.0 | yes |
+| **MPDD** | 2021 | 1,346, 6 painted metal parts | small (GitHub zip) | 200 | check the repository | yes |
+
+### Gated — an account, a form, or a login
+
+| Dataset | Images | Gate | License |
+|---------|--------|------|---------|
+| MVTec AD 2 | >8,000, 8 categories, ~30 GB | MVLogin registration | CC BY-NC-SA 4.0 |
+| MVTec AD (classic) | >5,000, 15 categories, ~4.9 GB | Registration (Kaggle / HF mirrors exist) | CC BY-NC-SA 4.0 |
+| MVTec LOCO AD | 3,644, 5 categories | Registration | CC BY-NC-SA 4.0 |
+| Eyecandies | synthetic, 10 categories | HTTP 401 on the Hugging Face archive | check |
+| DAGM 2007 | ~16,100 synthetic | Kaggle account | research use |
+| Real-IAD | 151,050, 30 objects, multi-view | Application form | restricted |
+| Real-IAD Variety (2026) | 198,950, 160 categories | Application form | restricted |
+| MANTA (CVPR 2025) | multi-view + text | Project page / form | check |
+| Kaputt (ICCV 2025) | large-scale retail defects | Project page / form | check |
+
+**Note on the newest and largest benchmarks.** Real-IAD Variety (160 categories), MANTA and
+Kaputt are the most interesting datasets to appear recently, and all three are behind a form.
+They are worth applying for in parallel with this project rather than waiting on — an application
+costs an email and the reply may arrive long before it is needed.
 
 ## 2. Decision — VisA becomes the working dataset
 
@@ -45,7 +67,7 @@ Why VisA and not the others:
    > cost of that caution is zero, and the cost of guessing wrong is not.
 3. **It has an official one-class split.** `split_csv/1cls.csv` defines the train/test partition
    used by published results. Inventing a split would produce numbers comparable with nothing.
-4. **It is small enough to be practical.** 1.8 GB downloads in minutes and fits Kaggle's 20 GB
+4. **It is small enough to be practical.** 1.93 GB downloads in minutes and fits Kaggle's 20 GB
    working directory with room to spare, unlike AD 2's 30 GB.
 5. **Its difficulty structure supports a principled three-category choice** (§4).
 
@@ -123,6 +145,27 @@ reason. Picking three PCBs would test one difficulty three times.
 method that cannot separate `cashew` is broken, which makes it a useful sanity control rather than
 a study category.
 
+
+## 4b. A second dataset, for the generalization question
+
+Choosing three categories within one dataset answers "does this method work on these three
+parts". It cannot answer "does this method survive a different camera, a different factory and a
+different annotator", which is the question a deployment actually poses. One small second dataset
+makes that a measurable rather than a rhetorical distinction.
+
+**MPDD** is the right one: 1,346 images of six painted metal parts, small enough to run on the
+laptop, and deliberately harder in exactly the way VisA is not — its images have non-homogeneous
+backgrounds, varying spatial orientation and varying light intensity, where VisA is shot on a
+fixed rig. A method tuned on VisA and applied unchanged to MPDD is a genuine transfer test.
+
+Scope discipline: MPDD is a **transfer probe, not a study dataset**. It gets the final
+configuration applied once, with no tuning, and one paragraph in the report. Tuning on it would
+turn three study categories into nine and is exactly the scope creep the charter forbids (R7).
+
+BTAD (1.23 GB, 3 products) is the fallback if MPDD proves unsuitable, with the caveat that its
+download page states no licence — worth resolving with the authors before any figure derived from
+it is published.
+
 ## 5. Attribution — required by CC BY 4.0
 
 ```
@@ -147,7 +190,7 @@ exception carved into them.
 ## 6. Reproducing the acquisition
 
 ```bash
-inspector fetch visa --out data/raw        # 1.8 GB tar + official split CSV
+inspector fetch visa --out data/raw        # 1.93 GB tar + official split CSV
 inspector audit -c configs/data/visa_pcb1.yaml --data-root data/raw/VisA_20220922
 inspector eda   -c configs/data/visa_pcb1.yaml --categories pcb1 macaroni2 capsules \
                 --data-root data/raw/VisA_20220922

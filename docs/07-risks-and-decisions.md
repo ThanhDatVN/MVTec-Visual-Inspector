@@ -167,6 +167,44 @@ achievable.
 
 ---
 
+### ADR-8 — VisA as the immediately available working dataset
+**Status:** Accepted (P2/P3). **Amends** ADR-1 without replacing it.
+
+**Context.** ADR-1 chose MVTec AD 2 as the primary benchmark on its merits, which stand. What it
+did not weigh was that AD 2 is behind an MVLogin registration and a ~30 GB download, so it blocks
+*every* experiment until that completes. A survey of alternatives (docs/10), with availability
+probed by HTTP rather than read off a paper, found five reputable datasets fetchable today: VisA
+(1.93 GB), BTAD (1.23 GB), KolektorSDD2 (0.85 GB), KolektorSDD (0.10 GB) and MPDD. The newest and
+largest benchmarks — Real-IAD Variety, MANTA, Kaputt — are all behind application forms.
+
+**Decision.** VisA becomes the dataset the project runs on now. AD 2 remains the headline
+benchmark and the target for the final report once its download completes. Study categories:
+`pcb1`, `macaroni2`, `capsules` — one from each of VisA's three structural groups, mirroring the
+one-failure-mode-per-category logic of ADR-2. MPDD is added as a **transfer probe**: the final
+configuration applied once, unchanged, with no tuning.
+
+**Consequences.**
+
+(+) Experiments start immediately instead of waiting on a download and a registration.
+(+) CC BY 4.0 rather than CC BY-NC-SA, which removes the sharpest constraint on outputs — though
+the project keeps behaving as if the stricter reading applied while a licence discrepancy between
+the AWS registry and third-party docs is unresolved.
+(+) VisA's official `1cls.csv` split keeps results comparable with published work.
+(+) It sharpens ADR-7 instead of dodging it: VisA's per-category validation sizes put the
+achievable FPR floor on *both sides* of 1% within a single dataset, which demonstrates the finding
+better than AD 2 alone.
+
+(−) **VisA has no lighting-shifted test split.** Robustness on VisA is therefore entirely
+synthetic, and the Phase P7 validity question — does synthetic corruption predict real
+distribution shift? — cannot be answered on it at all. That question is the single most valuable
+output of P7 and it stays blocked on AD 2. This is the real cost of the amendment and it must be
+stated in the report rather than glossed.
+(−) Lower resolution than `sheet_metal`, so the resolution axis is less punishing and the
+tiling-is-mandatory finding cannot be reproduced on VisA.
+(−) Two datasets in flight means two sets of numbers, and every table must say which.
+
+---
+
 ### Open decisions (resolve before the stated gate)
 
 | # | Question | Resolve by |
