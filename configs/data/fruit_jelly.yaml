@@ -1,0 +1,13 @@
+# MVTec AD 2 :: fruit_jelly
+# 2100x1520 native. Transparent and overlapping objects
+# under back-light: the optics/ambiguity stressor. Published PatchCore SegF1
+# collapses here, which is the most instructive failure in the benchmark.
+
+_base_: ../base.yaml
+
+data:
+  layout: mvtec_ad2
+  category: fruit_jelly
+
+preprocess:
+  long_side: 448

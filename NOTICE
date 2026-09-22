@@ -1,0 +1,60 @@
+MVTec Visual Inspector
+Copyright (c) 2026 thanh
+
+This product includes third-party software and data. Their licenses and
+obligations are listed below; see docs/08-licensing-and-attribution.md for the
+full compliance discussion.
+
+===============================================================================
+DATA  -- the binding restriction on this project
+===============================================================================
+
+MVTec AD and MVTec AD 2, (c) MVTec Software GmbH
+  License: CC BY-NC-SA 4.0 (Attribution-NonCommercial-ShareAlike)
+  https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+  NON-COMMERCIAL USE ONLY. Attribution required. Adapted material must carry
+  the same license. No dataset images are redistributed in this repository.
+  Full citations: see ATTRIBUTION.md.
+
+  Artifacts derived from this data -- trained weights, PatchCore memory banks,
+  anomaly heatmaps rendered over dataset images, case-book figures -- are
+  treated as adapted material and inherit CC BY-NC-SA 4.0. The MIT license in
+  LICENSE covers the source code only.
+
+===============================================================================
+SOFTWARE
+===============================================================================
+
+PyTorch, torchvision                          BSD-3-Clause
+NumPy                                         BSD-3-Clause
+SciPy                                         BSD-3-Clause
+scikit-learn                                  BSD-3-Clause
+scikit-image                                  BSD-3-Clause
+Pillow                                        MIT-CMU
+OpenCV (opencv-python-headless)               Apache-2.0
+PyYAML                                        MIT
+pandas                                        BSD-3-Clause
+MLflow                                        Apache-2.0
+FastAPI, Starlette                            MIT / BSD-3-Clause
+Uvicorn                                       BSD-3-Clause
+Gradio                                        Apache-2.0
+pytest                                        MIT
+ruff, mypy                                    MIT
+
+anomalib (Tier 4 comparators only)            Apache-2.0
+  https://github.com/open-edge-platform/anomalib
+  Comparator results produced with anomalib are attributed to it in every
+  results table via the `owner=lib` tag.
+
+===============================================================================
+PRETRAINED WEIGHTS  -- verify before distributing any image
+===============================================================================
+
+torchvision ImageNet weights (WideResNet50-2, ResNet50/18)
+  Code: BSD-3-Clause. Confirm the individual weight cards' redistribution terms
+  before baking weights into a published container.
+
+DINOv2 / DINOv3 weights (if used; open decision OD-5)
+  Weight licenses differ from the code license and from each other. RESOLVE
+  BEFORE USE and before distributing any artifact containing them.

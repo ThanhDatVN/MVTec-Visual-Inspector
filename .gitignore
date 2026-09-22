@@ -1,0 +1,76 @@
+# ---------------------------------------------------------------------------
+# DATASET EXCLUSION — license-critical. See docs/08-licensing-and-attribution.md
+# MVTec AD / AD 2 are CC BY-NC-SA 4.0. No dataset bytes may enter this repo.
+# Enforced by tests/test_license_guard.py and the CI license-guard job.
+# ---------------------------------------------------------------------------
+data/**
+!data/manifests/
+!data/manifests/**
+!data/.gitkeep
+
+# Image / video formats, anywhere. Test fixtures are NOT committed: they are
+# regenerated procedurally by tests/conftest.py on every run, which keeps the
+# repo free of image bytes entirely and keeps the generator itself under test.
+# Only figures we author ourselves are allowed back in.
+*.png
+*.jpg
+*.jpeg
+*.bmp
+*.tif
+*.tiff
+*.webp
+*.gif
+*.ppm
+*.pgm
+*.npy
+*.npz
+*.mp4
+!docs/**/*.png
+!reports/figures/*.png
+
+# ---------------------------------------------------------------------------
+# ML artifacts
+# ---------------------------------------------------------------------------
+mlruns/
+mlartifacts/
+artifacts/
+outputs/
+cache/
+.features_cache/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.engine
+*.safetensors
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# ---------------------------------------------------------------------------
+# Environment / editors / OS
+# ---------------------------------------------------------------------------
+.env
+.env.local
+.ipynb_checkpoints/
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store

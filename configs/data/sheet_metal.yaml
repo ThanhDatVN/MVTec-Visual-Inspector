@@ -1,0 +1,13 @@
+# MVTec AD 2 :: sheet_metal
+# 4224x1056 native (4:1). Extremely small defects on a
+# dark-field image: the resolution stressor. Smallest train set (137), so the
+# fastest category to iterate on.
+
+_base_: ../base.yaml
+
+data:
+  layout: mvtec_ad2
+  category: sheet_metal
+
+preprocess:
+  long_side: 1024

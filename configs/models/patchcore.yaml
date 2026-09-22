@@ -1,0 +1,22 @@
+# PatchCore reference configuration (docs/03, Tier 3).
+# This is the row every ablation is measured against, so it is frozen at
+# Gate G5 and changed only via an ADR.
+
+_base_: ../base.yaml
+
+experiment:
+  tier: T3
+  owner: own
+
+model:
+  name: patchcore
+  backbone: wide_resnet50_2
+  weights: imagenet
+  layers: [layer2, layer3]
+  patch_pool: 3              # 3x3 average pooling = local neighbourhood awareness
+  projection_dim: 1024
+  coreset_ratio: 0.01        # greedy k-center; ablate 0.001 / 0.1 / 0.25 / 1.0
+  coreset_presubsample: 0.1  # random pre-subsample before greedy (VRAM, docs/06 §3)
+  k: 1                       # neighbours for the anomaly map
+  image_score_reweight: true # the paper's image-level re-weighting
+  feature_dtype: float16     # distances still accumulate in fp32

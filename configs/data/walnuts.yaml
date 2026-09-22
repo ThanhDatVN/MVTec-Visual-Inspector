@@ -1,0 +1,13 @@
+# MVTec AD 2 :: walnuts
+# 2448x2048 native. Very high variance in *normal*
+# appearance: the false-positive stressor. Largest train set (432), so the
+# largest memory bank and the tightest fit against the 4 GB VRAM budget.
+
+_base_: ../base.yaml
+
+data:
+  layout: mvtec_ad2
+  category: walnuts
+
+preprocess:
+  long_side: 512

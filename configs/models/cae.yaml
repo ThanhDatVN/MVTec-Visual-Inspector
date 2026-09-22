@@ -1,0 +1,18 @@
+# Convolutional autoencoder baseline (docs/03, Tier 1).
+
+_base_: ../base.yaml
+
+experiment:
+  tier: T1
+  owner: own
+
+model:
+  name: cae
+  latent_dim: 128
+  base_channels: 32
+  depth: 4
+  loss: l2                   # l2 | ssim | l2+ssim
+  residual: multiscale       # raw | multiscale
+  epochs: 100
+  lr: 0.0002
+  early_stopping_patience: 15

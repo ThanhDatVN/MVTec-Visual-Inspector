@@ -1,0 +1,67 @@
+# Base configuration. Every experiment composes from this file.
+# The resolved config's SHA-256 is the primary experiment key, so anything that
+# can change a result must appear here rather than as a code default.
+
+experiment:
+  name: unnamed
+  tier: null              # T0 | T1 | T2 | T3 | T4 | T5
+  owner: own              # own | lib  -- carried into every results table
+  notes: ""
+
+data:
+  root: null              # set from INSPECTOR_DATA_ROOT or --data-root
+  layout: mvtec_ad2       # mvtec_ad2 | mvtec_ad | synthetic
+  category: null
+  fit_split: train
+  val_split: validation
+  test_split: test_public
+  # Classic AD has no validation split; these govern the carve. Ignored when
+  # the dataset ships one (protocol §3.4).
+  val_carve_fraction: 0.15
+  val_carve_seed: 0
+
+preprocess:
+  # Aspect-preserving by default. A blind square resize on sheet_metal (4:1)
+  # is destructive, so the policy is explicit rather than implied.
+  resize_mode: aspect_preserving
+  long_side: 448
+  short_side: null
+  interpolation_down: area      # INTER_AREA preserves small dark defects
+  interpolation_up: linear
+  normalize: imagenet
+  augment: none                 # ADR-6: no augmentation by default
+
+model:
+  name: null
+
+postproc:
+  # Fitted once on validation and frozen (protocol rule L3).
+  normalize_scores: true
+  gaussian_sigma: 4.0
+  upsample_to_native: true      # all metrics computed at native resolution
+
+thresholds:
+  op_fpr1_percentile: 99.0      # OP-FPR1: target 1% false alarms on normals
+  op_sigma_n: 3.0               # OP-3SIGMA: the official AD 2 rule
+  report_oracle: true           # OP-F1MAX, always labelled (oracle)
+
+metrics:
+  aupro_limits: [0.05, 0.30]    # 0.05 is AD 2; 0.30 is the classic convention
+  aupro_num_thresholds: 512
+  pixel_auroc_bins: 65536
+  max_negative_samples: 2000000
+
+run:
+  seed: 0
+  seeds: [0, 1, 2]              # protocol §4.2; mean +/- std is mandatory
+  deterministic: true
+  device: auto                  # auto | cuda | cpu
+  precision: fp32               # fp32 | fp16
+  batch_size: 8
+  num_workers: 0                # Windows default; raise on Linux/Colab
+
+tracking:
+  enabled: true
+  uri: null                     # defaults to ./mlruns
+  experiment: mvtec-visual-inspector
+  log_artifact_subset: 10       # same 10 images every run -> free visual diff

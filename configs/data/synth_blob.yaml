@@ -1,0 +1,10 @@
+# Synthetic fixture category (no dataset required; never reported).
+
+_base_: ../base.yaml
+
+data:
+  layout: synthetic
+  category: synth_blob
+
+preprocess:
+  long_side: 128
