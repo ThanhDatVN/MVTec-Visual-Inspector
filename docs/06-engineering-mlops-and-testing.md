@@ -60,7 +60,29 @@ by a notebook cell is not a result; it cannot be re-run, reviewed, or trusted si
 
 ## 3. VRAM and memory budget
 
-The RTX 3050's 4 GB is the binding constraint on this project. Plan against it explicitly.
+> **Corrected by measurement (2026-09-22).** This section previously called the 4 GB card "the
+> binding constraint". It is not. Measured peak VRAM for a WideResNet50-2 `layer2+layer3` forward
+> pass on the RTX 3050:
+>
+> | input | MP | batch 1 | batch 2 | batch 4 |
+> |-------|-----|---------|---------|---------|
+> | 256×195 | 0.05 | 307 MB | 322 MB | 354 MB |
+> | 512×390 | 0.20 | 364 MB | 431 MB | 592 MB |
+> | 1024×780 | 0.80 | 642 MB | 904 MB | 1535 MB |
+> | 1404×1070 | 1.50 | 959 MB | 1459 MB | 2645 MB |
+>
+> Native VisA resolution costs under 1 GB at batch 1. **The binding constraint is the patch matrix
+> in host RAM**: 23,584 patches per image at 1404×1070 × 768 training images = 18.1 M patches =
+> **37 GB in fp16**, beyond this laptop (16.3 GB) and a Kaggle session (~30 GB) alike.
+>
+> The consequence replaces a planned mitigation. Tiling was scheduled to solve a VRAM problem that
+> does not exist; what is actually needed is **per-image patch subsampling during extraction**, so
+> the matrix never fully materializes. The current implementation subsamples only *after*
+> accumulating everything, so the extraction peak is what binds.
+> Full measurements: [reports/P3-visa-findings.md](../reports/P3-visa-findings.md) §2.2.
+
+The arithmetic below remains the right way to plan; only the conclusion about which resource binds
+has changed.
 
 ### PatchCore memory-bank arithmetic
 

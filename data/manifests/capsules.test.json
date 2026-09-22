@@ -1,0 +1,1131 @@
+{
+  "dataset": "visa",
+  "category": "capsules",
+  "split": "test",
+  "n_samples": 160,
+  "n_normal": 60,
+  "n_anomalous": 100,
+  "entries": [
+    {
+      "id": "capsules/Data/Images/Anomaly/000.JPG",
+      "sha256": "c7e81efefcdb31b22bf6087ad74575446013eb2f3925c0e3265d467a2caaad7c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/000.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/001.JPG",
+      "sha256": "76dd4a2f47089db32cc3c386be0efcdeb48c8b1858512a4272d698ccbb6e9d1c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/001.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/002.JPG",
+      "sha256": "0915d84bc965a23aa6b25ee1ab5c625164a810c8d74d13f21efe30a2fa495247",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/002.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/003.JPG",
+      "sha256": "331958377f275154a5399966ecc536fd4304b619a68ee483b9cfb332eab2d6cd",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/003.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/004.JPG",
+      "sha256": "ef6c0b8b14447ca8e1ae5b1b51ff1543d406a8c80549f432c4b08a5dece865c2",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/004.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/005.JPG",
+      "sha256": "346bfc5d4b32ab6a9632da37a7f01b6219fe57380a4044061cf5c90e38e49108",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/005.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/006.JPG",
+      "sha256": "1f6ec527fd0bfd2c7e3bf7777d631e27fa7859f4cb66289aa8c71579930c51ba",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/006.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/007.JPG",
+      "sha256": "6f1a7111cd50319b49acb816e003510d874ed635d985c06f6a7e4dfb15634c3f",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/007.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/008.JPG",
+      "sha256": "c15544699cdf81bd9a368d057608600fe81b02051181280ecdc739313a657406",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/008.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/009.JPG",
+      "sha256": "4375fdeea646b9587119cff1a0cd9418d83eaa33a703f93f07fc3d6955ce8501",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/009.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/010.JPG",
+      "sha256": "23b383e42c111073db810a753681b898ee65a23629966e9caaafc0ab09a63175",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/010.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/011.JPG",
+      "sha256": "f39b09d8462fd721cb696b8a9456ac220c140d0245c8036e58e8a56f90cc46ae",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/011.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/012.JPG",
+      "sha256": "b2b441e65c25ba93a679fada3d6d5a6b23ab34c6eeb1350aed71320254ad1412",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/012.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/013.JPG",
+      "sha256": "8fcbc279c06651fd0932058a46b49495dbc1b9df6fb8d17997f0bf0289a23a1e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/013.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/014.JPG",
+      "sha256": "5c7383ecac2b11abef39f3d7b6f6869c61a01d6b4d78a59aa0b0a7f5beb0ff82",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/014.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/015.JPG",
+      "sha256": "a6fad688d6836629503c33155726186405bcdb8ddf78e1e1c91e4d4cb69498b0",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/015.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/016.JPG",
+      "sha256": "40f05bf3d8cc92d8407f179e431cfff67e0a8024be01deea2075795dffd4cfd2",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/016.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/017.JPG",
+      "sha256": "4a7e36eeec1866061f88fddcab1592bba11ee54f5e5d9a228f88831733bbf3b7",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/017.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/018.JPG",
+      "sha256": "12a23cd8a5118870d1a1663b34697aba00e6c06661b5e9bd05a481bfa2bee8a7",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/018.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/019.JPG",
+      "sha256": "094f90fda64be342bd38b8e43d8aeea5e7a6b02d266e5e41cfc8a448d62c0c01",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/019.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/020.JPG",
+      "sha256": "275532f2cbe28d92bf32b925602c174d56af798ce6963bcfa1fbc913f8cdf80e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/020.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/021.JPG",
+      "sha256": "13f43715cc4b07259b601c4a74a8af5a821ed55d5d4b62c0da93b8dfecc8fa5c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/021.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/022.JPG",
+      "sha256": "5da525a2fe0324f3a0905ae1bdc12b62347b703d8381ea40731ecf3835f578c2",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/022.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/023.JPG",
+      "sha256": "9f6e79263e9be5b417221cd142d58377655fe4bcc2c97698d9e0167ad76340ea",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/023.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/024.JPG",
+      "sha256": "739ecf2c8cf2fd40a9df57d9186c8219b43c9881850bb76064f074b1b27d679c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/024.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/025.JPG",
+      "sha256": "00bba28d1061cdd0d886838edb2a0ea5035311406172cb0f4bad63d5d09b5248",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/025.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/026.JPG",
+      "sha256": "35cb43650e44dbaa2814e61d661ba35633be8872d27e1120cf1e2544ac07af8e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/026.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/027.JPG",
+      "sha256": "14e6beb9c3affbe2b282ec00eb1a0c01c98585b2581bc7d21bf8a693116c92e0",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/027.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/028.JPG",
+      "sha256": "37b50385e68acff20b0e374810b25e66561e50cbfd9a00dad3e050aebba47837",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/028.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/029.JPG",
+      "sha256": "588533c0f13ff59f2f955428527de165373afcebf11b164b004f984ea1bd845d",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/029.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/030.JPG",
+      "sha256": "ff763ee3a3c247dd0d2f32f0badc30e3a2d50de8e68472263c07db2ced971c33",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/030.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/031.JPG",
+      "sha256": "ef710c089e5b07763e0f90bee9c7fb04d8b49b5c575e0077ad8d5737b6e67fd5",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/031.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/032.JPG",
+      "sha256": "ba1ee75364a775c80741ed5da128808a1ba25a7748a88a0448b828e1a9652877",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/032.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/033.JPG",
+      "sha256": "4d4ffbf45fe49281e541ed9077f17009b1365b15977ce118bd7d0f958115b180",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/033.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/034.JPG",
+      "sha256": "d42e14742264bb9e9393ae9044aac2fb325c03fd35e9846faad7f63d865e825c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/034.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/035.JPG",
+      "sha256": "78c0678463ccbbb28f078b5d1a95e95f40e229ff042d3592310bcb5e6cbcc7a8",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/035.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/036.JPG",
+      "sha256": "4d58027b5b90c8888d4c872f1dcde7a53063f26d71af1654d46395aab1e3fdc1",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/036.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/037.JPG",
+      "sha256": "477326dc4d161a22010c257bccf3354ce4ae63e6165c436708f2374821eabc6e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/037.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/038.JPG",
+      "sha256": "23110f3f90c401597b6d7e359a7752838384329020e749a3477e0f4c19674a25",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/038.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/039.JPG",
+      "sha256": "6373c2b23bd6201d4f0762ac4b4f2746542271c2d5a7ab4607d9713f878437ea",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/039.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/040.JPG",
+      "sha256": "a9517e77449b0b3a8e3737e2ebf7ad4873529ef302c53260becd173b8f6968d8",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/040.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/041.JPG",
+      "sha256": "59916f127c25aeeb12f0e5b94360bd776b7491589324234ef310ca4ef490a4dc",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/041.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/042.JPG",
+      "sha256": "5f9c75be1743300818db171ece0128c3a37b8d1ca2546f7bc603f5814e1d6beb",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/042.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/043.JPG",
+      "sha256": "c767485985d70abe07c42d3aa49b7a31050e62f78f11b02d9155137b1cada759",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/043.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/044.JPG",
+      "sha256": "be23570070a7a65a3dfadecdf98b4bfe20be58484fbc5dcce8e975dc8a0c4b2b",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/044.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/045.JPG",
+      "sha256": "6d2f67dc7cc17c79172550dc6fb84b80757cee712d70f65fa6e4dc2a78f0169c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/045.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/046.JPG",
+      "sha256": "9462d9ad0e7ecbbca7d97a629e6d14d217cd743c967b32a0ceb0fb6197d776fa",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/046.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/047.JPG",
+      "sha256": "ed621b3292e0326458d71de5ac7b624c1b14f254ea05baf4fb3e2f8b89f2c957",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/047.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/048.JPG",
+      "sha256": "7b1df57f25011aaaccc56911509223876ccdb6cfba6270ac28ef3e6d62953c21",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/048.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/049.JPG",
+      "sha256": "99fc0acd5a3daed14b5f5b9a9eeaa98a1db6408198fcfce1627cf284cd6a48dc",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/049.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/050.JPG",
+      "sha256": "6614ef2928b01223b464c239a93f4916b811705ba925b6f95ef4e0b8af5d0b25",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/050.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/051.JPG",
+      "sha256": "4b5bc576fa6609ec503eb65e290426669eb09a5dcf41f0ca24118057b6fda38c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/051.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/052.JPG",
+      "sha256": "e93de2b43fc2282467c1628ec1eaad604da8b2d1620ab9d232a644c0b06408a1",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/052.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/053.JPG",
+      "sha256": "af38242ba24b20e9045993eb9c121e0bb57cf63fe8504fcd2eced715e147a800",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/053.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/054.JPG",
+      "sha256": "abc2970a2fd4a34c56a9a1f7b3ca801cbcb112cc7dbb8fc9f51a1b34f38aae05",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/054.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/055.JPG",
+      "sha256": "06ff4d2a60a8e57c7781117977eac56f7a4ffb972b81ff6629ed8f27adf1579c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/055.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/056.JPG",
+      "sha256": "b04a27e2687de5cc064b577c418b5b120a4c8bc008a1f458a28aa5d3d9fe459e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/056.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/057.JPG",
+      "sha256": "4efb10990752e9d977868622ac32900c5b8e0665da3215b34046375508c22916",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/057.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/058.JPG",
+      "sha256": "5ef3aafc7e9b071d297fdd1acbbcb0fa2f7471fe21d7919f5ad462af74ab17c6",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/058.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/059.JPG",
+      "sha256": "2fa0865fc5ac79efb3c88371d54ae25730691b034e660a91bbf0ed950012d214",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/059.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/060.JPG",
+      "sha256": "77a9eaaa87bb50b557867fef7aa7269ec4e85d9ea0b54b06e85ca69f996c79c3",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/060.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/061.JPG",
+      "sha256": "38c15fd3a362fb4b3418fb8e2a03411456b629a86c54513684a21bda4683a67e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/061.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/062.JPG",
+      "sha256": "29e84c1b22952c55ce0fed2cf5fd6443f208ee512e00b8d579c832c70ec37653",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/062.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/063.JPG",
+      "sha256": "e7d8c88a62302a82fb47198517011d6bb32e3fa3f14651f5b986daae9ea74f3a",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/063.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/064.JPG",
+      "sha256": "15a1c80ccbaa75008975068a8c446e72afedffd0da5147a561bc02090abb3401",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/064.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/065.JPG",
+      "sha256": "b187f63252dae6f092717e726f4cea868e6e953ab8e940cf31f9e939ce394a3d",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/065.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/066.JPG",
+      "sha256": "c0327d7b78707d85a747b2e98c0ae3b40b7409153376cf8bc78ecedde5825723",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/066.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/067.JPG",
+      "sha256": "3c5da00df0014d0b27b53bc3032326a0051db3d8a306b0537d9666da6dbd9bdd",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/067.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/068.JPG",
+      "sha256": "61d7916813999df6043a73a62ebeef1685c65d83f54a329ff42a9830896beb67",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/068.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/069.JPG",
+      "sha256": "6ab09dd08c87a5ff2eee97b1076b2a957f5d9b65582eb6805979f8a598dd9c13",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/069.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/070.JPG",
+      "sha256": "9d8ad2e2898abbd3283b541b0b8dfcc7c24994d0922f3c56d3acf9322e9ee0f2",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/070.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/071.JPG",
+      "sha256": "6f28513e3dd8069baafd338e4f0af276d1dfd462f3ab659d48f798a82d2a599e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/071.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/072.JPG",
+      "sha256": "6bea7a677e3c5e56d56036157a8b3ba41f6b2efbcc15ce93f684189132e4d3fc",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/072.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/073.JPG",
+      "sha256": "0d893a967f30bedac4ad6002562c1a654dca879f7afef9122c1ea7f465cecbe9",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/073.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/074.JPG",
+      "sha256": "7db1d4238ebff533bc79c1d87054b0754e0639a0e6880b40708f61fb4902d2a1",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/074.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/075.JPG",
+      "sha256": "1ee79ebe1aec99b7105dad329ec84f26fb62e7707fd9327a3fbe4594a9659215",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/075.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/076.JPG",
+      "sha256": "b2be8c55a6dfdd7aeba2c80b8047c61191fd1144592298e12e0b591668ad6b6a",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/076.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/077.JPG",
+      "sha256": "78ca6ff1e4287b30b73565e4dbec4f256b20789845377e61706f0769d858f9a8",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/077.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/078.JPG",
+      "sha256": "b3c1b1fedf36d02400870262131441de04d23a29b241cf20a8f0a85ac8c1b1b6",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/078.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/079.JPG",
+      "sha256": "93e28352764cb141dc3334e329545159679327e7ac0bd2747fe7f4e01163ba74",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/079.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/080.JPG",
+      "sha256": "f036a5bda334fa194f7d1d5d111d2e35891c2af1949bd1deff40b55fa10aa0c4",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/080.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/081.JPG",
+      "sha256": "4f22c697b3483a9344e5561816fc52411a6840095874ac29d8c03171de70352d",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/081.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/082.JPG",
+      "sha256": "020cea550724ee8f140f82c2f81ba057243a619fd64e0273f243dd8a35dcd90f",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/082.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/083.JPG",
+      "sha256": "af8c3e826281c71ed827439badc3bc81fd9c3af8ad66e2da4be98c167be9e722",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/083.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/084.JPG",
+      "sha256": "15e81fff9b11c9956d404faa5bfd506a15b00ea6c7bf87d4be1cd79677240e3d",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/084.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/085.JPG",
+      "sha256": "ff810da5c6c696a2f42239db2742c9d2513bd8c2654a0f7c2ed230735728037d",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/085.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/086.JPG",
+      "sha256": "d12967391cce5638f33f916f4ae4af44bf85b96ca7071d9a42152716094f007b",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/086.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/087.JPG",
+      "sha256": "a6273f99e167646bf0ff921906bb039bd2eaaee6d8f8875e22c43239e32308d4",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/087.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/088.JPG",
+      "sha256": "000c61ee91bad1f9336c0fb88eb56996fb5d4cfb18c6e99d38744c864936db6e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/088.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/089.JPG",
+      "sha256": "1cb3d5f9e42bc6f5bf131a32f5ea83938d4ac59d981f336da03b70b7dfd52c9e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/089.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/090.JPG",
+      "sha256": "fd79c15f6c4c5091c18ab4b3ce17bac476395f8eef4a99554dbcf212323fc3f9",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/090.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/091.JPG",
+      "sha256": "a72cd62313b77312a70ad945f0f18455da59387726b5a2c63ab83c70669f134b",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/091.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/092.JPG",
+      "sha256": "cdeed72e5f7ea009261a76799c72c3840a88e2570a3d4a7a0698c08fe58fae67",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/092.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/093.JPG",
+      "sha256": "f91d517ae70c6a2943c6451994027fa7df8e4624dbc9f6e4fd0993ae3861885b",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/093.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/094.JPG",
+      "sha256": "9e74ef0a4565b813328c0b1699277af7010d4873ce81184108b1f374bb4fc6e4",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/094.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/095.JPG",
+      "sha256": "32ca86baad672a890dc7f48fcb9a362199526a5b5353673034a19da0c3dd201a",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/095.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/096.JPG",
+      "sha256": "ba8356b2dc4ec8953cd367512f04696edceca633321b232ad55103e9faec5536",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/096.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/097.JPG",
+      "sha256": "2a7b934aaf13389f95caa5b9b3244742a086785f607e7d7b64d777a7046d7f81",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/097.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/098.JPG",
+      "sha256": "e1f6ba25bab3922a17c5a0f495041805296433c0000acea8fc800efc93429a85",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/098.png"
+    },
+    {
+      "id": "capsules/Data/Images/Anomaly/099.JPG",
+      "sha256": "8405239c9f0c8f84ed2a99e7e7b3ff66c9a590739dcb9681aa77e96ac8dc4a51",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "capsules/Data/Masks/Anomaly/099.png"
+    },
+    {
+      "id": "capsules/Data/Images/Normal/011.JPG",
+      "sha256": "f5bbabfeef8e263ea8bbb99fef0c3cd9837558022b493f8b7eb4bd28c455123f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/013.JPG",
+      "sha256": "155b574c3f51e9a610f393877b3443a8e15e59e54f9cc3efa60dcb014404d3d7",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/016.JPG",
+      "sha256": "01a4cc23717deebbf1d861ff8e896447cff5a693e26281569c7d7e022dd472fb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/024.JPG",
+      "sha256": "1b3651720330967edb1c43c81504162f3bf38d63c2afc8fb0aa3934df1a12652",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/026.JPG",
+      "sha256": "502194aba34449f5ad1b599f1dd97ce901abe54f5955d2fe965a5ade4c5bf268",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/027.JPG",
+      "sha256": "24b8c30b448d90427c8b52ece05b3c777ffbb48fb23e1904953aee87a042340a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/046.JPG",
+      "sha256": "73cb77a20a1be8204e214cf766c7e0a2bb6bb78d88c69fa7ae7555f8ce86b67b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/062.JPG",
+      "sha256": "dc7bbd3eeff5e5f71ce6a0b0fcf9ca89cfa46c3f44ec362d6493b8a7b746a1c1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/100.JPG",
+      "sha256": "ca5e203826164e0e7b8c2909c68ab3dea2c4af4162d97b482f0dcb6385530740",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/107.JPG",
+      "sha256": "24519452f2e3589af9cd228227eda595a494c5747e9290615ce5add27e561bc4",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/152.JPG",
+      "sha256": "968f1d014cc3d6d807da045bdfa353e731f6b0079a475dc1950e88c2f22845f2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/159.JPG",
+      "sha256": "9b68f522bd7fd5411b9053f0d979e281a8cf5ed3392dc1ffa0541b35349b9a0b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/168.JPG",
+      "sha256": "c9ed9efece13bdda34d13774237f3bd786c71170f1d07ec69fa56c4ce05f3b03",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/170.JPG",
+      "sha256": "4ea2687eab569afa36eac067780b339418032b62217aebf1bce27ee7edaf89c2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/172.JPG",
+      "sha256": "e4782290d3911d15fcb8f06180ce98b9e63b2ec60deebd9a40fc50270292f9b5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/174.JPG",
+      "sha256": "e7aa4f1fd5ce326ae06fc9944050ee58e2bc4d31a56dfac39f757b75282034e6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/178.JPG",
+      "sha256": "d86eeb6a5f962e9306e42513b50e0d2120884219a7eb58eb5c59924c9bf171f9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/179.JPG",
+      "sha256": "f7ede2371eea009e6428ffb2a3b41ccc0b2500a46926826dc7a9b0c87fd06ccc",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/187.JPG",
+      "sha256": "68501194d95477565f7977766e34c8a83842fcba8e0e7f7cfb3d3f7032fde5e9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/196.JPG",
+      "sha256": "c2bddb1df001e5929f90067e2912e2aedaea4ddaf83a8b988b90c2404b7d2dc2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/208.JPG",
+      "sha256": "e2d40db957d6df882a1ca8261a00d6c731181b56e19092347e839f153b03818a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/214.JPG",
+      "sha256": "3c7b6589131b4c1d928cb4b30e187b60ed82dc3d7affac09cddeb74f33180e5e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/215.JPG",
+      "sha256": "e9ebf4393da354d4c9e4f3f799b1fc1abce941d3926b2a2d64c4b3e12d159c41",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/237.JPG",
+      "sha256": "fec4b496c94cb78df6015bbef44728b50757c04a71781cf519147a4047cbec16",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/240.JPG",
+      "sha256": "3842ae719968508bcdcc6354d67c77fb0b85ed47964f5cf9e8ec291addab36fa",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/261.JPG",
+      "sha256": "a815c0425a61085a2b3bc90ba7f88cf7cf5885ffb86d378cf182a7fc77f606ab",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/286.JPG",
+      "sha256": "48c0486a26edc5280f2b1ba18721a5ee964101cd3e5cc59f356f50c8547c7a93",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/288.JPG",
+      "sha256": "37cb113aa8827eea32926c3994ea1af8c57272278f8161a2689c211b37d8822c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/294.JPG",
+      "sha256": "7bb88078e3e2f88aa520550bb4e2095c415430c2b03af6a495e5301ae112981e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/297.JPG",
+      "sha256": "9d68120139f9312bef4198d901a4383a688f1762d9186701c373cb3ff40b1e1e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/303.JPG",
+      "sha256": "d4574fdc5849a418ce73fdd1f0b71166b21637b20b7ac1f22b192cc1e10c2a41",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/306.JPG",
+      "sha256": "9dd588d2018d2e2c5ee9830189e10996d73950eb12e70cbd181c52ffe4312e81",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/320.JPG",
+      "sha256": "64a6720bea00b89cde2e0ad99be9203e124042524605d3f5cb139c3af55c7d3f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/324.JPG",
+      "sha256": "e8523c5ea86392a2980ed7bad9788d5bf71e10114667c3e09137c6fa7faffc2c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/333.JPG",
+      "sha256": "a666857b8914069cac611288dbbf49aca38c14fc1720dbae8a5b3505ee778e00",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/363.JPG",
+      "sha256": "3b7e1e0836f88e264c805bb7714d639daea242bfcdb8b30626465d6e8050b00b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/377.JPG",
+      "sha256": "9154131dd5541bc188aff81559d90e11bb266fa6adaca29094d9ff3ef1b62a96",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/394.JPG",
+      "sha256": "da4a388004bd44e953b429b3cb522967f5915c40af2c346bbf870dfa94dcb5e5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/400.JPG",
+      "sha256": "8580aa67f5f9c5f6bd7ed94af114eaf5dcd261b032e7fd746ecec3caa5f0d7dd",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/402.JPG",
+      "sha256": "df020fdea1995f9a0bd2f9c8685bc87be0609a0482e3e3147d053da4d5dc7deb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/417.JPG",
+      "sha256": "01d258ca9aa999e2ba1476f689ac26fd73b712070c3d20ae77202c276bd79978",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/423.JPG",
+      "sha256": "47432e92d9c7a4c6e0196fbb91118b2a6f4c4582573a09298950783f3b69d09a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/427.JPG",
+      "sha256": "23eed70030856cc8bdb3bc7302914a4043a7d8bbefe2fd1463e146e50dab1216",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/457.JPG",
+      "sha256": "7886014e60447f10dbdbbb2f4b7c3e9bee4a21fc61ec73f00e574221eac9adc1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/469.JPG",
+      "sha256": "d8c68ec434dedefc34356cad4eefdaa58c6d982245ed4aa898ed894499f7e108",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/479.JPG",
+      "sha256": "7d9415feb393cf52578e861d1bcf2b35a50eb76870c3d955904aab0f26e0a0bd",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/483.JPG",
+      "sha256": "7ce7658e3ee79af8f0ca735a53d5fdef06bce02d623f45ca27d78547d5af6c28",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/484.JPG",
+      "sha256": "90f77b8f1b21032c2169e9a4bcc3d4f3c5f45a3f7558e0a493dfb326413a6638",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/488.JPG",
+      "sha256": "aee1c269ac0ccca27bead78bc466eca75eb7e9d515b738df24c2bc6c421afc6d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/490.JPG",
+      "sha256": "4f99fb08067e9b26930057d507b0e0ac0852a5fcdb35e041ad4d6503e3137204",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/514.JPG",
+      "sha256": "c570ee58e85ecefb7d08ce5cabf87078b2bf0f395765163c956d21a50b369d43",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/518.JPG",
+      "sha256": "36e23399ee5098747cdbd9f42575510e9ecaa6354e2194a314f60129b2c8fa13",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/520.JPG",
+      "sha256": "12431a9dc788743dd4d5903b0177eca35996726158e3e2f3b9087f6d9e3532d4",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/525.JPG",
+      "sha256": "d75088d42ca70d2f73234b3ab6b46bc872a897d8b3db8f642f5fe26ed47a1f21",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/545.JPG",
+      "sha256": "f70a708a041861fa838a6c6a778ba9139c9f018b082c0198807184db097da257",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/552.JPG",
+      "sha256": "7d306ca5c9ba6a8ebfe528b3f06496ab3c40c7047804ced444ac69d8338c41ed",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/569.JPG",
+      "sha256": "31fa3d6d967a7bb1c13b59625a5c8eb5c6d17c8866d48dbe9f74b326aafd406b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/576.JPG",
+      "sha256": "b2972ce9c9616620fb725a4d01288a73737cdb8e081137684f8fba72947cacf3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/580.JPG",
+      "sha256": "bf6a10c86cf9eda179ae057a49cbd71e4103dd628c937f9812222bada2a17f4c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/594.JPG",
+      "sha256": "eb5487c6445536537b7fd185cb177dbbfdc562e8224cab9547c5eb5026bb4dc2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    }
+  ],
+  "manifest_sha256": "8bcdce38e80346c374dc1684c86ea843e8fad0d01334d6cb981c04db6192db53"
+}

@@ -1,0 +1,3238 @@
+{
+  "dataset": "visa",
+  "category": "capsules",
+  "split": "train",
+  "n_samples": 461,
+  "n_normal": 461,
+  "n_anomalous": 0,
+  "entries": [
+    {
+      "id": "capsules/Data/Images/Normal/000.JPG",
+      "sha256": "c5ffa21822a8759621e81deedfcbd94cfae213667044f995fbaa6d9affbc1a4f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/001.JPG",
+      "sha256": "ba77cac2241a9841e7f594f0123a2ce0dcce4a6b7801ec0ba506eeee38378b11",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/002.JPG",
+      "sha256": "ad0b00938033e17c0deba7957d8b93859f5944737c547cf48f2d56fe3d463a55",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/003.JPG",
+      "sha256": "dee36cdfe7e1474a85fe036dba49b8eecf748b9f00057237d49356420156e31b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/004.JPG",
+      "sha256": "f3e7bac619c7f74c7ddf855d58f12124d172a4eb92f9a02c07e65be867ec3b86",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/005.JPG",
+      "sha256": "4acc7c46994cfbc6e774d9f4f926091cb64afbbed02d7b527ab5047b61737208",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/006.JPG",
+      "sha256": "a09d1a46983ae08c643032541d2afe450f8760c7f5bcf160a437fb87308af4e1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/007.JPG",
+      "sha256": "b2f5d192b8403d36254589667a827279b744112f33bb84ecf53994cf2bf2854d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/008.JPG",
+      "sha256": "eabb455442b61d5da1f7b56364e42c297dca2c4a395452a4aeb3136c5d974536",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/009.JPG",
+      "sha256": "d47091571e92e339210ea0beb5475722bb5b0ebdf4bc5196aedcde3e9c0befcb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/010.JPG",
+      "sha256": "5ae49ec10700939c8c36c109785022f1242e8cbf94fe3dd57a1f5cbbeb722ece",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/012.JPG",
+      "sha256": "31e990f5be88b7aca7768f83919747c52e16729557190ef2ca0ae4488a0625e6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/015.JPG",
+      "sha256": "85b862cdd0ec2dc1ed0fcac3a91248cb10fb6d0904920677590dce7cfd74313c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/017.JPG",
+      "sha256": "8ef631eaf292745bc7090b9afe87b5032ac71c3723c1a002e66e8118ac70f646",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/018.JPG",
+      "sha256": "7504b94f951e344dc556b68081a7d0424940851342e1ce743733793f41b9748d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/019.JPG",
+      "sha256": "7ee04cb99ef7303f2bc0ef62b7a737a886edafaf6754bcb568fc03b620fce438",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/022.JPG",
+      "sha256": "4cbcd8aef568fa99bad51961d4bb4e8cc557a69ad227170996ccc5fe8cd7be8d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/023.JPG",
+      "sha256": "24d8df308fd1add15f826c44d5549fadd92bc6e605020df42cb6f66f4c90952d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/025.JPG",
+      "sha256": "6f84f373d3ae42fa7bc37dfde186cb45ff72d9b936b9bdbaaef43c9a35ae192f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/028.JPG",
+      "sha256": "168aab9300f5934ef735d96cf693b5c04c1b594391786e713a2c92c1b99bde32",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/029.JPG",
+      "sha256": "3ce61b048f70b66778fdee17e78e8b72d9822415f53db17896390acbb5308148",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/030.JPG",
+      "sha256": "1d251f95570dad34ae2843abf879170220c24628afc54233ef7e3a8e86d9e681",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/031.JPG",
+      "sha256": "3bcc4473abd2ef50f902ecfb815efe26b1902eeac6c50b7af7d9147ab698b324",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/033.JPG",
+      "sha256": "3f5b145df3410501d3c939a149c61fee56164476c1d67ca8c4a60220dde942da",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/034.JPG",
+      "sha256": "46e7e293445ac174a50a7d3469eeef8f698ac890eb74f6f5c0dfb0553d1f96ca",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/035.JPG",
+      "sha256": "9e220fcbf77c112459a63d72aab554a329d75f382c1268a88a903fec99144797",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/036.JPG",
+      "sha256": "22c90b378b38b892369b68b106e141bb71348b5ea4d6b50c8bc5c308461f4ec1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/037.JPG",
+      "sha256": "d36b37c31e58b9a7eb0587f4ff59a121179cd5ad43aeb4441ea83201ebbdb86f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/038.JPG",
+      "sha256": "6f9622bf0e1a89d275374355c1ab3122636f1036b0e105cfe08826f4366de4e6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/039.JPG",
+      "sha256": "09307d430dc87fd3ba4c1f9c03ac68e0b09c4e73d9a887ad0d35e1bd7ff5da0b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/040.JPG",
+      "sha256": "9463371dfc47bf02a4dd9aae3266d42713a9069b9a3554b313cdfa2e8c3a8512",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/041.JPG",
+      "sha256": "2efb53b49e516ecd8a949bca09b2f2c5c067fcc2f9c5129173570e7806978c90",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/043.JPG",
+      "sha256": "093ec4859521a34a85d6814be231672fb3fc144bace3d1f926e45db821fa3748",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/044.JPG",
+      "sha256": "663f250ab90c95531833adb1fd773779b2d7f976394a38bdf09b56d458cd942e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/045.JPG",
+      "sha256": "874220b2018210625a98e012931da860f8028ef1be5316eef3be0b93125cdfaa",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/047.JPG",
+      "sha256": "34722bfa452e964435d9d9330fdef0f8e2f09d4d2a35fd949b705dd818acfb8e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/048.JPG",
+      "sha256": "a7b254266f7e567ec7cbeeedf9a6ac84358dc06c2ca969235757c040ce4a716a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/049.JPG",
+      "sha256": "5ae13bab4fcc644b9be247a6b55ff33720d5705818319a206a4af3850138330e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/050.JPG",
+      "sha256": "0c0d1af1e043cc570fbcbea08b6d576425c8f96306218ccbadbe245f960f0c02",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/051.JPG",
+      "sha256": "748b56cb9395b07c98a03dcff5981d1fb7fc20e5dce6e340fde48b206aadeb85",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/053.JPG",
+      "sha256": "f1f14696f62aa988625a27480f7b90a370014d4ca5ea7cf2e3e996c8ddb27bd3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/054.JPG",
+      "sha256": "de0d971c57ac11d38e57af270a4eec812ba4d8d35a26257da889cb1023685faf",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/055.JPG",
+      "sha256": "a51088606e05f8e8aece392c4edb42f92d713e7b3e638e1f796bb6d1b6c5a787",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/057.JPG",
+      "sha256": "8e9a5f3873d57ccf7195d8b1ba3bbd96fba7f79584d7e615b52fd55c14e2d7d8",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/058.JPG",
+      "sha256": "277825d7ca6fdccffd82aefd43ae2298bd43e2c9925a2c03d75a6eab861543d5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/059.JPG",
+      "sha256": "675fdf8770e48795b01d3fa411dfb76a1e6178ca7a1ebc279c0d045fdcea329c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/060.JPG",
+      "sha256": "3605f004f5d67d5b929300c0570ade52f52aad9caaacad36d2cc140bca49c54b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/061.JPG",
+      "sha256": "659ed7bb4676d0336b0f0283a12fd8ec8cb292d47153b8e68db072a3d49953b3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/063.JPG",
+      "sha256": "1f5c29ef3205e84180aac5e02122127da44f4cbd27fa0ab2f6eef9e47a203336",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/064.JPG",
+      "sha256": "ababb631ae366ab26de92bfe08694eaedd9a06bb4a044835c425cc64cce0b823",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/065.JPG",
+      "sha256": "ea0ff9a05750cb3e1886c2ce14924370c19dd95ce8ca4367a5fd8e21e4b094fd",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/067.JPG",
+      "sha256": "85cfe72edc7038f0d4e1a4c6efaec3da7d1587910de3c95d77301682b5531bec",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/068.JPG",
+      "sha256": "c69d9ff4bbf1e1d851a8b746e67b36cb773dee454e404dddcbe68fd5f224319c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/069.JPG",
+      "sha256": "9cb92336f1970b479207c6a5b96c4e95d974996c0059bd228561335ca02aac87",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/070.JPG",
+      "sha256": "bc83e0ff3cd2c374cd3a5f21a4c240d20369c18afa574579808e43c33fb9ecc2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/072.JPG",
+      "sha256": "b8e29331f43bba59cdc2b86585d5fa957588ae71d95d01f5e84cd44f64af94ab",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/073.JPG",
+      "sha256": "5a82e49a9f750860c627dff9978f42b3c83ffd9769d9daaf8d8f46dabd483018",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/074.JPG",
+      "sha256": "082431fadb9c7e6c5ce4a41bfac39d22a4917d94e80629abd479194b8b2fba2e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/075.JPG",
+      "sha256": "19a560a680868f762f2a3879a420288e7251d9545cad9d61c58c992121c91172",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/078.JPG",
+      "sha256": "261f70c87604f12f39f3758f8e0c47a1a61a0a4d129c97194947d778275e5505",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/080.JPG",
+      "sha256": "58e534ef598627c3f9f927acea6826ba3264fa04885edae4678653906400a7ac",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/081.JPG",
+      "sha256": "ed9536be1779b9ca25535cbd4a6ca8e908e3b7686ee668f502a7fbe6a5c8ccf6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/082.JPG",
+      "sha256": "84e2dd57168cb79e2e08fedf7f8ab423ab3560b3de0001ef09f68f7b711f903d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/083.JPG",
+      "sha256": "d11e371b89f7431be10837441dbe971aa489145c7720abd356d68f2afc5e93f3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/084.JPG",
+      "sha256": "63bcc05fdde48a8cd5364793151f898d2530ee72b22bc932d3ce8134c8bb93a6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/085.JPG",
+      "sha256": "fb4dc056b9dabc12502fa3d7d736ddb4bbe82e60697b93915393060f985be09d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/086.JPG",
+      "sha256": "61b9fb7a049e6c1c93d493fa04519439f46b59973aff2a1a797d3412ab412ef5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/087.JPG",
+      "sha256": "6d34a63fc37200f867cfcdc70070537de07e2f5e99947fb03828980c78924618",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/088.JPG",
+      "sha256": "b51fdf99d03edec7cbb766c64366300797f59cc5324f7807fc21482c9afc9d11",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/089.JPG",
+      "sha256": "d77b355778585f8528087b206897668493247f0a02907e9a7a25a016327f610c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/090.JPG",
+      "sha256": "c1befaa5659d571123972111d9e0b3af30b7a8616e76cb4536fc0dae0f70b863",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/091.JPG",
+      "sha256": "d3298a0e23d25089fafc80bbb872e778f49788cbd54a0db55255c443b1c014c2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/092.JPG",
+      "sha256": "660c9e4933f080a139795d69d5f98dc0524dbafe66723ddcaf5a75ba4d3a79e8",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/093.JPG",
+      "sha256": "61dcf4d742d77941f157341f62073000eaeed2165ac749bb84ff56360cecfd16",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/094.JPG",
+      "sha256": "1e67bef1bcba3c3cd1fd3150bb221ed30a0560e997241fd8c704409843ef200e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/095.JPG",
+      "sha256": "a33ea1ba6b1dcea1883190faba794ebf1e329ee5b7dba9c13b699c8b5af1792b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/096.JPG",
+      "sha256": "ec0bcf6b14b79422545d8f81fef8721ade5bd91e0d1da74e594dde41f7665c5e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/097.JPG",
+      "sha256": "3f43fcd7b80bf575d294bbe57450945aeefff72c8ff675fef4f13335bcd91678",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/101.JPG",
+      "sha256": "7579f75e6201fefc5206025753419ef7fb7c2697c2570bdb43e2f6fcb79887f8",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/102.JPG",
+      "sha256": "9aca2b3824351f9e6dcb88a312ef402cadc337ba5f5c239447cd65ac879a6c32",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/104.JPG",
+      "sha256": "0724aef87a2593f5d566400949f7c4c5c5a3a21375a6514215784f1c95a581ab",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/105.JPG",
+      "sha256": "4245a1182d55e5a1f106c1164a9013ba73beeb2d41baba7001aee9a4fe9ed04b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/106.JPG",
+      "sha256": "33dda068b13dab66a390a214c671845145edf51d7fe2e3d470fbf582ed1aee9e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/110.JPG",
+      "sha256": "c33b92b3761fbe05bf933fc412b643cb01c76d4f165ecc0235516c50923fb724",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/111.JPG",
+      "sha256": "605c197b7f70f49023c790b2107a145524c28bddc5bdd40b877466a74932c109",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/112.JPG",
+      "sha256": "4edbaec575e50c5b4dc29cb5f83daf51bc4eb11276ebf1bff9366a3236487302",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/113.JPG",
+      "sha256": "1fed987f6e61dbb584c62899cae3fc9a72744a4dca4eaf081b60f28ed28b93d8",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/114.JPG",
+      "sha256": "dcf5372fd9d22ccff8bd3e094a796245fcc8d90a1bec30acd4dd42a98e49340b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/115.JPG",
+      "sha256": "ccafa1ff5611016b0a91f29cdfe628e878f0f641c26af3a075465ea5bda24d40",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/116.JPG",
+      "sha256": "0d23a0c9c3a9d55d64a1bdd097470f274ae6b4184713bb89f0f823ba30e0f485",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/117.JPG",
+      "sha256": "6a92f195aa0675c9327b50deef9255349be8b0b3d608e8d14f79087513bff4ab",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/118.JPG",
+      "sha256": "8695ac5977766992d5825c597a6fb7a952e39b73907cd780c4d19520d991a174",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/120.JPG",
+      "sha256": "cac64eea98bd7507fd8fe9f0f6e5fab6fdd0054446f2a419c3864e9afb576427",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/122.JPG",
+      "sha256": "39bb1f7c4a5f1bb0e406f5c38b026088b2f0e6c7fd142c47f54bbc298fbd8591",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/123.JPG",
+      "sha256": "901a0d2fac05f03b90629301e687119764ed384c99fd4ef5a66351b756981e76",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/124.JPG",
+      "sha256": "c1c316045b3d6d6ec34942f01149e297245c1d119095852c994764446b7110a8",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/125.JPG",
+      "sha256": "8555d0983037c4a083536beb9f1117ee67c44f7b7dccd8b5feffba3407648de2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/126.JPG",
+      "sha256": "2a2bc6525d9830049b31430f3a640bd96d37dcfeef6051bd6f8c15bd98543a3f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/127.JPG",
+      "sha256": "e71b428d8cb7cc64ec4f6501ea254bb11ba59bba929e7f2959ebcddec8288ff7",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/128.JPG",
+      "sha256": "d58a989c82883f9f1598db3a6def17424dce33270b10b2933a7f1ed46c4dcd14",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/129.JPG",
+      "sha256": "a2d0cc434a15bfa6a68fce267a329f4fb2e0357bc3954f02485e8b79b654abea",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/130.JPG",
+      "sha256": "69fda42a31b02a2a8c4d38c1774300396232afe79cc6038aa2f0f6aa1f47df5a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/131.JPG",
+      "sha256": "1cd158bf3d29d4c5a262041c13d957e5c6d6600bcbbaafa0ed0f6444b6fda42c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/132.JPG",
+      "sha256": "cbd93f495471d14456d526d8a6453748e37dcd5cf1250c7ec5e36496a41a875a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/134.JPG",
+      "sha256": "b30a4ebb721da5ded6dfaa67bae5c5e2680bf14ba90c4b7eab7245f301f564e6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/135.JPG",
+      "sha256": "1d523fc059949c4d6a4282ee831200048ac69a2522442429d71355d2a557b6e4",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/138.JPG",
+      "sha256": "6850189df5b290a576655b516de2c49f0de4f5eaf38144b5ae33fcbbaf11c880",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/139.JPG",
+      "sha256": "f7b5f8e4e086bb019411e46604817e45ff9a8f394b4bdb088059e3f26741a35d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/140.JPG",
+      "sha256": "e3972fcecef8eec96ea71d89e9b5d664c9c7e29d8a76ea0f88c91715e6b9dbeb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/141.JPG",
+      "sha256": "9c2294d0aadc3ccb165ac1c1620ce52c2497b06f4395bc0753e4407d4001742e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/142.JPG",
+      "sha256": "9d44652f337257318737894bc25375584c3bbb66dbe0ebe715a4d24bc79a4102",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/144.JPG",
+      "sha256": "7899fe577b9793e556c283887162bb35a08dab6ce382283c343f092c3a3a9b71",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/145.JPG",
+      "sha256": "05f551df40d579a254864af0a63dcca36ecc7a2d85c48191e3d11c09f45a7a2a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/146.JPG",
+      "sha256": "49d4f32d2c97e5b9e8ecfcd71d66c65fa2bb42f1c72ffe1a5ce1e39a9f67fd6f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/147.JPG",
+      "sha256": "8720706a10dc424a2b07b64094b57050925d60119bab2495fba2fb2ce6e27c2f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/148.JPG",
+      "sha256": "ce4acaad216f68eeba0c96f112d9924d49a1ca9cb1a1717174808e424d41f743",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/149.JPG",
+      "sha256": "4f98801599670a47c3a28ae7f9fe5a4033368a3fbc7489862345ffbaa1215b71",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/151.JPG",
+      "sha256": "c261b77672c205fa99d705c906409f687b48494676ab9d286164bceadf1dcaba",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/153.JPG",
+      "sha256": "dd5553bf3cffe5176e76bccb58a82a43eace4a40ef817c27b2efa6c72aac4ea0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/154.JPG",
+      "sha256": "5e82be41eb1abab56312792a2bf4a575cd1b82117ce09e6599cc78f4fe58c697",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/155.JPG",
+      "sha256": "efb49f1009a43bc19299ad046b7f3c22cc7e3a162236319b72292a3019ba0f9c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/157.JPG",
+      "sha256": "7740cc9386f51cd01e90846a0e8931764fd3fde9fd63e63cd35ddf4f7226eeff",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/158.JPG",
+      "sha256": "22f2bfbd300d792b5a83ea43b218809e0e465707f4e6928989f4a054805c0c70",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/160.JPG",
+      "sha256": "93d9e43ad41fd979ba6b279c5810e38ad282c5285f070cd920bb4c5899fb5d57",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/161.JPG",
+      "sha256": "151c3e038790a3a15501d935fd2894ff5b52bfce19cf396ecc280f325b91c279",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/162.JPG",
+      "sha256": "570190824585f1115941fa37ec77173df9217f5e3f87cb4b96795bf2141a99f0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/163.JPG",
+      "sha256": "b776ffb8aafbf9116b9f97d73d897aaccb846516a4252f08d7a4794685e1c8ca",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/164.JPG",
+      "sha256": "aac8912d90d014602b7cb0084da0196790baaef3310ebb433dc6376015cfd168",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/166.JPG",
+      "sha256": "f07b744c5be3bf249d496cf30bbf29b94cb84fa9c9efd4cbe9c7679c9175576d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/167.JPG",
+      "sha256": "75c5e52110f055e54efc277c53a176f90e45bf3af9078691b090c9871dc0654a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/169.JPG",
+      "sha256": "1f86fac86dd7be06cd3af8641139d11cba570371ab1a298de9d45ed4d45c0154",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/171.JPG",
+      "sha256": "58cc19738a5a0c8e398cc8bd32a9c8d82c69eaa48acb06f294746d79d4762231",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/173.JPG",
+      "sha256": "3ab3534521e2eb55cb07fa23af2b89dd44dfd68e1475acc7681155e8bbebc145",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/175.JPG",
+      "sha256": "49e759541c693153c5300a501d1ed26f408497fab3e2bae75bce8f30f592c8d6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/180.JPG",
+      "sha256": "7f8b272640bcf18e4cbd6e27d72c4721af0c2a17d1340e975eb0dab6dab45b6e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/181.JPG",
+      "sha256": "6fdb9c91e44a9010d4f8a32e22917b3df4afc5ff02f5a0060d2a370dcf2bcf52",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/182.JPG",
+      "sha256": "3a4e0a0a6305d80e4e2910398b68294195c477c66c40ce8c03d03dfc565ea362",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/183.JPG",
+      "sha256": "0a6ae25dbbef6dfd257540b50a139bc78926589723fe46699635915a6bebeef9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/185.JPG",
+      "sha256": "9fa8c9c53397d67a63eb1417af6bc4008357c6a5260e65a881aea81542eadfba",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/186.JPG",
+      "sha256": "f703c4e44a9ba5aafe4003c141f89a19078d484b2cb5d426ddbadc28aa9bba29",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/188.JPG",
+      "sha256": "9542fed3705f9d4b67df3352fbe61e901a871dac2ab3b9e0cd1cea86ec7337f3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/189.JPG",
+      "sha256": "ad22af5f200061ca728f70cea5796cd843b5f1ec08fd29f5209702ab845bba06",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/190.JPG",
+      "sha256": "948d57ab555c755353a28f99ba8777f5f61ba2acee5fd972282707b8fc72244e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/191.JPG",
+      "sha256": "aced60bb8d508891e3f3faca71ef56639dc4ca0337b0019d81fc6abf4031b576",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/192.JPG",
+      "sha256": "778af35c6ffeabbae39a66ddffc28044b1aea937448fbc72e786b95338197658",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/193.JPG",
+      "sha256": "76bea8d9ef9fb2070302a5cc1abe29aaccfd1032b6e11436d3488a86211ff1e3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/194.JPG",
+      "sha256": "6a4e0125f196d51498e0950ce74da038e7a3bef9f9a979ecc7ae3b7133ba661c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/195.JPG",
+      "sha256": "29e3a8025d7c5ea1c68edbf65e9cd2676a04722020489bbb90ac61bc073116ae",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/197.JPG",
+      "sha256": "c24de0c5e0236e359cb5de1ea1989fb43527a95c854c1a2825ba051df1d0e348",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/198.JPG",
+      "sha256": "5d75e20ec324e9470aeee2817f8e0b1638ff5ab819afdf23f436d744d4119ded",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/199.JPG",
+      "sha256": "906a466ea7b102455f0537f7a84c917254c13bc64a07fedb181d098cc68a3365",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/200.JPG",
+      "sha256": "5ad8ab2c9854254d42c4482486e0a5f947f58961776943a15ba8b69254f9f70c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/201.JPG",
+      "sha256": "720e870d53a47ea0da4ea83785474d108742f0e7c2d5225ffc925c8d4b79b313",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/202.JPG",
+      "sha256": "bf541a0a1ac0c0dd0bd68358048529f5b35ba3994006bc6f08917239492bafe3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/203.JPG",
+      "sha256": "d315129494707c0ba2233e320a4a61cd8cf21be1420fdd48d1a82e5ed748f8e0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/204.JPG",
+      "sha256": "8678c65ef3b2dc2e2530d3021c5c7852085eaa4f8fbe70106e2066dbf0e4b38c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/205.JPG",
+      "sha256": "90841cc0e62566b0637d101ea47484975a781dacbac11b4991efd8fce77fc391",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/207.JPG",
+      "sha256": "a11a311803c4de5ea2b6f6ab91d1e5c676ce4b8e42cfc726d905554b03d12e51",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/209.JPG",
+      "sha256": "d97b123d6655b9b084571b708e2e509b3c594f831aacab6159b2ad37887b3e98",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/210.JPG",
+      "sha256": "099ae2b31c5f5c91090b0eb4c231e6900fe11e3854e3e39c938edb3c9a1d8ced",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/211.JPG",
+      "sha256": "3f296266eb3f479ceb8717f89b726881d1070d49d3bcf7fcb059c9f0d3bc6555",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/212.JPG",
+      "sha256": "6a53b209ce7aa3cb9add8f9d8b45d0ef0bb302c88530f5ddb04b9201f4fe2e18",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/213.JPG",
+      "sha256": "a2b01424d55c816d0142872f1b55e9769b233b699c70d55c610f2ac501967510",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/216.JPG",
+      "sha256": "85c07ecba7138581d6b1726c31bd87ac1c73fbcaca37811e13a9cc67f5fc7d5f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/217.JPG",
+      "sha256": "ffc888dec5136f2d74b4d2d18396e45e57ba9dcc615a24abe3c774916aad5486",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/218.JPG",
+      "sha256": "abfd0f1c35a61d576a2951cf01a8e1a30a158bd246c0a4ab315b72cf5631f8f3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/219.JPG",
+      "sha256": "beeab5a1d5b4b76e58995886746a2839a5f19233ba7c93f5f9b704f0313c8ca7",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/220.JPG",
+      "sha256": "2cd2e5519cac4aba491afdfe57854a21223c24688f4c590600e9946ad54a8320",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/222.JPG",
+      "sha256": "455fc3a9534377a279edff4f163d63b38079b134e06a29077b5541e5e3fff478",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/223.JPG",
+      "sha256": "a743f0f460f93b911bea09fdee9ce415d603eaa8dbdc4514fd20dee42d7b79d0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/224.JPG",
+      "sha256": "674e521e6812788acbe90e04c534d8ea048cc4beb79b539b11cf862b8bc00f7a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/225.JPG",
+      "sha256": "259755ba915d2d74f426f606115c4c80b759f07e2da37a3a9a4bca839fea693f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/226.JPG",
+      "sha256": "98705a22c7d5960ba32e23359e4c4ebc33fb4c673b22d375f00eb0a35fcd1ddf",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/227.JPG",
+      "sha256": "88f595caab0ba011a36aa7bd0c5fc4f9abb8628528030a02c015e9640d22dcfb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/228.JPG",
+      "sha256": "3fda7c5b31a47eedc9ffc4dc25fb603abf10b8c1fc7c871ac77cf2115a687d20",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/229.JPG",
+      "sha256": "8740e9a5b41ad8e016061d6d7a17fb9aec816a8a8a72612d551122792ca913d5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/230.JPG",
+      "sha256": "3a7c1b4670333fca3cf304715425be8a387d9a00ab798c0310f3584a21bc8073",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/232.JPG",
+      "sha256": "aee364932277b7bbe9f908e24b920690b04e0fad95b687023e43acbea8f10d96",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/233.JPG",
+      "sha256": "35cac3ede28ae5c365a9c61636ce5781b4e57c4c981aebe49f653f84c59deefb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/234.JPG",
+      "sha256": "88e0b21042281f89f17ccdd60a89d95e724d1a299d19f97b782dec250e34b203",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/236.JPG",
+      "sha256": "b40b19701db08e61838e37c96ce492151502c38e1922baad7bf1b15824ddb50c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/238.JPG",
+      "sha256": "8f7d18067f33dcad9091d2ff37004b7daa7b4b965357ed9b41f2bc57cf82b1c9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/239.JPG",
+      "sha256": "1c3f7e18a7bcca2c19452daf42d6987efe04670c9b9b2c8cca6be5b836619ce3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/241.JPG",
+      "sha256": "9093d15f5019068588eb7753f38b65dea4f3a406c431c940da9306d0268a7ad5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/242.JPG",
+      "sha256": "0d6324a5f34a9f496982ce40dfecae30ed5981f6be83c67048755792288f976c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/243.JPG",
+      "sha256": "402977b1d7d5d53ef816fade2881b52037aa6d2372244cac6746e37968658b3c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/244.JPG",
+      "sha256": "29d95c1dc36aa07b4625b16907d5fd11c43e7601fe529a0aec0fae981661dfd7",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/245.JPG",
+      "sha256": "eae9dcb5726613f6373767cdf7fba17328b335d4ba2549606c4a7d781b06725c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/246.JPG",
+      "sha256": "8b6e7a81fd558f586fe4af2cc3f72b9e812bb37ba4b77241c9561da1ea4da805",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/249.JPG",
+      "sha256": "af0ca6e602083bb76508118d88fa2dd479e0acb8b656ea993f489bce74c158a5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/250.JPG",
+      "sha256": "131d6fd9f056e59a08a2b4594b95030502d7d89c6e8aa512372da2b1e9a4efab",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/251.JPG",
+      "sha256": "d7d01835268eb4f71d4595d77506c40436324510bb1d88ea60d38319654d1520",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/252.JPG",
+      "sha256": "790fcd02d236d69d446bef4bc4c9fb8a82b6ec2f196d76553c7ddc8dcd4269eb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/253.JPG",
+      "sha256": "73258acc6d4fc423efd17bca7905660a0d590c2a7ee9c105a24cdbd2c4d1a284",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/255.JPG",
+      "sha256": "9a13dfc02dfc7d7ff70dc287e082275aa4da8cdf6d1ccc7a9acb1bf43fe973aa",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/256.JPG",
+      "sha256": "b714f27438fe6a33e326803f10bab27d655dd18f0a87cefd523c634fd8ddaa74",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/258.JPG",
+      "sha256": "cabf7e7eb69cae69333f0709279c21b66fdc26968005e3faba6337f66c37ece4",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/259.JPG",
+      "sha256": "720e8fecd652dd3d2ef3e304056ba3b22deeeaf0d398865a0a0b3cb717a29407",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/262.JPG",
+      "sha256": "4b419afa56881c7450ae4158076873da5728c179afe46e99461aac80d88fbd93",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/263.JPG",
+      "sha256": "6e78e415c32dff4f5a3dabc55c4b35e9dbe00f96478af4593a5392b8bd931325",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/264.JPG",
+      "sha256": "a6480c33596925911b7561b896412df544eca8552018f1fd9800d9044589c576",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/265.JPG",
+      "sha256": "999c28044b2dc50fd275f4025ab74d1fdc3fcf02dda993dec2dc4a3292bb6629",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/266.JPG",
+      "sha256": "daf713ede67d41c43e86390d42f285b0940761fdfa6913486af3021bdcb1eec5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/267.JPG",
+      "sha256": "b0938e7e76bb7e5839c0f574cbb45228ebe41a0b2fd5dcf3b6b96ce7b752f706",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/268.JPG",
+      "sha256": "4068584cb961745bcf1b30ba642206d4ddb41a34287bc40a50c8f897787b5004",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/269.JPG",
+      "sha256": "f4271d8aa577c23330ee62d14f1ae2a488a137f57789328b3bfb28d765361b98",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/271.JPG",
+      "sha256": "25832ffe796c51f08d30b4bdaafb87cb9eaa4db6d00323410e61b30ebdf8037d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/272.JPG",
+      "sha256": "b20edf58f0bed98996f5d6b7c7d73e80a5e810d39e95108e2ae35d36572f968d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/273.JPG",
+      "sha256": "9e8d9fbebb600da387c812847a7a2d5a7318ee14e0c14369c85f4af2748645b6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/274.JPG",
+      "sha256": "b56aff6ed92f1136f05c05d67846d5124a0684ef3d61a1610e192559bb11e970",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/275.JPG",
+      "sha256": "e1cc0d6dc0847eb01ef577ee77958e044bb41b145e8a72568f823042952a6f22",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/276.JPG",
+      "sha256": "7aba11872316032fd906afcb549ab9af4c87f3396b09e9f3d369bdee747c57fc",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/278.JPG",
+      "sha256": "19175f55c566d2447e4225f9d7af0c9f487f8cdd3167fea7351247e717a1ca45",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/279.JPG",
+      "sha256": "99ace819d37896fd7978bfe43542d86260c54389984352bde013821b931cf220",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/280.JPG",
+      "sha256": "2c913296abea35d1710b8965e334f6e33a751871be4eef2aa1bce3e84e7246c0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/281.JPG",
+      "sha256": "5091772dacf1d6c302cd28cbe60246e7426843deed5588c2643336436d19e754",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/282.JPG",
+      "sha256": "6231ebee82358afc03f7e4b2da1c3c6a9caa1f86fe5f83ede13ccb9c214096cb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/283.JPG",
+      "sha256": "d24162e7c26c31aeaf08d4c8576aa3c2cdabaa177469bb8ef812e4f145903bf1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/284.JPG",
+      "sha256": "a3f568dd53e755428823c2494133824940b88707c6c1574f67a3006f67a10a12",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/285.JPG",
+      "sha256": "5255bb1e49fe392068986af8250b704da75dab0658e406f92e1d8117368496a1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/287.JPG",
+      "sha256": "2d5860db9f337ceeee688c3efe57566ca2f3bed2c08a5001a05d69a191e8e4fc",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/289.JPG",
+      "sha256": "4feea91e7163932dd84ce9453fb9210538ebd75a62246e142fe2428ff0e875af",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/290.JPG",
+      "sha256": "064620f1cc7caff654dfb33d8ba262a5f5918c85138ed72324b9bfef70cf9aac",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/291.JPG",
+      "sha256": "677d158a0fb6158bc69c76ae726b2bec9f1bc5e4a12d49de6992b6ce74ea9068",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/292.JPG",
+      "sha256": "3615c6e65c3a150de5d0f13ba3a2d2114937ba6d459940505cd4d275ca06f5fb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/293.JPG",
+      "sha256": "04ed58ad449103d096c41d397a23ca3da058c1802eef3d4a7f51592812da8bc3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/296.JPG",
+      "sha256": "3300037bf69d26ff1637683e4fb756f85291d7ecd3ac5139c80b35e899dd66c3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/298.JPG",
+      "sha256": "cf5cdb54b51037d9f88966719d8185e2cebc3467a1779d6fca5aca72ee2fc364",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/299.JPG",
+      "sha256": "77363ea76c5795b7aec68f1313ed3856a0b2cf6b6491b4cdfd654afb754b3304",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/300.JPG",
+      "sha256": "2c340aa70f37bef6feeafd57d8f9bce896d1b4ed7fca9c2791e9d5b1ebf86078",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/301.JPG",
+      "sha256": "38cd7ebab910d5f9c9449be484c167a3f4f626fe00b101605fc5f83865692817",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/302.JPG",
+      "sha256": "6a4b0b1516c983930426e0ec67f3f88c64cdfb6a9479cff77b6cc48eba08463c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/304.JPG",
+      "sha256": "db139a0222edcee023d4c24dd3c40e8a6e9d296576516ddd8cd48a0eb9e3083e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/307.JPG",
+      "sha256": "a38a41106d57388c3e2778db13eb37ad5a2e25c35c5b385f94ae65ef3f7cb4e3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/308.JPG",
+      "sha256": "eae23f25a939d1b07e8146ba1d0e4d94c20c69e9b8c4c91541038eaf56bc625f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/310.JPG",
+      "sha256": "c9d1007bf7541ec0fa3325e53ec032412dce4da89b5740aa849c85e4a1fd72cf",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/311.JPG",
+      "sha256": "27619de7bf645aea72ebb3810d52005c1da903c9662dc2b0ee4582c031b4f309",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/312.JPG",
+      "sha256": "1637857637f921cbf08c14a81ee60ebbfccd716d450f3025ccbec00e7d4dbf54",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/314.JPG",
+      "sha256": "ce408b685812f14cc572f50af7d5bf8c6f8699cd2ddc7fbb8a3c604574a4ef57",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/315.JPG",
+      "sha256": "6ec67bb9d689ff11db4c0cb036fe9ad329b6715c7e2b976a726c83e7e8db156a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/316.JPG",
+      "sha256": "54e41934b2fd923fccaf60bb0ed90a1432aad6c8d804b00944a871724e29f40c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/317.JPG",
+      "sha256": "d5f8fd0bdfa9111b2f19d45c9b43597eb9f4bfbc7f0043e9162407f4231b21cb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/318.JPG",
+      "sha256": "cb04fc4f61b1d418c882be1508c5b1c1d212951e2112d4e46d3e8ad1f5b331eb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/319.JPG",
+      "sha256": "9afa80d436c5f6d68c40112e5e584f0dea4a38f605982d765d6110d14ffe0cc6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/321.JPG",
+      "sha256": "0929fd1a56ae00af4e713ca9be6219a45209f76a9df06f3006bee5bf830042e2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/323.JPG",
+      "sha256": "0da20ce5a74f1282c5728b38ff2e3fe13337e5bd175cbf50435dc2b424ae49b6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/325.JPG",
+      "sha256": "970c09178414304311fbe4df57131681be590d6cb5e2c8cb9bbc31a47b00ba80",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/326.JPG",
+      "sha256": "8a64b70377617cc530afaaad6d564d3c073007cc5bef8df5e2d770758c6411dd",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/327.JPG",
+      "sha256": "38781281141b31a3a82b4c9bf785b1fbfdae7febcdc0fb71c7f70d2f408d7063",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/328.JPG",
+      "sha256": "c1b6c83a7a8be14b0d6600565163d30fe1c18cfa6aab8c2b1d13804e1660161f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/329.JPG",
+      "sha256": "e17d705f1629368e192cff0cb5687a8220a92499ad36bc5e6296cd0206bbc16a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/330.JPG",
+      "sha256": "7cdc2748543030eded31c4e0c49fb1e42b041dcf2b18cd6a6532eb8d0c707b78",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/331.JPG",
+      "sha256": "7528b15ee50e2c8495245454f96bc8e0c6acb9fbaf9e41af2b33943ccdc71a99",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/332.JPG",
+      "sha256": "785d190fa376efe5f597d0331b5969f16f888afa3c68be729c499361a70a4bbb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/334.JPG",
+      "sha256": "2d9a9b6fc7182afec2add0966a33c983a8408702f81a8779a880e93aaa45cf91",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/335.JPG",
+      "sha256": "f57544d57e06c0adc3b6c3c9974605d6fcf65f572d6868ab12bcd2f3df179245",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/336.JPG",
+      "sha256": "f6f3448c6d3debeb897b8ad3f191eabb2fb48171319fbc194fcf1d55d6f26483",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/337.JPG",
+      "sha256": "dbda2120ae7ca7ba23614b6cd67f7a33dd00ad8771aaf6da1bb1cf5f5ed5a528",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/339.JPG",
+      "sha256": "86bfe261614be2c47034888b985dfb27629947f88e6e196d637ed3b7635e65a2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/340.JPG",
+      "sha256": "272d40648143e14074a8819afb016dbef4062af23701ddc88c72808fc5fafa6a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/341.JPG",
+      "sha256": "57db104d49b8ac7f2f448146922b537c6a5811bfebb1015eb488bdb1efe9c905",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/342.JPG",
+      "sha256": "578234fa784b1fa5207672c0f28cbc388e6893dde8aa0f1266580f27b9db623d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/343.JPG",
+      "sha256": "21b8a1f610e34f1da2865a77ce4ccebdc6127abc5a533c4897a70856012ef04c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/344.JPG",
+      "sha256": "bef801a82dd08a9ffa4ed5f46312b77d97d57b5b92d7080c7cb6a2dc9ad2bdc6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/345.JPG",
+      "sha256": "69861babc5d99f3694b76dd14792a45ef928407179192ae20eebd6eb184a7f7d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/346.JPG",
+      "sha256": "83a73c05b75a487a1070402bc45e7e8562f78e543bd50e2951f9d4d4be12af1b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/347.JPG",
+      "sha256": "deb7bd72436f46b6a9f08ec4f7d8ad7425b06fbab036868927a92865287cd471",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/348.JPG",
+      "sha256": "9bb388af862e4275c32fa676b0851deaeb70728d89390079fb4c2437da05e902",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/349.JPG",
+      "sha256": "db1a3a3cab013ec28352595cb63dfbae3b0efc10c0afc3f1cdfc2b0dea60f90c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/350.JPG",
+      "sha256": "59ac67bb6c161a1bd1d00969e1d60d93d068e4cd845f38f64bab11583c1c97d9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/351.JPG",
+      "sha256": "63cc7683b47b264298adb79e3b8b6a6adc90f34406fa5d67db6b795cf3de4836",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/352.JPG",
+      "sha256": "359f274524a166073281770e6b0ecec129984ec8dca18ce43aad2aa49a5613d2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/353.JPG",
+      "sha256": "33ea90678fa7ed55692d764551e4a42f773c2c0853256c3d04e0422e6bd7af2e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/354.JPG",
+      "sha256": "974af3385daf4dff8f4cb86a3c9753c8c72875a3a0e244bd3e36aee19d800a16",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/355.JPG",
+      "sha256": "5c1574e49f79f4ffabad5ab09a4ff9ce8e301c716de25d6cdb545a84ac86d7dd",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/356.JPG",
+      "sha256": "9923de51ccd83d228ee11b09359ee130ff3fe1af2393f9be93d4432984ce9682",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/357.JPG",
+      "sha256": "fbd84199172ca5f93a4893b4e7781fcaa328a68a3546ced93a7136023d6c131e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/358.JPG",
+      "sha256": "8bad0ba86262189857f542bf29bf628b4be03c7f5a1471f2e33d4fb0a87c11b7",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/359.JPG",
+      "sha256": "de433c2ed68757111ba35b8a2b5ca638f8717d994e6fe01e2b72b77bbc46dc52",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/360.JPG",
+      "sha256": "ada9f53c6d84da62a21641811411ab78541df0c595c7f2e489632d858f18c4a2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/361.JPG",
+      "sha256": "bb4341a774e7a2242ec75c206f347d6a25c144a8030792a3bf2c14a456414429",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/364.JPG",
+      "sha256": "f45c2af33c07cabaaad432fb45abda06bdc49ae993e4016dbc81b25d941e73e2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/365.JPG",
+      "sha256": "a0ab051662f36e293a6143104d36a19b280921e520f9a85a692726168de7f843",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/367.JPG",
+      "sha256": "27bfc309de00830faeb6716e3d04aeec194544b92711f7e64fca1e61c6fd5776",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/368.JPG",
+      "sha256": "a493632da2729742520894722bff63c92108204a538857aa96333b24eafb97fc",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/369.JPG",
+      "sha256": "7dbe161881dd651d589263ff1a2c4275582c89d00f6a4b51d54e096e6c3078ff",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/370.JPG",
+      "sha256": "185340dbab617eccb2932f231514fde35f85494db67418f6b3661c70f840ea66",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/371.JPG",
+      "sha256": "62cb996f56a03b0551df1c3538a8fa5b57b6a2367963db9f8be4ff5b4bce82a5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/372.JPG",
+      "sha256": "66c8e4f2b9c77a35f9b7a9e450197e504607fe587480a79afa4adae695a67915",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/374.JPG",
+      "sha256": "e6b63fccafd391c85abd243f726b3c3ae7c13e51a8fbce8d59bf104853e0f4c9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/376.JPG",
+      "sha256": "2d94abd58ed1bbeca8fdec682cb22f11c2fe893dd89f1059faacbd3c379f0e91",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/378.JPG",
+      "sha256": "06c91318157d269da5522918a25a567adcf47f62f3460fa38e92166dfbab1976",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/379.JPG",
+      "sha256": "a5c045923cc1c0094ef7f90214079a431ad8ce208a364c3c597a8af7377ef146",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/380.JPG",
+      "sha256": "a8a569fe296ab82a1fa3c3e9e47f0cbb6517082d9b2a4969a906f09a8c82f124",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/381.JPG",
+      "sha256": "7412be6b6cffd9cb66898ef85bd89d39c1820f18608eb1046f39b0ad9495aa53",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/382.JPG",
+      "sha256": "ba17fc2be8d743f9c1cf46c83bf54a65cd179709d89983a9c8f30ed64b4da50b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/384.JPG",
+      "sha256": "1320a921d122d25203a3f2ae36eda3f5dcfde2f5cf19096d05187dcb82649952",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/385.JPG",
+      "sha256": "4978cc672d71d999452ff624e05f5c124b895ab74546bdf1223bc64865fada54",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/386.JPG",
+      "sha256": "c24f51ee5fe4bc931f166b17202544477214a1f4a0bdf36ab76da4b6ba295398",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/387.JPG",
+      "sha256": "9af1280f1b5df8ddef277e01ac4475b1381befb13f18e4361e920b487c59f10e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/388.JPG",
+      "sha256": "01959e4e517b3700ca205cd27b911a1caee9e5aaa05bec33e9ae1501f3cd5ae6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/389.JPG",
+      "sha256": "cbad2cefc828f41119a5fe238525593e55d6d543e364aea9b5c935f6f29ab444",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/392.JPG",
+      "sha256": "8e1bbfaf035af024d5c5d2f82ff93a5ae5bf81e816cf4a198aa73b0ec87ad65f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/393.JPG",
+      "sha256": "dd1d62eb6c25db5f94a5e0bbdfd728ee3174b0c0ec215ec2567c32e27479acf4",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/395.JPG",
+      "sha256": "3273bb639df573df82678f9168e959e958f35b3b6362f88447ef26432b65c9b3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/396.JPG",
+      "sha256": "05073fb879d5458f39b10e307d753f67b8a7e8124b2ed1b95bbced2516d34622",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/398.JPG",
+      "sha256": "233ed2fd5596bddb8cede756696c5e6fdc842286b6ce91c9872fa0562253254b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/401.JPG",
+      "sha256": "d0af4df3c8b6241bbf37202cb634aa66e2e0c49a8d4fa7f7b8022689402f5fef",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/403.JPG",
+      "sha256": "21fd1ba8129a60327ed1e6e7b0278a1a97a7dda1294a8c5598d5ae0f591ffbf7",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/404.JPG",
+      "sha256": "df21dfd6c4b64b3a5b0dac63839e9224013aea741bb4c33feb48677d2d54c587",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/405.JPG",
+      "sha256": "df9cd7fb186287510ddb71e6dc8a04d22c4c2c3e5c7487505636e2db4d247312",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/406.JPG",
+      "sha256": "cd082fe6538094b8141f42b4fc1c9fc3a10914b9801738f67036b07af0ad94c3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/408.JPG",
+      "sha256": "930ebce70eb3b037ebb6461147daba290b88c2b09cb0d23e56997a687aff0de0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/409.JPG",
+      "sha256": "fa7a06860ae644da5539fc2c8ec4e8a271dcb55e1103a74fa173befe424c0f25",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/410.JPG",
+      "sha256": "384b444b91c27e2ca65b48f340da61188eabfe5e2013b6bbf09b694a5fa57fb4",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/411.JPG",
+      "sha256": "bd257f3c3ef74882f9881cd7d56ba9423bc1286f9ce08ce2c8821046ca14ede3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/412.JPG",
+      "sha256": "1b11f2e8bd28be386de3a09add06b77563a3054fcc173bd3e462b3e185c0f4d9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/413.JPG",
+      "sha256": "cab42f426a9be58bd3f3e3fe19ce13209f083c540c2b50c8c60286d364ae296f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/414.JPG",
+      "sha256": "43caaa888d135e2d199231fa925d0f7ad4570b9485f09ba54b2b7b526e29216c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/415.JPG",
+      "sha256": "e0eed375b6f42ef5253c55f02e87af491df6017d692cb73c9843914c1a96d12d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/418.JPG",
+      "sha256": "48061e08656751ab15bbaab738913c29f1be1fde680587210a496f458207f400",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/419.JPG",
+      "sha256": "99322c312f91cdbeeba643c1f392e4fb84ec9766d9921c48ff2c67ae8c7bbd6d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/420.JPG",
+      "sha256": "eef8e91307b734999ad777ceb5dacd1ba9fb5d83410124f44b87b2a1d10e13b1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/421.JPG",
+      "sha256": "54e70a3de63a65b6aceb9cc7e5d6e838f2b621f9638aa8b582c567e8341a274b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/422.JPG",
+      "sha256": "b54b7809ee84bbe708b597be05819007af39ccbc3d61646e79df0a9546b5a212",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/424.JPG",
+      "sha256": "0a50933c9c311bf1f0b64014d5b3ca2c509dce9ba2baa41a46b3ef9529e9eab1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/425.JPG",
+      "sha256": "067f4c1c53beb9f50692eafde0c51274edf222f8788c1eba27c443d4ed9b918f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/426.JPG",
+      "sha256": "788bc775a61322dd8cedbdb55d3c0bb96d45a538a38beb49c021a2aceac86807",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/428.JPG",
+      "sha256": "9c8610084c9e3420f4cc2860a3b7a45e08de640b30ecb801c509443909a4ce6b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/429.JPG",
+      "sha256": "0a9d2f20d38ed4942cbf4da32588df064b9e5896ae0e86caf973f002b74a93a1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/430.JPG",
+      "sha256": "8c824f50be98098e4dc3df2449186ce1f45a6a471d15e623199e6e66e820c7ed",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/431.JPG",
+      "sha256": "bea913a13141c98e14f2549b0ff5a7e74619df30490edec43347ae3efedd77da",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/432.JPG",
+      "sha256": "4a50810e88b1b5dbc97dcb1a4683d7f6140591ba621371acde77116e51460edb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/433.JPG",
+      "sha256": "fd32174e556bbf76802110398537aefd40d96dc366692c450253787aee624834",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/434.JPG",
+      "sha256": "9e86d56b20d070bc5850c61dbe130be141be9dca16bcd824d799668477113714",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/435.JPG",
+      "sha256": "7dea3186846694e49d163ae2efccb2a14853214d9c9c1b8136cdd4bd010ce262",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/436.JPG",
+      "sha256": "13c4ff881f08829be9d83cc565bf2bbc3312387e2674863d9569c8f33dc79e47",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/437.JPG",
+      "sha256": "1e64afd7088c28c9f9135b1bb0acb520894d93a12ef3233a18a0e8f7abe0e27f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/438.JPG",
+      "sha256": "5848bde3ec03e3e1146153ed9d1058b3b4412efec8f9ab219c0935543923891c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/439.JPG",
+      "sha256": "533f06e440c3828073cfe1c8f60aab3b413ba963388df599af06fccb5e144592",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/440.JPG",
+      "sha256": "e9cf7299e8817f7dc36bb5bb20a5b9b520e476b1e48bacc88296ada73deaf12f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/444.JPG",
+      "sha256": "10617efe9c10c5e276742e7f170c8f8aac7ecc2c44f4436ab0a0f9f8c3dedd02",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/445.JPG",
+      "sha256": "1cc0a487bb7e309b7a32fa65eabb548af9fefe27074e858db1cead4b76c15d66",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/446.JPG",
+      "sha256": "6b4786af2df0c4fe6b4ac559074afd8684234882cf9e8368d015afefe9590ccd",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/447.JPG",
+      "sha256": "c8ac6b784fc8cb1a54b5e2a46c63561044d6842c2d2d37f136714cd7797a6545",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/448.JPG",
+      "sha256": "fc121bc1709255506cd1c2981732db34fa32fe9eecbcda9f9535649d9ecc2f0e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/449.JPG",
+      "sha256": "64ff065b80da30a7cfa4e01fc5617d0dc31d028f80eeb80eebb440b0c48640fb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/450.JPG",
+      "sha256": "4f0db04a6d9d281b89d121797b23ad5e0f8714c641ba086b1a7334ad27a11a1e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/451.JPG",
+      "sha256": "9317e9857fe65f663241a3fd354a22ff3d550662dc86e3097dba6fb7a14b1192",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/452.JPG",
+      "sha256": "46dc563bd2ccc940aca0ce8f4762baf79c33b80713c5a49949bf73fb953f945c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/454.JPG",
+      "sha256": "0cfbde31818444fc4cf7f70a45e12f20014fef7af4a151cca2265d6e6739f946",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/456.JPG",
+      "sha256": "1838c4825f90aa132ff8d4b919640a301b51aa60099f158d8787d1b9a3b2f496",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/458.JPG",
+      "sha256": "ef7491aab0ac8146bbf78ce550786f5aac3575cb31ffad066bdeebf9b6282c45",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/459.JPG",
+      "sha256": "e1977931ae52d7c505a0bc20b49ec169e501c6f731016ea7f454bc015e642258",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/460.JPG",
+      "sha256": "f4f63867b5e3cc4723c5bf28120734298afae18925d30e26c71c0710ebd99f1a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/461.JPG",
+      "sha256": "92330a8110a2224b8de88b314806fad0146e298915136f01336853ecacf3c5e1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/462.JPG",
+      "sha256": "3eb019d4f7d0ebf0095699dbda1552d66f98b852a238c711e5a4f1c6198f27cb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/463.JPG",
+      "sha256": "afcf68fbc6667514829403994b55ed6d0ca34a88252a4fae0f0e797b3f8fee1e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/464.JPG",
+      "sha256": "4a0d070a68bcc418c8e8b3c2ccc4229bd3bf92e257cc1c00676aae2f4d16c4d9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/465.JPG",
+      "sha256": "82db2252d28f877b098b9dbe2bdf89c330c10d346af3302ffd055320092ec9c8",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/466.JPG",
+      "sha256": "a1561eadb4e8d05116a1f0fd5969eb20a94078bbc291f0ee57dab07e8d96ba9f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/468.JPG",
+      "sha256": "48e42dcd14eb79d6a4f61a74efc2fd48a3b7509a8cb83fc97eb6c0c25cc6c4ce",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/470.JPG",
+      "sha256": "d434aac886fd02a939d39c311e3bd2c07a11436a32431df1a9564df6a32238a6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/471.JPG",
+      "sha256": "0e7c42ea901be12053729067fd2275925fbc8a0e401429d44a080964ee96355e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/472.JPG",
+      "sha256": "cb2f0055895c7aa9e7fe994a197cf8f808d7a6584fef91a7df5356697d170992",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/473.JPG",
+      "sha256": "16a64df0d7e6490904a285b4b3a7de13f2b976f033a5490d946fbab392d4e440",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/475.JPG",
+      "sha256": "92b4df34e7e9440e445a38a023c5967e7ea21f5f2b1a52fb063988f9e2369c54",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/476.JPG",
+      "sha256": "b9bfc7045be9aac730fa52cf133e9879221e26d9c6ae228ec9a476ce6c9a65b3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/478.JPG",
+      "sha256": "02588eede5a602d5a08ef87d2fa7e3c2f84c0e1e327c1d56b96e9a5c2013de95",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/480.JPG",
+      "sha256": "bc875c5f6ac3e65e29fedc0d839656152a2936b8671e31269110785168e8f5fd",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/481.JPG",
+      "sha256": "d9cde80d28fb946a58af784727589e92a1f97cb579c28d43507903cdc33f42b2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/482.JPG",
+      "sha256": "2434254b0afbc29ebdb4d78819ad07b4328a0cebe342c865550b4300696af29b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/485.JPG",
+      "sha256": "31487645508bd65a7acaf7182087591323919f97564b6ecef3aeadb5577bac28",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/486.JPG",
+      "sha256": "a4bf7752d622b87cc4c5900bc27fad8c910da5b2476d0dd040353fbd0e77bedb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/487.JPG",
+      "sha256": "fd0562c2038303c90e2233fed49c8280ea3d2102a4d905dc9efc853cf786c3dc",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/491.JPG",
+      "sha256": "5b567d33876d6bc4c3e07ecbdefe69e3818f43487b916a9321b45876511669d0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/492.JPG",
+      "sha256": "9968ada0a90bce9dbac839150f995c755fc679e8b6523bda5fc2ece2f7839b64",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/493.JPG",
+      "sha256": "ab1e88b7bbf1a78c95b23b21049862d65b4778325fbf225e3a16426d065ed228",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/494.JPG",
+      "sha256": "c0b5d2965960fae339ce1a40fcbddf884669b3b60ee7c34663b0452468fc85d3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/495.JPG",
+      "sha256": "a6baf327365cca608bdd26d8acd6b3171e24aea0ea5cc7f2aa5b43184dfec2d8",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/496.JPG",
+      "sha256": "6aad74a03bd97b46acd641a66be7a3d689b66612c6b0d87ef8c2c9a1003b5b08",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/497.JPG",
+      "sha256": "aa8142e0a663a638a6fa4c2456174093417e68050321dcfd6a7fc6ca4a662219",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/499.JPG",
+      "sha256": "2ad68cdec7cfd55a58f554f93a07dba4e054ed5e1f5b578984381e09c88393ae",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/500.JPG",
+      "sha256": "088ba7af5821ebc4fa890a12931211d5204d387334b993f127946bd7071f6a63",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/501.JPG",
+      "sha256": "157dc047c4bc2b37d087b1cb7b46ec7adfbf1ad4a416599c1b61cfa27d2e027c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/503.JPG",
+      "sha256": "18f54daf177052570b33a29105c40dec9e6e72c834c64afbba24531bac5e1d10",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/504.JPG",
+      "sha256": "5d138bdf1b074db4e2c875bdbb2f25d4e9928a0ef46570c5e34d3e3dc6b44a1e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/505.JPG",
+      "sha256": "29f20152a4ad577749cee10b077042d88687734c127c49398196b0c0f0ea4a22",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/506.JPG",
+      "sha256": "dcc10755a2bf081d7453688339214c49664ced2a94738e5470a08761a99a37c6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/507.JPG",
+      "sha256": "8ef4246b0c27b94c4f610b7a8f4311c281bf16d00d339e635fa8d7bb08cc7a2a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/508.JPG",
+      "sha256": "11c8567d7d3abba7c84d9542afee5d8f0f8d1de1ab6148a9dc6f7cf2db79ec9b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/509.JPG",
+      "sha256": "2b2b1de382bda06acde453f52690e1fa94ea2d639a3df6c50bdf989acda806b7",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/510.JPG",
+      "sha256": "94c62f3ba58b069dd4226276bbae9552f4f9a88324b81a71ad3b48f871b835f7",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/511.JPG",
+      "sha256": "e9e716bf0028350e0d54e2fd8a8bf755acf8f2c533531e4f3e0f3d5c0dfee2d7",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/512.JPG",
+      "sha256": "cfd7969dc9b18fead9848745792153fffbba6b93ed2c945bf45015d3316d4f2e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/513.JPG",
+      "sha256": "605cfa9165d1a9713c5a943548fa59017ca5035996e6f1f423b43ca23d1809d4",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/516.JPG",
+      "sha256": "fe16995487e5bc11736fae62958a7f562df6219532c1ec3b3e4f1b888572cef4",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/517.JPG",
+      "sha256": "d61b3cb8dcba45a502981574d0533c0c03417103d54f97442fcf3728911edacd",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/519.JPG",
+      "sha256": "13959db669e9470c7b0742ddd5572e69d83317fa73a56df9d9cf506f19b3856d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/521.JPG",
+      "sha256": "4b0715ea71067ffe8c5228ff852391fa54d34c3a77fea33ea9e1072c17f7fb27",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/523.JPG",
+      "sha256": "958dea8a4bada4ffc8d48975232e9ba28b0677f3d40aeaaf255927b2b4327a45",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/524.JPG",
+      "sha256": "bf6c48830033ac71b67325d561de0c016e29cc250f12de0f6bba3054777270f1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/526.JPG",
+      "sha256": "4b650275a9731de2408451e85242658e7eda18d09dbc5cf4bbc145e376d04d60",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/527.JPG",
+      "sha256": "64aa9d0c3310b6d1bbb61cad7e56c9a85bf72627303de3a6bdc8a208619aa1f8",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/528.JPG",
+      "sha256": "a36eea58415729612208782cf892840dba5195a67acf9f9e08171f37ec48f529",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/529.JPG",
+      "sha256": "af48b3f83591b265f5250635ad8485a9ee99f7eebbf6dd813f69af3b7c7f7d0c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/530.JPG",
+      "sha256": "8af8beaae867bae46718b95c5978f96cbf77f747828c03c58d732d95beb849fc",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/531.JPG",
+      "sha256": "97ade6f37678c1ce9590e118fa0854299d07144223cd02b559430ba27d2c1aa2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/533.JPG",
+      "sha256": "2faf263dfb78d36b5058478ff56da3895349931440c7e7930e2e7bc6e62174f9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/534.JPG",
+      "sha256": "e5bd14dd299f45b39266ced4501ab6c442eb55d40e8c312ee38f845f374127cb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/535.JPG",
+      "sha256": "c8b3de3f2d4e12f36464ff2620b5430cf12cfe3abad23a07ffa7d353e26713c5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/536.JPG",
+      "sha256": "9b00e3cdcbdbd422a6b9fe007e58a1aa5c0b7efb0f061f8aa2ae53468bb7deae",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/537.JPG",
+      "sha256": "ca236c216e8d966cccbca29b964dfe12370cbe7b7262c89306ee6405ab0c1895",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/539.JPG",
+      "sha256": "a274a7b6d8d164727a693dc6b0f5b70e76911b411af24f8b91cdad3d80cb6493",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/540.JPG",
+      "sha256": "74ed071380af3efba81fd0e78b57fe99af72e046f81eb098d3d30ccd354ebc2f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/541.JPG",
+      "sha256": "2aef4008fe425eba69eecfc4304c4d874dea972ca07af7650f4bc676049cd039",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/542.JPG",
+      "sha256": "859cce09df7b839cf8dbf857b85e1566919d4056f72f544b8fad0644b928e7ae",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/543.JPG",
+      "sha256": "774051709f60b08d0e1222f98360549a127d55a1e511f0d3fb3103fe08c31d0e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/544.JPG",
+      "sha256": "033668490071eed2708f32893cd10dc4cdd7b003a9b408c4e2531fb9c9d211e1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/546.JPG",
+      "sha256": "19b274e3f29cad3a52d83dee349b1ca31258a80b701d52524452f41cf4f6087c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/548.JPG",
+      "sha256": "decf675e9d2a442b501af60971bffc90cbabab78aadb0f870f95d7d3bab258eb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/549.JPG",
+      "sha256": "14ac4e3d81ecc14861d3b407f47134a0a23ded99f84a3449413000881fb0f0ed",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/550.JPG",
+      "sha256": "077dffd9c82ee67536d8f7d66d029a144e24d48377b57108145f4b75d101b491",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/551.JPG",
+      "sha256": "daa9f94d93a64381003dfa5828c8e456a28ef0331b959cab9b538881f1a77839",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/553.JPG",
+      "sha256": "c9174b0d9089a2d8e9766ac5495ce1b22844e42dd09954d5fd2e32238bc3d5e9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/554.JPG",
+      "sha256": "7d1549cc7d5bee634d05ac2e4190d137ca2dda2967aa30b11427d01a567c4577",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/555.JPG",
+      "sha256": "a90743b60ef3230e23bc4b4b455aa31226854229d769d2c1e0ec71ad59be6d8a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/556.JPG",
+      "sha256": "a24879cf44c1a32765106c5b51e3bb122f9c89241f85feb82a5ab80230c81a28",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/557.JPG",
+      "sha256": "0b57c1cef2b60bfeeed7a66b3794a1f6a871f0493715ad98ef8857ae4d5a0168",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/558.JPG",
+      "sha256": "4cb296d29d3f8c4b2731cd845878d145e5fc1ce8d4b9036379a46f40f9601355",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/559.JPG",
+      "sha256": "d52a62ae85acec50fe9e04c194233e49d2ceca40ad2f779b188edc3642fb4e94",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/560.JPG",
+      "sha256": "c52d4a98db282ec1bc27c0d656eecaa69f6b2683a6c97fb262bbd996c9ea0d1d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/561.JPG",
+      "sha256": "b57cfa5d99597256d28b4db5cde285e844a0390d4deaf0702d4b362a4b423e7a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/562.JPG",
+      "sha256": "8da9515d0f4d92130a68fbb7db56b19f6bf02b36e3826df6ca8e59e7a1ec1f7b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/563.JPG",
+      "sha256": "0d8bc530ee343a1529d8e4fb42a1cdbef62f9fd93618a0076ad582233531ba37",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/564.JPG",
+      "sha256": "e27c2795b3726dd29a185a034ecabc782ac7506d367efe990b0cb0a8aa26d38e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/566.JPG",
+      "sha256": "f8f2ada7e098ab24ead8ec56ccce728f1fb578923dd69e3c693c266bfb52d127",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/571.JPG",
+      "sha256": "6bbccf70f05449c0f1d5d4e984457aa88a3ae6ef1843e683217a143b78f4b52e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/573.JPG",
+      "sha256": "afb5c2bbf1dffba35f0e88fb814b12dc8abd5aab56b477066779354e69204b88",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/574.JPG",
+      "sha256": "3fb2f3523ffb7a612c6a7adfe9bd8f4784a01ecd45c118994932bb482e998db5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/575.JPG",
+      "sha256": "f98816cf4a89f62f42d9c4aa4853d4bf16053c65b0635369faa55e68d8ead87e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/577.JPG",
+      "sha256": "8cfb13676fd7e2ed6d477bb875d1baba2236e66e54f46d3f8c2ede6fc8c8e581",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/578.JPG",
+      "sha256": "e6b162d0befab565e775db9a3f5cefdf9b4c1826f44ba5131508e0565f34b3f1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/579.JPG",
+      "sha256": "3ad5dc88a1611180ee6cb321bd10c1900a3c978661fd437833bc444b3d71c532",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/581.JPG",
+      "sha256": "dee9f78808b5f7df1ea5597ca06711c6a55544493915c484f263be2079144fc9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/582.JPG",
+      "sha256": "f225737fffcc6b4de6b323fd335d65ffececd6ee9f28a99a1d95ce86a6a6798d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/583.JPG",
+      "sha256": "6e459d267e782ff39c6b42d3fe294a6c770d5ef63fd6afc47bcb047f00771114",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/584.JPG",
+      "sha256": "3f174e72df8ebaa7c068092f773b13ce65f1ae3482cd7f85c9d1b533834692e6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/587.JPG",
+      "sha256": "57e8cd0fc8fa09d662ea1ded97ad0871db167ef1b32d75f99e2193e875e661f8",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/588.JPG",
+      "sha256": "d403900c0f52654d14537a4b6fa29e6b862b37032ca8931134ff709e3170ef94",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/589.JPG",
+      "sha256": "6f1a4c0b1ebc8c577e99f16663cae6240d9aaa5a55e457f430cf5bed8ed064ca",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/590.JPG",
+      "sha256": "70002327f746103e370c67c079eb033b08094921a103bceafcb0b7b44b9c27ac",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/592.JPG",
+      "sha256": "6901dbec3c5fefec8366e4521037daf162bbd97d57fe1e616c2e3b5b1d844c24",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/593.JPG",
+      "sha256": "0a56560060ca108e4ded3ad78f2b20b9a771298b8417c8456bb747e2e2438979",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/595.JPG",
+      "sha256": "854f7875505dbd85abac1b3f3fc9122aec0fa0d3532a6bacb6b3b2154af523fd",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/596.JPG",
+      "sha256": "08007efed1392a210b5c535128e7f6ea5b778c6f47f0feed7b00eafe188dd4bc",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/597.JPG",
+      "sha256": "a959af07291660693b940450fc3dd6f6889e6a3b65cbb0221a1e9946346ac4e9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/598.JPG",
+      "sha256": "8be87f9999a29721ad6c43975d1ff25220a6cd39e8282bd1de70529bb577ef7a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/599.JPG",
+      "sha256": "317ea0abd0b344b2aa5b6d57ba62e42583f1834f8e8dd6c06a547d1450744eef",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/600.JPG",
+      "sha256": "45838732ffe3f5d12c2527a3e0cf3407579bd55ff6444eb6cf15c4fa7c82bdca",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "capsules/Data/Images/Normal/601.JPG",
+      "sha256": "507137069b0bfb40e67272449a56ffd5a911fc9eed6f626dc0af5d2ec978a063",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    }
+  ],
+  "manifest_sha256": "10f38500386c4ade38511ca2349e4eec269e6e1b502da248b87014397a93edc0"
+}

@@ -1,0 +1,1411 @@
+{
+  "dataset": "visa",
+  "category": "macaroni2",
+  "split": "test",
+  "n_samples": 200,
+  "n_normal": 100,
+  "n_anomalous": 100,
+  "entries": [
+    {
+      "id": "macaroni2/Data/Images/Anomaly/000.JPG",
+      "sha256": "d8d75c58c45bf68793bd2500c1b7c05f27f39c5ed90e40db28baea78e0bb865f",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/000.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/001.JPG",
+      "sha256": "9f4cf26ebc457443c9b614731e4194edf54dc6f4a19ae1a369ff22bf40848725",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/001.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/002.JPG",
+      "sha256": "2fa901e38e88b519ecd9747fa1717d2b416411b55a61ef968f6694cc9c4aabed",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/002.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/003.JPG",
+      "sha256": "a9b0f7c69ded4cccec79d00d1d1dbe3bb1984b06cf1ab7b90999992433ac4552",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/003.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/004.JPG",
+      "sha256": "b7ea11143c10eeb2436e9434ce976b2b02ab093234c7289942c150c13f548d9d",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/004.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/005.JPG",
+      "sha256": "ccf66769921a9c189040db9e52008909358b774f978ba4ffc4484c8791a8b21c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/005.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/006.JPG",
+      "sha256": "1e39db2171626eaddf17f8c8d4547febea18af6cb14901545bd66ea5bc5c95d3",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/006.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/007.JPG",
+      "sha256": "ba4f59195424f9b7a723bf470aafb5f778cf9e948382228462dd6575d6413d00",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/007.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/008.JPG",
+      "sha256": "ebd68622c43b708de1f83adce2cb176bfc2d1b3082d0e23c1decf60a3bb3d149",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/008.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/009.JPG",
+      "sha256": "f78f41ebe584375240b641e59d41036515e0dcf2070d7e71e2220c73393b1bb5",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/009.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/010.JPG",
+      "sha256": "dd6e049474365f527a27d0e3b1bbc5dc1c312524637eb56a0b43001af2dbb3b0",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/010.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/011.JPG",
+      "sha256": "0a96de4c596c250f12ff61780983d8c3756b7a66c7b34e222068e10083fd8cb2",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/011.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/012.JPG",
+      "sha256": "de72214c79777745fe18fa271a12b4a73a03587bac5e96cc7d8cae7ac8235778",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/012.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/013.JPG",
+      "sha256": "774077523f79bd541e5e9301b3cf4d2c2af105e257a360a95b3dfba354b237a8",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/013.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/014.JPG",
+      "sha256": "9b8fa0ac4de8dbf494aa6ff37851e1d9e10b9c95c8ef057576a3bf35fbfd4cac",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/014.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/015.JPG",
+      "sha256": "bb8ec78d1296313fe514d38608823d963a652c30f5e8c4f860721c846c88b413",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/015.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/016.JPG",
+      "sha256": "64c6c58c8934e71ce145364b8955993284790d51c79fd2e92a0f7f4bba076539",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/016.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/017.JPG",
+      "sha256": "709677cc61a1ca8f16901599e846e60d679154f5d154282bed97edbb759962c1",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/017.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/018.JPG",
+      "sha256": "11075d7094b58d50915d06c70c8350103695facc126d21eac4ad9a0a0cbb8138",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/018.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/019.JPG",
+      "sha256": "f0e3520ccff856bed6a91dc7994ad26141b5d76d8a13da2b13c6985752aea3c0",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/019.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/020.JPG",
+      "sha256": "b601f04fc0d225bd18171340f5229e8b38460bd87bfc1e3b6b946e511772b0ff",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/020.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/021.JPG",
+      "sha256": "f1e0ec92ca53ae9b1122c157d8a7c604e2b14c259ba5d3583ccf89d6699bb643",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/021.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/022.JPG",
+      "sha256": "dcba987dfaa5bb3d21dcac923c699720f7eb938b2130660971f1c3bc639e36c8",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/022.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/023.JPG",
+      "sha256": "41ff23ae5bc46b5fe9215b324011fe427de8b613095786e2f373905af6bd54b4",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/023.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/024.JPG",
+      "sha256": "295e37e10674f8568f36f13acdfd2ad6bb2169cda7f75916635b29c572441a8c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/024.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/025.JPG",
+      "sha256": "950e91994677b3db86499afd5153db81ce502d471c7e1df2f5912816797ebf46",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/025.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/026.JPG",
+      "sha256": "6a9bad1e7169cd1eeafe1ff4e3cbf2e52e59a67263b0976dc5978723f037f302",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/026.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/027.JPG",
+      "sha256": "9289c9c3fe7d66279e72f46801018aad94035bf3b6681e4d07938f0ecbd63b96",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/027.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/028.JPG",
+      "sha256": "eb355c5ba93ad82fc37353e8dfcd893b80ebabc1efe54ca0eff3334246ac7d80",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/028.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/029.JPG",
+      "sha256": "bee8d0e4912ca71a1bf8527b7972e922a1318423d21913bdac3ac7f9826ce195",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/029.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/030.JPG",
+      "sha256": "f1e8a604160b974c0afb34873ad08e94431ed874b32041b377a9d6b7d8b10322",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/030.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/031.JPG",
+      "sha256": "50f481aeb8ebb62fe570bce616c1994a62f21a333993cd8182d7638ebdae9ff5",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/031.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/032.JPG",
+      "sha256": "f45888b80a61cc987705eb0654490827731d84f47d176d69a871fcd88c16527e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/032.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/033.JPG",
+      "sha256": "317e816014971aba9b15bb42aa852490303c86a2970b5de4309c7e4f581e03cb",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/033.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/034.JPG",
+      "sha256": "2270611ae08504e1e06dc28f276ba353f1ac81cc14774bb6ae439930aec8ed9c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/034.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/035.JPG",
+      "sha256": "0a406270a048fe67b708f0357d09980c94b3eb3a559460e209e791d63a6ffb77",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/035.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/036.JPG",
+      "sha256": "b3f86cf13836f5dd547945524a56c91a5b6b952edb2d8cdaef86013e07437a6c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/036.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/037.JPG",
+      "sha256": "937015412bdd9ed80364e2ca3f3abe131949a3d03827684d764e626df0b84cd4",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/037.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/038.JPG",
+      "sha256": "aa627045da6bd89a9da8317979b8ff5f82e261125346ff5fe2d65e3b22f2a040",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/038.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/039.JPG",
+      "sha256": "fc0ef7ec1e9e4401b3e7916a041d3ede8f207386a1f5171b4b731905b2249e32",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/039.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/040.JPG",
+      "sha256": "8b2f7978eadfd72ddea5b8a7a894d99e43a6515894faa6d8eb014401fe32e2e6",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/040.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/041.JPG",
+      "sha256": "0a3cd55a57d0a780375cc7a90a2122c0d0d461bb04fb1acda27c1cebbb1175da",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/041.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/042.JPG",
+      "sha256": "098b2a1936e9adcb0f183be239a348ba0871eae97fee3c85a84fb7b2f0a7e6a8",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/042.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/043.JPG",
+      "sha256": "03a262856a04d6cee23274e1884d3f83309dff16c8d8ed741498cd042cae2e4d",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/043.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/044.JPG",
+      "sha256": "b6924e7ab67077da2e3da2e907d24fa8030138ef06d938be3080f88520fa7c1e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/044.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/045.JPG",
+      "sha256": "68e826a207b16983356a958436e5ff7990a53e38a1b90fb6b6ead545f5b3eaee",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/045.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/046.JPG",
+      "sha256": "c40a5b9fd5d34ab165e1550f24a6950ca368e6abfe6db2ed24e5873f4fb20b8f",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/046.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/047.JPG",
+      "sha256": "d307a61569550f5bbe2e02d7b725538158a1e0dc49751e77217d8afcfd1de476",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/047.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/048.JPG",
+      "sha256": "d2142d2cbce2247c46b06422724779104cc1180422384960110ae44e7af1e9fe",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/048.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/049.JPG",
+      "sha256": "82147a7d0c321426267a87f92bbe3b77fc135f0fc6f4ce6f6dd337ead6858765",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/049.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/050.JPG",
+      "sha256": "5e4635ca58ce1d58e0deabcdbe0e21ef84bff1e997bfca8aa25abe08ddd12b4b",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/050.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/051.JPG",
+      "sha256": "d3e182327459a89be860c0ecff5c3a112d8ff277163c28217a3096a8585f7019",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/051.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/052.JPG",
+      "sha256": "96d741120a93455d300714e93ba9ee149aafea23a99b58e8b79f651573a8ff1c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/052.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/053.JPG",
+      "sha256": "ab7cab41a75e0d0e312afe53cdd2c9824382d30c73ea8c2a4339b4dce3980668",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/053.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/054.JPG",
+      "sha256": "83974f651e80e7ddc5835b22acf26dd08e31114e47560f902b0711fd36666b32",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/054.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/055.JPG",
+      "sha256": "dc9d98f5bb16cf1ebead456ed52208ae3439c2f9d93f018b033348ff74c33082",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/055.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/056.JPG",
+      "sha256": "18291564d91c58a8353379cd3acd9dfcaa568db6e3e644fb11aa02e7ce3d7ab2",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/056.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/057.JPG",
+      "sha256": "12aaff780192a73cf11cc1ee62c3b2a414f90decb9387cae5b7399d450bbfaae",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/057.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/058.JPG",
+      "sha256": "d5da0ba6b3ca893fb039e7f78a53c4a3a0d36be521dbfadb4efd75b37dc5df53",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/058.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/059.JPG",
+      "sha256": "223527e6640dba063cb8e5263becb1c6daf70a5fc491e9d0f23c848f0f11fb60",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/059.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/060.JPG",
+      "sha256": "b9c0e84729ec7b5de82641ee9606f610a903826016b3aedabb1eb8eb97a3e685",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/060.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/061.JPG",
+      "sha256": "6d50acbe250ccbec781e0ae548a9b1a3a8b543b884ad59c03b55c8928a55c948",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/061.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/062.JPG",
+      "sha256": "566347291e7296f42580417662c0473d29dccea2717ab3616db44677921c7f5c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/062.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/063.JPG",
+      "sha256": "42ca84f0b0ad312acbb2c3e57056dba249ff87577060dc3b3ec524787a6e16ab",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/063.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/064.JPG",
+      "sha256": "aef723552eae6f5bd2ebef71baf7529cdbc74737862c203a8d10844c4fde447e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/064.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/065.JPG",
+      "sha256": "c44a6a547d8c96525ee3edab60bacd2f63ac6ca4b098a35854b66774308caa5d",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/065.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/066.JPG",
+      "sha256": "517b414963ad80dbafe44aabb35df0902ad0be964e7eb896d51352be133b7cbb",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/066.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/067.JPG",
+      "sha256": "d4fca641c0e0f05ead77d7077cd5070df5d4c91141a7b07ea1b04a7c591e001f",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/067.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/068.JPG",
+      "sha256": "5f2a78493b82001fb1e6c810b1e790a1ab5465e55746b5b2e34b4d1373bb7517",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/068.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/069.JPG",
+      "sha256": "c8d052c87be439340c56e6f47b4862363e611b283460c09c65408e0db82ef98d",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/069.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/070.JPG",
+      "sha256": "19c53aa37353abee35a64fd37d8225095d93e6c1e973a2d0b19fa7631cea100e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/070.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/071.JPG",
+      "sha256": "c6277e80084d1b23a90c75fa0810e6f2cc1942f86388147c43574b268e319881",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/071.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/072.JPG",
+      "sha256": "a557d5b1f40f394cc755a110c7b36838fb2661c63adaa04c26b37377e52dcfa1",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/072.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/073.JPG",
+      "sha256": "585a608878bb65ffe3468113c8171f1af2bf0ac1863584b22defb5d0bd6ef871",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/073.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/074.JPG",
+      "sha256": "adabf177b3c2accf98d08158566bfb6100bf30735f65630f301e3133e2530000",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/074.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/075.JPG",
+      "sha256": "410919cf8a457036c18a83ba12f7509e01e1560b16e6d1d853d4af6843338757",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/075.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/076.JPG",
+      "sha256": "06533bfcbf2c264ac37d93bfd8fafc67d32f8dee42ef9654e3b79ba69c61a078",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/076.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/077.JPG",
+      "sha256": "8378d890b7f5771912996ef30028fc205bc622c0bd0f1a6d23e9095dc91917db",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/077.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/078.JPG",
+      "sha256": "56c57755bb4210c957022c151ce6e610ea467768b8dda4516054b56b678f900e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/078.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/079.JPG",
+      "sha256": "c81915bb6983ff1700af95e80b21ee28e9c51dc50ca129de6e41c57da2f7a27e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/079.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/080.JPG",
+      "sha256": "6d0fa09e6194eee984d4b259526b5b49d517182bae261eb4c087cd12fc9fa5b4",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/080.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/081.JPG",
+      "sha256": "6abc10b648fa2c722fcf3dc4cc86559e36b004f3ad38184f9a9f1c760f1b05a7",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/081.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/082.JPG",
+      "sha256": "a39b43591cca576bea83708cfcd883006cf75a16f119ffb0382b3b2a5ae51883",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/082.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/083.JPG",
+      "sha256": "d2bdec6a55f4cd5b6269e40f4447aca169172d3ba03a257d20c0e8b962979c39",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/083.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/084.JPG",
+      "sha256": "1e4e4b312af5d4efa86913d28630cd0f721e026dd4775fa16346d31b9a47f8f0",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/084.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/085.JPG",
+      "sha256": "562cfe45912937560f7d3f019fa04349210f91093d9e015184d8633afd251195",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/085.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/086.JPG",
+      "sha256": "327f5fa628f8de6e7e9af779c9964163fc5fd3d2d4da8706e5b3331d6b815af9",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/086.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/087.JPG",
+      "sha256": "566fb6f2924e602ad715616198103085da9d244152e8bdda9a61d702b32b4979",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/087.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/088.JPG",
+      "sha256": "32d99e1a093d40c264d201092800249960000db6f4c3c99db0a280579f050405",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/088.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/089.JPG",
+      "sha256": "47d2cacc79874593683152b1f795501c7ea06d43d0fae1af25778b2c8b92d5a7",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/089.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/090.JPG",
+      "sha256": "667a8dca2cec15abf74f6be0d383cd6e2200190096ac4ac66b19950f07aacbd6",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/090.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/091.JPG",
+      "sha256": "6b878f981522f44391baf5f9d34878132240e39703c115b50919a6fbda78324b",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/091.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/092.JPG",
+      "sha256": "80b4615b7f7be8ed21580803d1a4f47c182516c8f282e09d6e0464a66f0fa2e0",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/092.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/093.JPG",
+      "sha256": "699b527824e48ac44e0f054adcad7d7220ecd83c71755d5ce36eacf49499574a",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/093.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/094.JPG",
+      "sha256": "1366a2eb4a422208dbdbda6f81a5737e8971da68c5116cc128d78590cba0785d",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/094.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/095.JPG",
+      "sha256": "9c9565e9649183f98bba9a8287c3833c0f656b3f9133f4a98c03a6142c8bb0f0",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/095.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/096.JPG",
+      "sha256": "d7897642eece80716c8ceb9362e2ea503c20206a227ac47e651b9b64e7f856ce",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/096.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/097.JPG",
+      "sha256": "0f34f2ca22f6fe74f94bb38c446554780b15da0abfd8378b2d333219929e0f72",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/097.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/098.JPG",
+      "sha256": "d46bcdf303c70e9d92b7518d3b6e98259d562835ca8f61bdbf87eec27dba76a5",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/098.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Anomaly/099.JPG",
+      "sha256": "e9e88c79db0af7bb741c46bd1a3900926837904780b1c46d665520cb998a82fb",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "macaroni2/Data/Masks/Anomaly/099.png"
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0011.JPG",
+      "sha256": "4344de8881aa0ab6889a52f7737831dc9f99a539f481f79d7bc1426998a4eb75",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0013.JPG",
+      "sha256": "b3b17435f4855dc59642784c446811cde324f353e5ac5d3f2c6d2ae5c63bbfa3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0016.JPG",
+      "sha256": "5c1e2ac917db330e80f0d246452605add3609367cdbbe7c41b5a4a01f8f8395a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0024.JPG",
+      "sha256": "82eac326245f8a4516fcdb171115009b5c4473331fd697456c3af90eec1e382a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0026.JPG",
+      "sha256": "5c99c59dd7e32d55540ae0db4c9130b0503949d2e0f9a35d336fd6c3e86ab8a5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0027.JPG",
+      "sha256": "b3eed0b46163dcf4019511202df703c7917e4c009172c5150f017acb89783826",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0046.JPG",
+      "sha256": "16adc3e0e200e9cfc5a6b582984ce0112266c524724786e9a6698fbea70f1d20",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0100.JPG",
+      "sha256": "baae46480a1f2819d2ec00896706847cb4836d887da406050c5f340ad25fe5d3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0107.JPG",
+      "sha256": "8f727e97a888e797783242cf11a117d4977bfff031ed602e49e7120896a76db5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0159.JPG",
+      "sha256": "1a00af62c359057b1af7bf4dd1af0c0de3d11b2d4641f14d8f24ff5ed76540ef",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0168.JPG",
+      "sha256": "45ed3f0eea318e7847c64af19348f2bf07ceded8a3d16aafca5f9f889d7b052c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0170.JPG",
+      "sha256": "a8140f54ef47513c19e90140a934289b8aefae885fe11cdde733f0d923f8f54d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0172.JPG",
+      "sha256": "98c516d8cca435c6c9cb18e7d6a23344cf6550594215fac4a92dc1aef122350b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0174.JPG",
+      "sha256": "4e79b311a4cb38310e28930c9dd3baf25588677b57a5a5d90e29423582f1d6b9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0178.JPG",
+      "sha256": "0796457569255e8be879f58bb8717df47640a9a2be145d74cf7fb282663b4b04",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0187.JPG",
+      "sha256": "112bb4bf04b66d41123dfe5eca3ac7730992198e7310bed1a2daa8f746a72e62",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0196.JPG",
+      "sha256": "bbf6859c0200f6fd694cafa1d55cb12c76a040865028a67daaf726b919052e66",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0208.JPG",
+      "sha256": "6da61b539df0e9cba0cd83590f470a49907e1ff5d2725168611152954dc7970e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0214.JPG",
+      "sha256": "7a0956853896f8e7efc49208a9ec56396969c1e6d50f3f5782a9408162ce796b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0215.JPG",
+      "sha256": "602058085f95145b50557392be96c9c854c57be637c389d2a6656f6b3b3b1fb7",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0237.JPG",
+      "sha256": "dce8751c9d5524859ae3e961dbbe90e85248ece0e0d8b563726468c3cf913f2f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0261.JPG",
+      "sha256": "8faa0ecd3d011cf391d7af3a266d01456ad273e99aca7398da328d698e3d6e89",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0286.JPG",
+      "sha256": "8ab3bfdb3daa805d24f3ae2831a8bc204cded1c6717788f7e6b31c4f03f6abed",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0294.JPG",
+      "sha256": "d7c374e9ab7174b23c9181d8320eaf9ec1dea7e6193964b12aed090606fe0ff4",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0297.JPG",
+      "sha256": "73e865efc0aa93d7812c98bcdbe0a2aee2b66a049fc7f073370084743634bfaf",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0303.JPG",
+      "sha256": "e6ddf133393bc49477a646171ded27067c6c6c8b31ff9a1379c3c591a6bdd90a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0306.JPG",
+      "sha256": "929290a7a41d509d3f0654460c7582b1ece3fbcfc352c9927920c64843be82aa",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0320.JPG",
+      "sha256": "56062123023cc9931a077e5f43b0bc650ff48b3c5ccb888c23a529b31155ef3e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0333.JPG",
+      "sha256": "d16c6c26474a718b672aab54a317efbd505c4321675c2cd238fd13ae4c9c83c6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0363.JPG",
+      "sha256": "421596a69aa80e42f040ef7c22e9ee3add2f8c7f70cf921e1834c076d800b759",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0377.JPG",
+      "sha256": "57299be6b70486dad59756634e6008d4e01dd2ec3b5a0a61b9e6ea3a3dafb88c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0394.JPG",
+      "sha256": "ea18407158cd703e4ba15d11607398f8de230fc6ffaeda9d57d152c4775b142c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0400.JPG",
+      "sha256": "324ef98561cb0c4c9bc808b39fb62738c421f455cb9dfb85fe3ffdb3df7a6a3f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0402.JPG",
+      "sha256": "8c98b930baa0f1fbba839057a4ce44f3136592ed5aebe7801859dce07be949ce",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0417.JPG",
+      "sha256": "b175bc0be7248b28e279dcceb134890e2cb29fd82f0960c3d3622423349b972a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0423.JPG",
+      "sha256": "540680cb471fad770f159c68172406def5d50b7c81a2812184d7fd21fcf781aa",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0427.JPG",
+      "sha256": "251f08ca78ff1feb5605939a5b7975091d51491123f93b2cfe87950e8eda647c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0457.JPG",
+      "sha256": "1358225293448c9667fad54942e3ccf7a1c99c2765417d156dad2cec0fd3e98c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0469.JPG",
+      "sha256": "eb127b0f9bb375dad919b81da7b561cd03b020e39622e0cf599fdf87057c3331",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0479.JPG",
+      "sha256": "38753c1ff04f11186129cc46f76df425161a2b3b20b70085b4b5e61144361baf",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0483.JPG",
+      "sha256": "4ba87ff03b336ad23e90816c786c807131edddd831e46bcc2af71e61dc5e7efc",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0484.JPG",
+      "sha256": "25a689cfc9c2dcbf0fbff5249f260733edf2432dc28718fbbadb1a2bf370345a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0488.JPG",
+      "sha256": "d41d0658d5ac099ca206e8574173a4e1f093126ccc35310af16eec4d4c52e8fb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0490.JPG",
+      "sha256": "5be104d70c1b38748df761582730a127ffdae512ac9587264df3d1ef3cad9c6f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0514.JPG",
+      "sha256": "b2bc52c37a216d454e1de3775838a925b6c0994e603d44d398c0b5236ce21fd0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0518.JPG",
+      "sha256": "a4cdd659b91d85a07628a9d00c5ae1937d570530f2bf92e7aa25394cde7187e4",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0520.JPG",
+      "sha256": "c0ff49e13cb4313ff2a4ca196268ef723ce76af84c5bfb9e171337f97c33f152",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0525.JPG",
+      "sha256": "578b61190ca232dbea2315985605753b1aa9a2257a00f5af4799e59a3fcfbe17",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0545.JPG",
+      "sha256": "18742fa2988973f48bb74a106e79fad5fb58c67f8e61623d57e6415bb24b06a8",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0552.JPG",
+      "sha256": "0f2c9bf1dceea210e2f20440ccb5d1730e8dc2422fdd6d48b8801b0f8cf10073",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0569.JPG",
+      "sha256": "d6737cd60c0e57d109812575ca62cbce1821318b52c195ffe72256ba7671f0c0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0615.JPG",
+      "sha256": "12802b0bea6eacc554b98bf5bcabfbb48d9dde6c1b81d2e55c61499c9cd47016",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0617.JPG",
+      "sha256": "5ea0ddf083ff98348d3a1b618fe161c8a4733c3ffc43775e22ea2becddddc00a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0619.JPG",
+      "sha256": "03ad84c4fba175bb7881690da620a58d5489120c25b8c1edf19a0f71b3ffe42b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0621.JPG",
+      "sha256": "aff5d401ba51fb2cc35f16169c46c19ac523ad9089231d0c2560b376d6a1bbcc",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0629.JPG",
+      "sha256": "32f5d36c8393793b6621a5ed747eba6d96f049417127fad190b1d720e0068b1c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0631.JPG",
+      "sha256": "dd4b96c69837eddbc642cfa54113127267e4457a562c5f435e8893c3e446c4e9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0648.JPG",
+      "sha256": "3818647071f5f7c1ed01b7c48c9797b8a9285c38587738ab449ab55d8f0b2bb3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0654.JPG",
+      "sha256": "369362f8647364a98f51f1b4e03dd1357101ee0bbad37283c93d5086a1e03a57",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0657.JPG",
+      "sha256": "03dab75e9ef590a972b8cc987e17f0fc5b4b8b9a9a9671ec1b5aa963985bdf6f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0659.JPG",
+      "sha256": "4d6d12b7659ee611595054c3458100766c31b9410a1f60b028b9bea5d3b69e09",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0674.JPG",
+      "sha256": "d7fe9d668d9545efdd8c84f924e8491f566de7421fe29723cfd88ef715b6dd57",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0684.JPG",
+      "sha256": "20be881123e161d46a30cf91e57b36886630aee6f017e3c13df3b85dca608037",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0685.JPG",
+      "sha256": "fa610b7e67bc7bf124685ec23e2c3e9e89ccfd2f833f0da6a9f9a323d4e73ab0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0688.JPG",
+      "sha256": "09bf23e9f258fc1e502f92f2d1560f664ad5b639939d5cb00e6e31009cd48655",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0690.JPG",
+      "sha256": "f2a9bbe650d7873e257e1ad3037decc78d2b746753844fe89a1af71f22c136cd",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0694.JPG",
+      "sha256": "89dd14c2cdc792437516a4866f88a47d70dbd16f6fccc804d02e299811ff4bc0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0705.JPG",
+      "sha256": "c4cec2636ab2af94f27ae8705cad502a093c1b5480ea64860fd5a9dc53ca7a14",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0725.JPG",
+      "sha256": "077792864064e9062bd66d523c9c8e2b95ac2b68db970dd79741f1123d2dd357",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0730.JPG",
+      "sha256": "26f2e282e503faf64eefab0f26d1fc3119c62c1425f0e3fe5f09746cff843ee8",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0735.JPG",
+      "sha256": "fb1d4cd2eebc2d98497a8e6872c1e8d6dd3878298ee3987ee611dd63cccdc1f4",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0739.JPG",
+      "sha256": "1e552fdab5597f26fd1c77c2f8873f0269bb8e30a78738da46ff3df90d6a16cb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0751.JPG",
+      "sha256": "2202ee649da77f436a5ac001e2720eb3ff326ff39eefe02685597cce5d2cc8f6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0755.JPG",
+      "sha256": "db9de2975c60a5678b13e1e6b4cfc86ac954e8e82b947754c0f2c6e1bc41562a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0764.JPG",
+      "sha256": "d725c32d17f253e8d9f0ed177003cb58e88c7308a3b25af2a8ed43698d1eaa49",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0768.JPG",
+      "sha256": "2592a52c2e28db94d29ea2cec51b41b095fcba7530e8c7fd9ea65dbb83ea4b29",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0779.JPG",
+      "sha256": "846fe2e7fc84ad9b33d3b489286965b8f951f087bd7a2482b1f06651f12c2271",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0784.JPG",
+      "sha256": "1caac556bba22089809a083a154bc6af2d43908eb21eef313c89b219bae826a6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0790.JPG",
+      "sha256": "28a50f4fb4be0a7c6eaa69609e10a4c6ab25c9a7c40262ab07f1c7fd8c4f447e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0796.JPG",
+      "sha256": "c947e70cc49e66575a3caf5b7d769ae8a4f137c8b597ab17754e42064caf4ed0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0797.JPG",
+      "sha256": "ca0475065eadfe5d1f7969434bbe6817b9e30693607e1738e69648dd9d129e4c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0800.JPG",
+      "sha256": "3684c49ece94e17eb536c6c49afc0260e5307d18de2a788c43feff3d773e6148",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0804.JPG",
+      "sha256": "feb58673c2e0c37218411427e1fe835238e9c9fd141d769e93bbe5d533971a1e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0811.JPG",
+      "sha256": "a79a8a2a67df46fa63a02ee49d1b962d96706d3b2b5fdb115f17b5afe6428553",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0844.JPG",
+      "sha256": "77dfebcc39f64ae3e24988e6124543030cc547c13fb877b2a41111acac4d4224",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0869.JPG",
+      "sha256": "e6b1de55d0ab5c333c613c1f087687ce6a6240d476dc895f30182943eb7c11c9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0871.JPG",
+      "sha256": "cea6fd20fe412d73cf0023cd117386ce902b3108056a24a16dc02cc97c8063bc",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0892.JPG",
+      "sha256": "3dc2dee5b95061170cf24e931e976efade064ba17cd2bfdfc52c73f460b64965",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0900.JPG",
+      "sha256": "703617ebfddd15112d2ea1bb92240708407829bcbf069a8a29f272985e890240",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0920.JPG",
+      "sha256": "5130f0d7c0c6790dd4de8056ac81204f13c19242ba486da5ae383e49a6b51031",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0923.JPG",
+      "sha256": "6fe2a2c3cbefeae13872448a9860fa7f8d4ab21aa885a1aa395c25d4d24f620d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0935.JPG",
+      "sha256": "4b2a0b02ec3e919092e087e72487bc56b5c0299c87e2775608e5f46f99aa9bb8",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0952.JPG",
+      "sha256": "65aa41c84f8e398109dc4ad9abd873f6e257c94cee245c12d10701431a48daab",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0953.JPG",
+      "sha256": "7bc33fa0222a949e591d5ee8f190e1358e412f41484e1316fe0a21585845f2db",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0964.JPG",
+      "sha256": "5870303f398730089fe4228dee6dd988c98717bacb83dc90c50ee40b1758fad1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0967.JPG",
+      "sha256": "cba8e9e69c39af9baa39eec6884b6d173d0c9000c3b1636becfad718ed151902",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0974.JPG",
+      "sha256": "4cf2665512f7cdb8ec4a59f1204aae57a27a6710f7d44d408642cf2081b1f9e3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0985.JPG",
+      "sha256": "4e7235f197b33be31faec89639337d56041c67848f3979e5f90e43b29fae239f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0994.JPG",
+      "sha256": "55adb9c25b4f6f889919af2efb29193cb2b9f24f43295e14be736f4fa93a000a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "macaroni2/Data/Images/Normal/0996.JPG",
+      "sha256": "0722a3a1dab567c7e89f71ab642f2c8a48c8aa95df1ec5148d34c7ab036b82c6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    }
+  ],
+  "manifest_sha256": "90efccfcddc38d16d505dc621e4bc69aff417a2d13e654e3126e3a0430bdb70d"
+}

@@ -1,0 +1,1411 @@
+{
+  "dataset": "visa",
+  "category": "pcb1",
+  "split": "test",
+  "n_samples": 200,
+  "n_normal": 100,
+  "n_anomalous": 100,
+  "entries": [
+    {
+      "id": "pcb1/Data/Images/Anomaly/000.JPG",
+      "sha256": "e67db34e1045d7b8f01173a2f3e0138a6d89700e8a83d1426b6de0464e1e5e9d",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/000.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/001.JPG",
+      "sha256": "4e255d79adde14e83171896fe571113aa632de1202a32b263bd8bd6ba04c105c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/001.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/002.JPG",
+      "sha256": "9f297d7f791bcf17ec97f3275ff3bd2a1ab9988dc5d57fc3767eaf2741b92a98",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/002.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/003.JPG",
+      "sha256": "a5cab41d212f58f5e8265a60273c6b52667299d0c97bdba66b29e9298296cb84",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/003.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/004.JPG",
+      "sha256": "cf562b8b172b50417487d0640885c1d89b930492b4524b68c9fd4cc003dee643",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/004.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/005.JPG",
+      "sha256": "ec34541be729af29a287bde12d4e3955cf3f83c734baea8a9505a7b801ce54e2",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/005.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/006.JPG",
+      "sha256": "130738852d074373e18fcf9f610dbebbfeb92724b7ee9875912437322b53965f",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/006.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/007.JPG",
+      "sha256": "404172cb52c7abd585973ed4b30cfe01aaf33ce83c7971327153346a0f79dcb7",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/007.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/008.JPG",
+      "sha256": "c446989f076e143703700de90a38372e6bade758d5e8b6ecdb749925263cac42",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/008.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/009.JPG",
+      "sha256": "e05c40ca6a95bfcea04598dac35b13f6b7f41a45901168abcf0def187ebcf0e9",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/009.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/010.JPG",
+      "sha256": "42a0ee0c7d9e46733d3c19521d00bed0b1bc702f3f53488289014f44dbf9b020",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/010.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/011.JPG",
+      "sha256": "8d93ed48b97868e200e6d7148b71681c5d87a1342ea7bc48bd05021b91470bea",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/011.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/012.JPG",
+      "sha256": "a03687541d90e7e9f62b884fb049bd8eaacdefb82e868d9bff22654203220047",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/012.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/013.JPG",
+      "sha256": "a6af4b64c782a392aa0d3cd033ca64ab9a56b3ab5b907bd164fc8751a633855a",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/013.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/014.JPG",
+      "sha256": "6c3005a3ba78b7be59978468aae3e11234acb5dd9f76c9e0b282cfe8db3d585e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/014.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/015.JPG",
+      "sha256": "a5c044990118bd3fae4019c6df32e4b14cb7c81bb7da2deb44ce5b5c9cd49a94",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/015.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/016.JPG",
+      "sha256": "fc6bab01f74d13aee33855f5ab3a837404dff85ba0af0144e8a2154d2074beaf",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/016.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/017.JPG",
+      "sha256": "73bff7d7b713870c78ff24ec5ab0e3ffd8d78adb04f81f55fb5e00eee53cd79c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/017.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/018.JPG",
+      "sha256": "4a547d79fee844759b73d4b5dceaecec31899a0771ff6e3f2c4c48dde175c7d9",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/018.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/019.JPG",
+      "sha256": "1ef64d4f85621a954edb07b1768f8bc822e8241a101f532f95b7a75d9e7b6714",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/019.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/020.JPG",
+      "sha256": "4918219c1719e3dacd8a7cb62b613b5125bcb22ea8a5c3aa516261b1ff484aeb",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/020.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/021.JPG",
+      "sha256": "4988b7c5fff110fd0dfe3a88b4339e67b346ee715b99caf72e0669571c68851c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/021.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/022.JPG",
+      "sha256": "1f3b60ebc78ada22947b15a30337593c84c76a8b53964554f5751fbeba319217",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/022.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/023.JPG",
+      "sha256": "c5ce6868603ad03a545c458307978d78f6fe5d47898757868c85d73313b59932",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/023.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/024.JPG",
+      "sha256": "2b2f19d8bfbb2761a5f2b3afba2d73f04435eb68d5f10a590a2d9de74a3475c5",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/024.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/025.JPG",
+      "sha256": "833c2f08ee1edbebf86178d3ea6477740e63e167f54765ed1bdb9ffbae0e642c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/025.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/026.JPG",
+      "sha256": "a9b8a1d98569b80dd3d356491e9994e8d5f8e6395e9eb48f8b56c17b084a8731",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/026.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/027.JPG",
+      "sha256": "29afa1a56639a782139b53400c84187d3ef7b4419443f0f19a0a7ea91ed3c162",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/027.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/028.JPG",
+      "sha256": "edba03ade1f2b6b7e4c070bfefbfa033fd47e95e948ff7bc68e83f2128214619",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/028.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/029.JPG",
+      "sha256": "ea134ba8c07d7da5b2335688b51152d6ba4ebb0dfa8fa740f133009953ffcb40",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/029.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/030.JPG",
+      "sha256": "9ea3cc4e0a66efab6c57d82a8cb422d1011730a22c8c4ac82ceaad9126c48e95",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/030.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/031.JPG",
+      "sha256": "cc498f351029d1e891091b69f1163532bdd149a486a5a975778f5b2337543782",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/031.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/032.JPG",
+      "sha256": "25892cdc117ba887a921533d7e8057bbd52f68b74de484542851e70b60a789cb",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/032.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/033.JPG",
+      "sha256": "97ea033ede8dc38894cc300973176add4ddc48075fbe0a1af5f3faf337844b90",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/033.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/034.JPG",
+      "sha256": "d3a9ec73745af2b24a554e0a705c2637309f1d68f730e98328fe9658841829e1",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/034.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/035.JPG",
+      "sha256": "ba73510acb40187812128974425c765fc35eac2816f2c51e173795bd4c5e4df1",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/035.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/036.JPG",
+      "sha256": "630344c77ee4372f10d04477777673356d3595061c08a382a5ae1d18805855f4",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/036.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/037.JPG",
+      "sha256": "fa2e269d8719dcbdf41598b72f9836de5413dc4ebffe9f419eb684a62a8aec56",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/037.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/038.JPG",
+      "sha256": "20971e8c3bf13131530013ec3d7662c05f26a960ea0eb72d7cb67858cd53a9c2",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/038.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/039.JPG",
+      "sha256": "edb5e552df92e141d5ed22045a95ce498b5584afd545ebe94922c82751fa0a35",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/039.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/040.JPG",
+      "sha256": "0be5f5ad3cb2138412cdb3557097e896de16488954577ccac018c61a52d59f51",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/040.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/041.JPG",
+      "sha256": "e0afe15a69d18accaeecdd8202b25248407f5f60b5322713d061de275997c82d",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/041.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/042.JPG",
+      "sha256": "54e5bceb2e20c09fc0c4634515111a6e581248966adf2dc4da89f4f234e80011",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/042.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/043.JPG",
+      "sha256": "dbc6b10eaacb7be78fd1ba20e5dc821297e3280be0b67d62ab0e95bdb307f877",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/043.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/044.JPG",
+      "sha256": "fff4da91d032e4c7cf70150de43e713c14fab157e66349d6ff2a9f8f3124bd2d",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/044.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/045.JPG",
+      "sha256": "73053007e5f02db7d64b2559b09e0088386242839990e35631aad83b70b21e9d",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/045.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/046.JPG",
+      "sha256": "903f3e5f6ec4f5fbcd4f2472f688356ac6709bd2dd7e91237ce8c8ee32b528a7",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/046.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/047.JPG",
+      "sha256": "f42bc1b522c464ded90847b0e3f63e2f237be3ede8cd58e844dab1d037f8f5d1",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/047.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/048.JPG",
+      "sha256": "733c324c3b5918cfeaf4e4ec280886539aed18149184a93e037e834078617508",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/048.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/049.JPG",
+      "sha256": "79f3e5e9743e2d7f8fc5b52d1e4498e0c733f6e8a718febce9a13fbfc1339138",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/049.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/050.JPG",
+      "sha256": "954e2bf18f7fc8d30a5bcee7220dba3e19ddd9b19fa9d5b38dc79ba775998e05",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/050.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/051.JPG",
+      "sha256": "fefb62dfe5ab6946104009aeb94d1261bd9f0b34026a4a7cd14add7b053ec1ef",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/051.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/052.JPG",
+      "sha256": "0fe7cdf3c4821a3eab54e4bb118479024bade1ac39db3a41346f6b7d5e255068",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/052.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/053.JPG",
+      "sha256": "b414dbaa4b90d4daddd0f8e7bd871141eae637ba9bf4f4b386abbd74a8d9fede",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/053.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/054.JPG",
+      "sha256": "291acf3345f67436278da05b852cb1dd96cdab8577f2647d80ef7c5fc03edafa",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/054.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/055.JPG",
+      "sha256": "95cb1b4b9610e9452291459f532e9369acf6e8f58b5b07abf53cc43112843cdc",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/055.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/056.JPG",
+      "sha256": "b2377147712c8c90579a233fca0a8759e82c577b60d615099bd9af112749173d",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/056.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/057.JPG",
+      "sha256": "cd1b5cdb7e8bd8a194164101bff94ecc3d17d86e1eb452361fdca76729ddd4dc",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/057.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/058.JPG",
+      "sha256": "d101ac67568b78bf3ac0e2e23c7a929c25fef0f52e976c9063dc28034a5b54cc",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/058.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/059.JPG",
+      "sha256": "101280eaf13b901bda19c4fbf2d54ca9a91ccd872e27b5713cb6e163e7da1f64",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/059.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/060.JPG",
+      "sha256": "c49aabaf0a5cdaa93d77ceba9a7f392ae51c710830e7eda24e29ba11a9bfb13a",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/060.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/061.JPG",
+      "sha256": "fafccb3223285e5240e3f825a6bc53662ffdcd19bb44e7805ecd046967093a68",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/061.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/062.JPG",
+      "sha256": "ad2815bd51dbfea4c02b9c2c6430f5f220f09f21d44ac18e6c22e70770cfe735",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/062.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/063.JPG",
+      "sha256": "80bf0ee5a0a24dfcff35c15d663a981e88e04ccad33dc6eb229c4f7e52c3c077",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/063.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/064.JPG",
+      "sha256": "74a56f1710244831c1c9c8ba2d4a2cdb0414ea483dca5f45ecdbff2351894ff1",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/064.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/065.JPG",
+      "sha256": "34e36bacabeda8ad3877a7ef206eb9370e6c4e0594e1ee8f9c2803cf93b46988",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/065.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/066.JPG",
+      "sha256": "45df6a300ce0e5d3444c55a127cf7f171ca97a550b573541878939379014c5bd",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/066.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/067.JPG",
+      "sha256": "23e11057e8284876426d79e857b28fdc2a9436f814f270d1dd95b2200c35be97",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/067.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/068.JPG",
+      "sha256": "2d5c96ec2cf8cc3fb2ded81671569a60604b395194613a9642c710ad7d67b221",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/068.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/069.JPG",
+      "sha256": "af5a7bceaef83ce034402e82568b874151d214caa8c811d2b946257d54947474",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/069.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/070.JPG",
+      "sha256": "86d3a81d03c05070fe80868c84171e0b57a1408f2b24237943e4bf16dd17ec6a",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/070.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/071.JPG",
+      "sha256": "1865a23a9a2ddb43b0c202e0637f78693c33a119471b272f69294561c52260e7",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/071.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/072.JPG",
+      "sha256": "369c056fe93c793b0341285d45c0b2d73a488ae3c8c0f8caa395e95127bea109",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/072.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/073.JPG",
+      "sha256": "f2c672946729be8bc2ab5aeb0e9c3a0f5e126b7dac16a5f54c0a37e736282bf0",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/073.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/074.JPG",
+      "sha256": "9a1565b0910d2506186a903a1c6a3997f515137c06e76bda1bbfd83a13707dd3",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/074.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/075.JPG",
+      "sha256": "0a85ad297d464dc303892f0c682e75ffb5f77e1d3df10fcf43787a35fcda8efb",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/075.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/076.JPG",
+      "sha256": "50e9e3c9b8110da512c97b3c7acf0d9d322a74961cc10b77bfeb1700941a04ab",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/076.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/077.JPG",
+      "sha256": "fb351afdcdf521a408aca539c10ea1822e70fe6301efd34664c6b91530cd8b26",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/077.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/078.JPG",
+      "sha256": "a5d3c5b22ba98f03d90ffc89c946541ee404e6bc42a2cbb034df578aa571a27e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/078.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/079.JPG",
+      "sha256": "822d6efbd5f33ba5ab4b6249e8696b6d5aef1fc7986ee5bf0b7945f7ab44d5d5",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/079.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/080.JPG",
+      "sha256": "27bf665e31b59d5c753bf414ac44a20031f1ccdccb00f2019c445a724a79f224",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/080.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/081.JPG",
+      "sha256": "4228dd7e627ec2096171dc95172960df34862ef9a878a48228009e8d8cdc637b",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/081.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/082.JPG",
+      "sha256": "037c0bf3c4e00754d6c0416a8d51b74608358f4c68a39c6d6542d973e2785ed1",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/082.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/083.JPG",
+      "sha256": "52ad883619ba4549fc34240ee39b3cb025574e045e181b4ef18b61ecf11d0157",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/083.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/084.JPG",
+      "sha256": "6a8be28d02e63c3973905c59ac682b819ed61a7e08335c170cdeb27fb5161a74",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/084.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/085.JPG",
+      "sha256": "af372794bd4ed8300dc342843bf3922f842f92f53122c1cb5d821f57b23039ef",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/085.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/086.JPG",
+      "sha256": "ba17adea64c5aff07f0d87a5eb41c01938cd13780ab4d5c5152f622a44933a24",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/086.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/087.JPG",
+      "sha256": "b7005d69f76c1d34a7e8786ff18bbda4605fc6c1ab99442a92f69178ebc6bb69",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/087.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/088.JPG",
+      "sha256": "b340ef3805e0887d9e607bdbd40ca8f43dbedc952fc7bfca7f04c34965523225",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/088.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/089.JPG",
+      "sha256": "05e084f937528a5f6a0f60066512543c59371afbe93acaab6d39af1fb0b80e56",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/089.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/090.JPG",
+      "sha256": "f67fd6308abf72e2ae864ccd5dfe8c3b1dfa5a46fc8eba0f47517dbcb7499f6d",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/090.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/091.JPG",
+      "sha256": "fa4b54a4132a08883de44001e2f98e08da28587bff020957c7e85c26da00dcf3",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/091.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/092.JPG",
+      "sha256": "4269ca7be62b8e483b12de0e94fe7e5b3e9fc6346bc85b053cc7441fe92d839c",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/092.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/093.JPG",
+      "sha256": "86bdffe3218c56bdb4d4b12bb0cdf45633bb329713eaa6773d67aafbb1ae75d3",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/093.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/094.JPG",
+      "sha256": "91c679ca0959cbfc3e4f5e2053e59d70b04f540815be43d81314fae66aff671f",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/094.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/095.JPG",
+      "sha256": "6e80a211897db96f52e55a2582332d10161038088bb6f770afe43ca56f7d865e",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/095.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/096.JPG",
+      "sha256": "2647a328727d167a88450ae842b959cbd07ac5ce148eb7069ec9cd4415c2416f",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/096.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/097.JPG",
+      "sha256": "c5f03fe1f23b351de030d315907afe3cd8b71e2700e1bf294214deefad9c6ac6",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/097.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/098.JPG",
+      "sha256": "f589eda90ce0b8865e102878d125f999949286339fa9bbc41f1354866976430f",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/098.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Anomaly/099.JPG",
+      "sha256": "f58451a02981c7e004969f9842cbfa9d2ea59da28f92e451c73a3f8517e5c152",
+      "label": 1,
+      "defect_type": "anomaly",
+      "mask": "pcb1/Data/Masks/Anomaly/099.png"
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0011.JPG",
+      "sha256": "09b58a87f2380592be9f72ae3b0f8060adefb3d2836ec974ffce4ef662d6c252",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0013.JPG",
+      "sha256": "3a603c10dc9aa30d251def50c53379de97495534b6bb5ce180bcca2ddaea6cee",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0016.JPG",
+      "sha256": "156eec1fd28d20f495f31a23375de771f35bd0ae90ddf079cdf32e437ad91a97",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0024.JPG",
+      "sha256": "0bab2e052295e644699b0af348a8621a3d1596e1c81a0b5ae6d7d8011490ecb5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0026.JPG",
+      "sha256": "887725103a469a5ba52178c40f185a3103a6ebeb4bd81d6f25e133fd2d0ff3cc",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0027.JPG",
+      "sha256": "a7f9cde1448e96e412c5091ce192a843b464b087d9bc3d2480a3c5c2fa7ddd24",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0046.JPG",
+      "sha256": "bd1a7a201b070855cc86c618d0e4af7b878492283a8ab4bbb801cd15d6b7f67a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0100.JPG",
+      "sha256": "3d182e9f2ade8e954c16ec4e3e7ecc70404e6f990fa4646869aa96b6b8a5d948",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0107.JPG",
+      "sha256": "b374416e97d268dd2d5660f13e77b8b9ff4cf35fad08856485038afeebce66bc",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0159.JPG",
+      "sha256": "0cdd28b289d8e03dfaa05b904ed26dc2c33cc57da555d29f660d0f3478c3d92f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0168.JPG",
+      "sha256": "7b2fbab154db941c91a751430f31662a5cb14c5fe0a1cdf6ba1bcd3ab471d3b5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0170.JPG",
+      "sha256": "16ccb02058c725dbcb56198bf4bdc5c8e6bc787588e401e58f7a96c9cd205022",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0172.JPG",
+      "sha256": "4ac49a07beb199de519ea24ff45283bf60301808f76bc8ad6d491fefc4ee9a32",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0174.JPG",
+      "sha256": "feae6b86a1ca9b17e8141619f0993c376935a0297564a87f6749cef47d12aec9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0178.JPG",
+      "sha256": "b182e675080892a852d438b32a524d54a214965ff285d11210c5aedf2fee4673",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0187.JPG",
+      "sha256": "750619e80d96f338119b101aac20222d9ad01bd86ca7183131ea8f9d968fded2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0196.JPG",
+      "sha256": "fb5df83054bafca371b8acd255ac72bdb03191fc6f2664b69725747799c26692",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0208.JPG",
+      "sha256": "c1a9dbc7442f0b52d6400cbabe28f21a380fac8c452b65dd3e5c9d8d910895f5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0214.JPG",
+      "sha256": "2770d2da17b9942ea6c7a00b96e2558c98aba8471d061cd53f709191c9f1cd0f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0215.JPG",
+      "sha256": "89103ec7129ebae8a561c80c683765492e1ef7d6a3967ee472e24599bcd4e2db",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0237.JPG",
+      "sha256": "fc8d3edb28b94ab50f26350ca480e75c8e1d5b92034bfd5543d475bea1b61077",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0261.JPG",
+      "sha256": "ba2b1e98fe964f76eb47f26a0b97a88658ed609ff049db21ccd3dcfc0be86282",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0286.JPG",
+      "sha256": "4663e6a67011879aaa9cc0ca22a9c5645751f6791b3d4df3a0d184fcc3760b8b",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0294.JPG",
+      "sha256": "d82a692188ecfc99b2e9a2bc31de1906d73239915f2fc5ce32925427ae34796d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0297.JPG",
+      "sha256": "2782729ea0a64f8d31c551bd9c7220a393800479b6ab583094cce16c2f99b446",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0303.JPG",
+      "sha256": "3fe175efbd7c84031d85050654f7a6571959597a4d4d6491b6f2f385d20b16e0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0306.JPG",
+      "sha256": "1fc11e1c362e645aa8f7e0c8c08351aa5f04d25aecbb2ce44a9fffaacd980541",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0320.JPG",
+      "sha256": "232b728f6d63a5d561259d3e4167ce40f794396dad39d5e2f2503e66cde36b70",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0333.JPG",
+      "sha256": "ccdcba7ba28b98819931140a0170cdb51adef8a6f43123d20f3136b1fab18714",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0363.JPG",
+      "sha256": "ad3157cacc2477e1d9b028288ac1b6967f83e669b2a952d240d61fa84e8d76bb",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0377.JPG",
+      "sha256": "23543934da28485f68e78c30b295a4f485d8d2c62956dd382ef0aae2eebc452c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0394.JPG",
+      "sha256": "b3804a20b1a4f134a14fc66dc1d2ddbb406e27dfa52bed4c47af95adc00f3c79",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0400.JPG",
+      "sha256": "60b89dd5aedf69723968ea0c2ce5b8562cf272269a5db3b1be2d1674491b86e7",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0402.JPG",
+      "sha256": "5fede448d7d0586736e136556c10cecfea5bde56ea29b9cb04d5f41f51fb728a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0417.JPG",
+      "sha256": "86ed2215cd112caf8a131dce2fc1ec44a6c784eacb7000e7754a2418a89daa0f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0423.JPG",
+      "sha256": "6635a2d8b6dd4778f0f8dc9e6726343217373eb595f6b94565e36f4be54792f1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0427.JPG",
+      "sha256": "e9b4278b3d5877a6021ec5af92c418a8188e9fbe30b66eedd7252f2597125856",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0457.JPG",
+      "sha256": "675bba8fb6d3c8d8959966410b2ffe224040436676213cdcf050ae742e885fa1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0469.JPG",
+      "sha256": "4e808b2ea9a3623e27c4b36f3d5f69fc5b57089097dcdfbc4f06338452aecac2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0479.JPG",
+      "sha256": "8367cd6a0caf88f29835d89cd2b2881f95811331ec1981c35c7324f13d7e9646",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0483.JPG",
+      "sha256": "dcda52ba1b8eb217882aa42aa706fcbde741c87329d0bcee625b592d1cf63ff3",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0484.JPG",
+      "sha256": "7256a3c077e539ee597d1042ca7ec9e144565c058622df111944554cfc4abbe0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0488.JPG",
+      "sha256": "04f7272a2a28b277c30a6c1573921b267cbd2778c13186e0b2a92b1b65f2c0fd",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0490.JPG",
+      "sha256": "2ca39c9bde074942a8762089f5eea704080c0edcb7294200790ee7c57b00fd85",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0514.JPG",
+      "sha256": "53f7a0724bd467bbd58f9616e1e4f8f0d21c601b1c75abd3fe96530d8d895736",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0518.JPG",
+      "sha256": "82c618a43e22857eb6eef209ea6f40b4b22e30567953e2fc3e9b3d53b41335a8",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0520.JPG",
+      "sha256": "d506124137b4ee7a5ab3abaca89fc31eb74562ce701824900834f5dbc714147c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0525.JPG",
+      "sha256": "4fa7143a13cbe7f3f6546bc1cf9858d7812dead759aaf86aec042ea0e5be473d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0545.JPG",
+      "sha256": "37f775f48e3c94acd79b4022e46de7b00daa3bea3d2cdcd94b42e622681b6c50",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0552.JPG",
+      "sha256": "7d6296f85ab9be88ecb31d1e9511f583d9e0f95e1c9f39b26972807049bdcc72",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0569.JPG",
+      "sha256": "753509362ab7f958ee16c408b70718e0b2ad43dbc14f3bb4dee6fefa8ff5071e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0615.JPG",
+      "sha256": "a13c4e47811df0ea67198d6a66864d778e257a94afc98356326bcd1827a731a2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0617.JPG",
+      "sha256": "3d8aaf17adadeb4e99fd11d37bfb929ec41323c860859a2daf6f77419ce84fed",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0619.JPG",
+      "sha256": "2fbb8a3d2bc856a17175c700bd703344a30af17927e6fa5e1dc129963b78bcd2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0621.JPG",
+      "sha256": "2b921c6fdca28b7170e30e05e217ba74cf7cf6f743f8448cdb9c2048b4b4e9a1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0629.JPG",
+      "sha256": "1cc4897a806333984ec6b292377318eb5f5ff99bc02fef9ed6315e45b59d3a4e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0631.JPG",
+      "sha256": "69c8b1436b40a68d9dd0ab3cbb4ce641359d16dcdf8bdf8540e24b7a05fed139",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0648.JPG",
+      "sha256": "e92021ed3d426adb30c71967dc8a8db593c3e95ffcfc1a53d6b416e06d5cd639",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0654.JPG",
+      "sha256": "85abac8145b6f8edfc081d73445f740d44ec19924665839586e4f69d900785f2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0657.JPG",
+      "sha256": "bd68671b9952ffbc1efcfe369b372af91cff1b9c81ae9ba187f34f8b0bd880bf",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0659.JPG",
+      "sha256": "2c6380f7faca67e0fc27adbaf56afe6fba5e88d4a82b4993d21e4077befc434f",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0674.JPG",
+      "sha256": "efcdfed11141ed54759884ed0fce8f3aab8e7cb16cb8b3be9f428b80a0a341f0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0684.JPG",
+      "sha256": "b0be6054376426ea408ef6fce017cba57a63d0a2813196ac8d119b9fa5b23e94",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0685.JPG",
+      "sha256": "76665a28cd89d62eb4384886020712fda90a716638fdeef925085860f9881ad0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0688.JPG",
+      "sha256": "752d03cb4613a2e1e3dce746cba906f85d2ceb546d1be10a8945a445ae68fe43",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0690.JPG",
+      "sha256": "92a3cd6f28d9713f43ef65499efdbb7a74bc6e1053bbe52215e71a914159b0f1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0694.JPG",
+      "sha256": "f02a36e6376236fbc1b113fa81324d383cc337b9c490846d273044bf7e8cf9a2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0705.JPG",
+      "sha256": "72207fb8941a9b099cfa1e163d12900e11743696fb2e0eb45e256374af9345ea",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0725.JPG",
+      "sha256": "9a86c52d1f27298cc199874430e96cde30c275184880099163b50176a9d23698",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0730.JPG",
+      "sha256": "7352fd49a58d166c51048cd1687c28e11f97bb974e44d14eee689ce7811e51d6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0735.JPG",
+      "sha256": "c198d31240cd23d469ced09c55a8ddac9cf555bb869e5acefaf9ab2483a9e51e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0739.JPG",
+      "sha256": "071f8d273a9da32f4320558981b24a696c58d01a523dcb1d222172084a3bf19c",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0751.JPG",
+      "sha256": "da74ad1ef11748d449f3936e5866d4b2b9a5d662fc4396bedacbdaee2ed0c7e2",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0755.JPG",
+      "sha256": "71f479f12e0218a1ae07e794570202a39769691f27a81d53dedd7b6b6f6f98ea",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0764.JPG",
+      "sha256": "7f5a2f3aaa699675af0ec85bccd353ee1511fcbf3b1c73403f610900a54083da",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0768.JPG",
+      "sha256": "6d38e46508dd89529d5060d7e4b09acf2d73b1dcd5b16ed79fc1b028a8695907",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0779.JPG",
+      "sha256": "bd9e5e34b74e5800c969c3d264bf6e5ccaf0087de41fe588e9368a2b07b26ed1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0784.JPG",
+      "sha256": "4a5f4919626795c496a348fd41c6e6ec467520c5c1c9af58eb1b5b5cda7248f4",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0796.JPG",
+      "sha256": "023886dcd55b295865dd037c01f20598dd084c8b10efcb3b6ef436c06cac7b7a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0797.JPG",
+      "sha256": "9cb6c71afbcaaf70df40a7188daae613ee1759e94c18965ff23532c66db25ed5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0800.JPG",
+      "sha256": "df69910ec6c88a286b6df8cd33d36406f50df580d550a3e7c6e4a154a8c89ac6",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0804.JPG",
+      "sha256": "0682705e5cd15352208e5d6a415f50ea716d5986dd30bbf45953f8f10fae2a4e",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0811.JPG",
+      "sha256": "8f4af53581fb25e72edeaedeaab82b28bd082184a5297c76867c5267a7d320d5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0844.JPG",
+      "sha256": "553db56acfb0a672d5de88e2abcb6711cb29654d92b4773ba6572fa83b084bc5",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0869.JPG",
+      "sha256": "61bad21697fb6d22df3b1ed9e9ea420b6b390673b319bb561fa52a42caa39b26",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0871.JPG",
+      "sha256": "ad8eb1fcda8f3c1ca8d73ec602cb52934762d0ac23a6cf81cfaddcd90aa74b44",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0892.JPG",
+      "sha256": "562fa496415d5b484cb4d9103eb9ff212f9d66493c5f501bc38064ee4d9cfead",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0900.JPG",
+      "sha256": "11fc84543bf2fcdbc98cc0a54a989ad948ca184d868256f145748ab0c6ce65fa",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0920.JPG",
+      "sha256": "1abee3701f097f34f9af5ab26b65de75f8bc9f394a6c227cfe7ccfb1d71c249d",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0923.JPG",
+      "sha256": "435d29169bf99e01c14f11809727b7ed30b0edbdc73d33ea2b59a03ba7e72991",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0935.JPG",
+      "sha256": "941184de522c6c977bc2c721f1c550338b5eb9a3132de2f2cafd10bcb9ceb763",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0940.JPG",
+      "sha256": "c76280c79c259aae5c89bba32ea068b89869526e6218636b856b3dd15c0548a0",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0952.JPG",
+      "sha256": "a17f22633c42047d80eb9694e756a29a47a7a8ab1dc3060f7024787577b7f794",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0957.JPG",
+      "sha256": "0942e14ed95c5ac9b3a1f52e8d99e061bc2bb62fe41184d892c5e1b852abb8ae",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0964.JPG",
+      "sha256": "16e5e43c38f0935bb23aabf6b171606ea789eeed918deca773bbc8a83dae52c9",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0971.JPG",
+      "sha256": "5734655fe05d4ee58a1acfb16e6bcce970fdf54be8743a255b96ff6d6e26caa7",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0974.JPG",
+      "sha256": "993445eb011c231a32a060365edc2db4bf14f1fd825d0436e51247e4352ab6ec",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0989.JPG",
+      "sha256": "af42c20f3e5462c0154222dca03b235c713957039f1c5a15b35894e52177d7d1",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/0994.JPG",
+      "sha256": "f2d5cb8e0cd78264a3ea46c4b528f2931100497ac8fac9068c6c06b667948cca",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    },
+    {
+      "id": "pcb1/Data/Images/Normal/1000.JPG",
+      "sha256": "affa14246b93c45862a5f0f60d9932f724cb2d67c2a8bde8cc50e2466131081a",
+      "label": 0,
+      "defect_type": "good",
+      "mask": null
+    }
+  ],
+  "manifest_sha256": "a5bfd85ef06b49e37c4c81db3f7427ef5f2d9bf5c50bae5e560a977d463d92c9"
+}

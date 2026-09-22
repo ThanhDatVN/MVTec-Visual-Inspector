@@ -286,12 +286,27 @@ class ResolutionDecision:
         }
 
 
-#: Largest single-pass input we assume fits the 4 GB card for a frozen CNN
-#: backbone plus its feature maps. A placeholder from the budget in docs/06 §3,
-#: to be replaced with the measured value at Gate G5 — the plan requires the
-#: maximum feasible resolution to be established empirically, and until it is,
-#: this number is an assumption and is labelled as one wherever it is used.
-DEFAULT_SINGLE_PASS_MEGAPIXELS = 1.0
+#: Largest single-pass input that fits the 4 GB card for a frozen CNN backbone
+#: plus its feature maps. **Measured, not assumed** (2026-09-22, RTX 3050 4 GB,
+#: WideResNet50-2, layer2+layer3):
+#:
+#:     input        MP    batch 1   batch 2   batch 4
+#:     256x195    0.05      307 MB    322 MB    354 MB
+#:     512x390    0.20      364 MB    431 MB    592 MB
+#:     1024x780   0.80      642 MB    904 MB   1535 MB
+#:     1404x1070  1.50      959 MB   1459 MB   2645 MB
+#:
+#: The earlier placeholder of 1.0 MP was far too conservative: native VisA
+#: resolution costs under 1 GB at batch 1. Set to 3.0 MP, which keeps batch 2
+#: inside the 3.5 GB fitting budget with headroom.
+#:
+#: **This is no longer the binding constraint.** The forward pass is cheap; what
+#: binds is the *patch matrix in host RAM*. At 1404x1070 a layer2 grid yields
+#: 23,584 patches per image, so 768 training images produce 18.1 M patches —
+#: 37 GB in fp16, beyond both this laptop (16 GB) and a Kaggle session (~30 GB).
+#: Native-resolution PatchCore therefore requires per-image patch subsampling
+#: *during* extraction, not after it. See reports/P3-visa-findings.md.
+DEFAULT_SINGLE_PASS_MEGAPIXELS = 3.0
 
 
 def recommend_resolution(
