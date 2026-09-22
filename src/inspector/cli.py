@@ -6,6 +6,7 @@ package and calls these commands — never a place where model code lives.
 
     inspector fixtures --out data/synthetic
     inspector audit    --config configs/data/synth_strip.yaml
+    inspector eda      --config configs/data/synth_strip.yaml
     inspector info
 
 `fit`, `predict`, `evaluate` and `bench` are registered but not yet implemented;
@@ -131,6 +132,54 @@ def cmd_audit(args) -> int:
     return 1 if failed else 0
 
 
+def cmd_eda(args) -> int:
+    """Phase P1 exploratory analysis (docs/04, tasks 1.5-1.7).
+
+    Answers the question that gates the whole study: what input resolution do
+    these defects permit? Run it before fitting anything.
+    """
+    from .data import discover_category, ensure_validation
+    from .eda import analyse_category
+    from .report import write_eda_report
+
+    cfg = _resolve(args)
+    data: dict = cfg["data"]
+    if not data.get("root"):
+        print("error: no data root. Pass --data-root or export INSPECTOR_DATA_ROOT.", file=sys.stderr)
+        return 2
+
+    categories = args.categories or [data["category"]]
+    reports = []
+    for category in categories:
+        indices = discover_category(data["root"], category, layout=data["layout"])
+        indices, _ = ensure_validation(
+            indices,
+            val_fraction=data.get("val_carve_fraction", 0.15),
+            seed=data.get("val_carve_seed", 0),
+        )
+        print(f"analysing {category} ...", file=sys.stderr)
+        reports.append(
+            analyse_category(
+                indices,
+                test_split=data.get("test_split", "test_public"),
+                candidates=tuple(args.candidates),
+            )
+        )
+
+    md_path, json_path = write_eda_report(reports, args.out)
+    print(f"report  -> {md_path}")
+    print(f"json    -> {json_path}")
+    for report in reports:
+        rec = report.recommended
+        print(
+            f"  {report.category:14s} native={report.native_size[0]}x{report.native_size[1]} "
+            f"regions={int(report.region_summary.get('n_regions', 0)):4d} "
+            f"recommended={'TILING' if rec and rec.requires_tiling else (rec.long_side if rec else 'n/a')} "
+            f"({rec.verdict if rec else '-'})"
+        )
+    return 0
+
+
 def cmd_not_implemented(args) -> int:
     print(
         f"`inspector {args.command}` is not implemented yet; it lands with its "
@@ -169,6 +218,13 @@ def build_parser() -> argparse.ArgumentParser:
     p_audit.add_argument("--near-duplicates", action="store_true", help="also run the pHash check (slow)")
     p_audit.add_argument("--write-manifests", default=None, metavar="DIR")
     p_audit.set_defaults(func=cmd_audit)
+
+    p_eda = sub.add_parser("eda", help="phase P1 exploratory analysis and resolution decision")
+    _add_config_args(p_eda)
+    p_eda.add_argument("--categories", nargs="+", default=None, help="override data.category")
+    p_eda.add_argument("--candidates", nargs="+", type=int, default=[256, 320, 448, 512, 1024])
+    p_eda.add_argument("--out", default="reports/eda")
+    p_eda.set_defaults(func=cmd_eda)
 
     for name, help_text in (
         ("fit", "fit a model on the train split (P3+)"),
