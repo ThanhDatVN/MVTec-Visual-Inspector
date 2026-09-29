@@ -500,11 +500,15 @@ class RunGroup:
     long_side: int | None = None
 
 
-def group_runs(registry_root: str | Path, *, role: str = "development") -> list[RunGroup]:
+def group_runs(
+    registry_root: str | Path, *, role: str = "development", implementation: str | None = None
+) -> list[RunGroup]:
     """Group completed registry runs by everything except the seed.
 
     The implementation id is part of the key: runs produced by different code
-    are never pooled, even when their configuration is identical.
+    are never pooled, even when their configuration is identical. With
+    `implementation`, only runs whose id starts with that prefix are kept —
+    one study, one code version.
     """
     root = Path(registry_root)
     groups: dict[str, RunGroup] = {}
@@ -516,6 +520,8 @@ def group_runs(registry_root: str | Path, *, role: str = "development") -> list[
             continue
         spec = json.loads(spec_file.read_text(encoding="utf-8"))
         if spec.get("role", "development") != role:
+            continue
+        if implementation and not str(spec.get("implementation_id", "")).startswith(implementation):
             continue
         # The seed appears twice: in the spec and in the model's hyperparameters.
         model_hp = {k: v for k, v in spec["model"].get("hparams", {}).items() if k != "seed"}
@@ -558,6 +564,7 @@ def run_studies(
     data_root: str | Path | None = None,
     roi_methods: tuple[str, ...] = (),
     region_size: bool = False,
+    implementation: str | None = None,
 ) -> dict[str, Any]:
     """E02, E03 and the exchangeability diagnostics over a registry.
 
@@ -572,7 +579,7 @@ def run_studies(
     }
     proximity_done: set[str] = set()
     selected = [
-        g for g in group_runs(root, role=role)
+        g for g in group_runs(root, role=role, implementation=implementation)
         if not (methods and g.method not in methods) and not (categories and g.category not in categories)
     ]
     out["comparisons"] = method_comparisons(selected, root, n_resamples=n_resamples, seed=seed)
@@ -636,6 +643,7 @@ def run_studies(
         "role": role, "target_fpr": target_fpr, "sizes": list(sizes), "targets": list(targets),
         "draws_per_seed": draws, "bootstrap_resamples": n_resamples, "seed": seed,
         "aggregation_domain": AGGREGATION_DOMAIN,
+        "implementation": implementation,
     }
     return out
 

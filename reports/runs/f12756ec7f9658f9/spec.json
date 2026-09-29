@@ -1,0 +1,61 @@
+{
+  "dataset": {
+    "layout": "visa",
+    "category": "macaroni2",
+    "test_split": "test",
+    "val_carve_fraction": 0.15,
+    "val_carve_seed": 0,
+    "split_listing": {
+      "test": "2dbb9d7f1ec34a1c",
+      "train": "3708bf994a3856b4",
+      "validation": "4939143f74d1e6bc"
+    }
+  },
+  "model": {
+    "name": "cae",
+    "class": "ConvAutoencoder",
+    "hparams": {
+      "loss": "ssim",
+      "score_map": "ssim",
+      "latent_dim": 128,
+      "base_channels": 32,
+      "depth": 4,
+      "epochs": 60,
+      "lr": 0.0002,
+      "batch_size": 16,
+      "val_fraction": 0.1,
+      "early_stopping_patience": 12,
+      "residual": "multiscale",
+      "seed": 2
+    }
+  },
+  "transform": {
+    "mode": "aspect_preserving",
+    "long_side": 320,
+    "short_side": null,
+    "interpolation_down": "area",
+    "interpolation_up": "linear",
+    "normalize": "imagenet"
+  },
+  "evaluation": {
+    "smoothing_sigma": 4.0,
+    "smoothing_units": "input_px",
+    "target_fpr": 0.01,
+    "threshold_policy": "relax",
+    "sigma_n": 3.0,
+    "aupro_limits": [
+      0.05,
+      0.3
+    ],
+    "aupro_num_thresholds": 512,
+    "max_negative_samples": 2000000,
+    "sampling_seed": 0,
+    "pixel_auroc_bins": 65536,
+    "report_oracle": true,
+    "metrics_version": "2"
+  },
+  "seed": 2,
+  "role": "development",
+  "protocol_version": "2",
+  "implementation_id": "b76d4f8dd1b63d04607d465e99b94baec3a232ce7b36d473c8394adc7455b692"
+}

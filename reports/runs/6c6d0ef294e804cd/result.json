@@ -1,0 +1,101 @@
+{
+  "run_id": "6c6d0ef294e804cd",
+  "status": "completed",
+  "finished_utc": "2026-09-29T01:37:06+00:00",
+  "prediction_digests": {
+    "validation": "c33fb30e444c4b459be3bcf61c3684b5f3b32b24e14e8ee9132e6b7c3cc117da",
+    "test": "f0c686dd8ff44deecba05b5391c208dd444985c20e5ecde31a712429c027f927"
+  },
+  "provenance": {
+    "git_sha": "c53e7f67e6c4e66cd8789556f5fe4e1fe315bc9c",
+    "git_branch": "HEAD",
+    "dirty": false,
+    "implementation_id": "b76d4f8dd1b63d04607d465e99b94baec3a232ce7b36d473c8394adc7455b692",
+    "environment": {
+      "python": "3.11.9",
+      "numpy": "2.4.6",
+      "scipy": "1.17.1",
+      "PIL": "12.3.0",
+      "torch": "2.14.0+cu126",
+      "torchvision": "0.29.0+cu126",
+      "cv2": "5.0.0"
+    },
+    "device": {
+      "platform": "Windows-10-10.0.26200-SP0",
+      "processor": "AMD64 Family 25 Model 68 Stepping 1, AuthenticAMD",
+      "cuda_available": true,
+      "torch_cuda_version": "12.6",
+      "gpu_name": "NVIDIA GeForce RTX 3050 Laptop GPU",
+      "gpu_total_mb": 4096,
+      "cudnn_version": 91002
+    },
+    "dataset_manifests": {
+      "test": "a5bfd85ef06b49e37c4c81db3f7427ef5f2d9bf5c50bae5e560a977d463d92c9",
+      "train": "4011be37eb37b40d09f52152b39f4b6fadec71b962e3813c04f270562ecacb14",
+      "validation": "17d7d0fbf71a0f89a3be87e824e4d5eb7907a6d413aa0bd965b651ad3d3f8a49"
+    }
+  },
+  "result": {
+    "run_name": "histogram-pcb1-s0",
+    "method": "histogram",
+    "tier": "T0",
+    "owner": "own",
+    "category": "pcb1",
+    "dataset": "visa",
+    "split": "test",
+    "seed": 0,
+    "run_id": "6c6d0ef294e804cd",
+    "config_hash": "7ee4b734f4b96086",
+    "implementation_id": "b76d4f8dd1b63d04",
+    "git_sha": "c53e7f67e6c4",
+    "dirty": false,
+    "status": "completed",
+    "resolution": "320",
+    "n_train": 768,
+    "n_validation": 136,
+    "n_test": 200,
+    "image_auroc": 0.8291,
+    "image_aupr": 0.8681715816949798,
+    "f1max_oracle": 0.7783783783783784,
+    "fpr_at_op1": 0.0,
+    "recall_at_op1": 0.12,
+    "tp": 12,
+    "fp": 0,
+    "tn": 100,
+    "fn": 88,
+    "requested_fpr": 0.01,
+    "effective_fpr": 0.0072992700729927005,
+    "calibration_count": 136,
+    "threshold_rank": 1,
+    "target_met": true,
+    "threshold_op1": 0.05816568300035103,
+    "threshold_method": "conformal",
+    "threshold_comparator": ">",
+    "threshold_source": "validation",
+    "oracle_flag": false,
+    "pixel_auroc": 0.7310967563015249,
+    "aupro_005": 0.03743899242670344,
+    "aupro_030": 0.2801284273120832,
+    "segf1_3sigma": 0.028687241946588126,
+    "iou_3sigma": 0.014552354429499845,
+    "threshold_3sigma": 0.03539312597872156,
+    "n_regions": 304,
+    "n_negatives_sampled": 1987843,
+    "smoothing_sigma": 4.0,
+    "smoothing_units": "input_px",
+    "metrics_version": "2",
+    "fit_seconds": 20.782016499997553,
+    "predict_seconds": 8.137741799997457,
+    "eval_seconds": 20.47265449999759,
+    "e2e_ms_per_image": 24.219469642849575,
+    "peak_vram_mb": 0.0,
+    "escape_by_defect": {
+      "anomaly": 0.88
+    },
+    "fit_extra": {
+      "bins": 64,
+      "oracle_f1max_threshold": "0.0118175"
+    },
+    "notes": "role=development"
+  }
+}

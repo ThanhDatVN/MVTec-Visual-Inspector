@@ -285,6 +285,7 @@ def cmd_study(args) -> int:
         data_root=args.data_root,
         roi_methods=tuple(args.roi_methods),
         region_size=args.region_size,
+        implementation=args.implementation,
     )
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -418,6 +419,8 @@ def build_parser() -> argparse.ArgumentParser:
                          help="dataset root; enables the model-free train-proximity diagnostic")
     p_study.add_argument("--roi-methods", nargs="*", default=[],
                          help="run the object-region study (E02b) for these methods; needs --data-root")
+    p_study.add_argument("--implementation", default=None, metavar="PREFIX",
+                         help="only runs whose implementation id starts with PREFIX")
     p_study.add_argument("--region-size", action="store_true",
                          help="localization by defect size (E04); needs --data-root")
     p_study.set_defaults(func=cmd_study)

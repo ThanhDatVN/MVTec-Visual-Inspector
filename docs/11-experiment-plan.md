@@ -127,6 +127,10 @@ All at a common 320 px long side, so the comparison is not also a resolution com
 **Gate D.** Mean ± std over seeds per category, and the realized test FPR next to the effective
 bound. The seed spread is the noise floor below which no Stage E difference is called real.
 
+*Status: done (45 runs, commit `c53e7f6`).* Results and paired comparisons:
+[reports/E00-E04-development-findings.md](../reports/E00-E04-development-findings.md) §2. The CAE
+never triggered early stopping in 60 epochs; its rung is budget-limited, not measured at its best.
+
 ### Stage D′ — Aggregation and calibration on stored predictions (E02, E03; laptop, no refits)
 
 | # | Study | Question |
@@ -136,6 +140,22 @@ bound. The seed spread is the noise floor below which no Stage E difference is c
 | D′3 | Exchangeability diagnostic | Are validation and test normals exchangeable? AUROC of validation-vs-test-normal scores (0.5 under exchangeability) and a Mann-Whitney p; a realized FPR far above the bound with a shift here is a split problem, not a threshold bug |
 
 Both reuse the registry's predictions (`inspector.analysis`), so they cost minutes, not GPU-hours.
+
+*Status: done.* Added along the way, because the `pcb1` operating point overshot its bound: an
+exact tail-exchangeability test, a calibration-source control, a model-free train-proximity
+check, the object-region aggregation domain (E02b) and localization by defect size. Findings §3–§6
+and §8 of the report above; generated tables in `reports/studies/`.
+
+### Stage D″ — Resolution under a fixed memory budget (E04; laptop)
+
+| # | Run | n | Purpose |
+|---|-----|---|---------|
+| D″1 | PatchCore at 320 / 448 / 640 px × {1% bank, fixed 10 k bank}, seed 0 | 18 | Separate the resolution effect from the bank-size effect, with per-stage host RSS |
+| D″2 | 640 px, fixed 10 k bank, seeds 1–2 | 6 | Seed spread of the candidate recipe |
+
+*Status: D″1 done* — the largest effect measured (+0.03 / +0.19 / +0.25 image AUROC from 320 to
+640 px, intervals excluding zero), with no measurable cost from fixing the bank at 10 k. Report §7.
+Native resolution is open; it needs a smaller candidate fraction or tiling to stay within 16 GB RAM.
 
 ### Stage E — Ablation sweep (Kaggle, ~25 GPU-h)
 

@@ -4,11 +4,12 @@ Industrial surface-defect **detection and localization** trained on normal image
 (cold-start / one-class anomaly detection), benchmarked under a pre-registered protocol,
 with an explainability case book, a robustness study, and a containerized demo service.
 
-> **Status:** Phases P0–P3 complete. Stages A–C of the
-> [run register](docs/11-experiment-plan.md) have run on real VisA data: split audit 15/15,
-> Gate G2's metric control validated at scale, Tier 0 floors, and the PatchCore reference
-> configuration at 3 seeds. 243 tests pass, `ruff` and `mypy` clean.
-> Results: [reports/P3-visa-findings.md](reports/P3-visa-findings.md).
+> **Status:** protocol v2 (after an external review, [docs/13](docs/13-project-review-and-research-roadmap.md)).
+> A PatchCore reference-agreement check (E00), the baseline ladder (E01), aggregation and
+> calibration studies (E02/E03) and a resolution/memory study (E04) have run on three VisA
+> development categories; nine further categories are frozen for confirmation
+> ([ADR-10](docs/07-risks-and-decisions.md)).
+> Results: [reports/E00-E04-development-findings.md](reports/E00-E04-development-findings.md).
 
 ---
 
@@ -39,20 +40,25 @@ One per structural group; three PCBs would test one difficulty three times.
 ## Getting started
 
 ```bash
-python -m pip install -e ".[torch,track,dev]"
-python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+python -m venv .venv                                       # everything installs into the venv
+.venv/Scripts/python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+.venv/Scripts/python -m pip install -e ".[notebook,dev]"
 
 inspector fetch visa --out data/raw                       # 1.93 GB, no account
 inspector audit -c configs/data/visa_pcb1.yaml --data-root data/raw/VisA_20220922
 inspector eda   -c configs/data/visa_pcb1.yaml --data-root data/raw/VisA_20220922 \
                 --categories pcb1 macaroni2 capsules
-inspector run   -c configs/data/visa_pcb1.yaml --data-root data/raw/VisA_20220922 --seeds 0 1 2
+inspector run   -c configs/data/visa_pcb1.yaml -c configs/models/patchcore.yaml \
+                --data-root data/raw/VisA_20220922 --categories pcb1 macaroni2 capsules --seeds 0 1 2 \
+                --set preprocess.long_side=640 --set model.bank_ratio=null --set model.bank_size=10000
+inspector results                                          # regenerate the table from reports/runs
+inspector study --data-root data/raw/VisA_20220922 --roi-methods patchcore   # E02/E03, no refits
 ```
 
 No dataset needed to run the tests — fixtures are generated procedurally:
 
 ```bash
-pytest            # 243 tests, no GPU, no data
+pytest            # no GPU, no data needed
 ```
 
 ## Notebooks
@@ -75,46 +81,56 @@ Both are **generated** by `scripts/build_notebooks.py`, never hand-edited. Opera
 | 04 | [Roadmap & gates](docs/04-roadmap.md) | 12 phases, gates, compute allocation |
 | 05 | [Robustness protocol](docs/05-robustness-protocol.md) | Corruption suite, severities, reporting |
 | 06 | [Engineering & test strategy](docs/06-engineering-mlops-and-testing.md) | Repo layout, MLflow, pytest tiers, VRAM budget |
-| 07 | [Risks & decision log](docs/07-risks-and-decisions.md) | Risk register, ADR-1 … ADR-8 |
+| 07 | [Risks & decision log](docs/07-risks-and-decisions.md) | Risk register, ADR-1 … ADR-10 |
 | 08 | [Licensing & attribution](docs/08-licensing-and-attribution.md) | **Read before publishing anything** |
 | 09 | [References](docs/09-references.md) | Bibliography, each tagged ✅/◐/⚠ by verification status |
 | 10 | [Dataset survey](docs/10-datasets.md) | What is downloadable today, and why VisA |
 | 11 | [**Experiment plan & run register**](docs/11-experiment-plan.md) | Every planned run: purpose, venue, cost, decision rule |
 | 12 | [Running the notebooks](docs/12-running-the-notebooks.md) | Laptop and Kaggle operation |
+| 13 | [External review & research roadmap](docs/13-project-review-and-research-roadmap.md) | Review findings F01–F12 and the E00–E12 programme |
 
 ## Compute
 
 | Where | Hardware | Used for |
 |-------|----------|----------|
-| Laptop | RTX 3050, **4 GB VRAM** | Data work, EDA, Tier 0, PatchCore ≤448², all evaluation, robustness inference, demo |
+| Laptop | RTX 3050, 4 GB VRAM, 16 GB RAM | Data work, EDA, Tier 0, the CAE, PatchCore up to 640 px, every study on stored predictions |
 | Kaggle | P100 16 GB, **~30 GPU-h/week** | Reference configs, ablation sweep, autoencoder training |
 
-The 4 GB ceiling is a first-class design constraint — see the memory-bank arithmetic in
-[docs/06 §3](docs/06-engineering-mlops-and-testing.md#3-vram-and-memory-budget). The binding
+Measured, not assumed: a WideResNet50-2 forward pass at VisA's native 1.5 MP costs under 1 GB of
+VRAM; the binding constraint is host RAM for the patch matrix, which per-image candidate sampling
+bounds and every run now records per stage. The binding
 remote constraint is the weekly quota, not the session limit; the plan budgets ~41 GPU-hours of
 the ~360 available.
 
-## Headline results (VisA, 320 px, 3 seeds)
+## Headline results (VisA development categories, protocol v2)
 
-PatchCore reference configuration against the Tier 0 floors. Full table and caveats in
-[reports/P3-visa-findings.md](reports/P3-visa-findings.md).
+PatchCore reference configuration; operating point from a conservative rank threshold at a 1%
+false-alarm request. Development evidence only — these categories shaped the hypotheses. Details,
+controls and caveats: [reports/E00-E04-development-findings.md](reports/E00-E04-development-findings.md).
 
-| category | image AUROC | AU-PRO@0.05 | SegF1 | escape rate @ operating point |
-|----------|-------------|-------------|-------|-------------------------------|
-| `pcb1` | 0.937 ± 0.001 | 0.732 ± 0.010 | 0.217 | **40.7%** |
-| `macaroni2` | 0.717 ± 0.011 | 0.678 ± 0.030 | 0.043 | **88.7%** |
-| `capsules` | 0.697 ± 0.047 | 0.430 ± 0.025 | 0.527 | **82.7%** |
+| category | image AUROC, 320 px (3 seeds) | image AUROC, 640 px (fixed 10 k bank) | AU-PRO@0.05, 320 → 640 px | realized FPR at 640 px (bound) |
+|----------|------|------|------|------|
+| `pcb1` | 0.944 ± 0.003 | **0.979** | 0.734 → 0.862 | **5.0%** (0.73%) |
+| `macaroni2` | 0.708 ± 0.011 | **0.887** | 0.645 → 0.882 | 2.0% (0.74%) |
+| `capsules` | 0.710 ± 0.044 | **0.916** | 0.430 → 0.853 | 1.7% (1.22%) |
 
-Three things this table says that a leaderboard row would not:
+What the controls behind this table say:
 
-- **The pretrained prior buys localization, not detection.** PatchCore beats the best Tier 0
-  floor by +0.31 to +0.50 AU-PRO@0.05, and *loses* to linear PCA on 64×64 pixels by 0.09 image
-  AUROC on `capsules` and 0.02 on `macaroni2`.
-- **PatchCore's published AU-PRO/SegF1 divergence reproduces here** — `macaroni2` gets 0.678
-  AU-PRO and 0.043 SegF1 — but `capsules` inverts it (0.430 / 0.527), so the property belongs to
-  the category, not the method.
-- **A 0.937 image AUROC still misses four defects in ten** at the threshold you can actually pick
-  from normal-only validation data.
+- **Input resolution is the largest effect, and it needs no larger memory bank.** From 320 to
+  640 px image AUROC rises by +0.03 / +0.19 / +0.25 (paired bootstrap intervals exclude zero),
+  and a bank fixed at 10,000 entries matches one that grows 4× with the pixel count while halving
+  fit and prediction time. Peak host memory at 640 px is ~4 GB, set by the candidate pool.
+- **At a common 320 px, PatchCore was not measurably better than linear PCA at detection** on
+  `macaroni2` and `capsules` — a statement about a resolution-matched comparison that E04 shows is
+  PatchCore's worst case. On `pcb1` a colour histogram alone reaches 0.83.
+- **The `pcb1` false-alarm bound fails at every resolution, and the reason is on the table.** The
+  highest-scoring normals in validation and test are debris on the background felt; three flagged
+  test normals show the same stray object. The upper tail of test normals is not exchangeable
+  with validation (exact permutation p 0.005–0.03) while the bulk is. The rank rule itself is
+  sound: calibrated on held-out test normals, it hits its bound.
+- **Scoring only the object region** — estimated from training normals — lifts `pcb1` recall at
+  the operating point from 0.46 to 0.81 at 320 px, but costs `capsules` 2 points of AUROC: a
+  confirmation candidate, not a default.
 
 ## Findings from building the apparatus
 
@@ -127,9 +143,10 @@ Three came out before any model result existed:
 2. **`OP-FPR1`'s 1% target is not always achievable** ([ADR-7](docs/07-risks-and-decisions.md)).
    A threshold from `n` validation scores floors the false-alarm rate at `1/(n+1)` — 5.0% for AD 2's
    `sheet_metal` (n=19). `numpy.percentile` does not complain; it returns a threshold delivering
-   five times the advertised rate. Thresholds now use the distribution-free order statistic and
-   refuse an unachievable target. VisA sharpens this: its floors land on **both sides** of 1%
-   within one dataset.
+   five times the advertised rate. Thresholds now use a conservative rank, `k = floor(α(n+1))`
+   with a strict `>` ([ADR-9](docs/07-risks-and-decisions.md)), and an unachievable request is
+   relaxed to `1/(n+1)` *and flagged*, never silently. VisA sharpens this: its floors land on
+   **both sides** of 1% within one dataset.
 3. **Localization and detection are separate abilities.** `pixel_pca` reached 0.985 pixel AUROC at
    0.53 image AUROC — good maps, bad map-to-scalar aggregation. Aggregation is now ablated
    separately from the model.

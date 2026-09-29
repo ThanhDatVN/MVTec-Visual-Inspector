@@ -21,8 +21,8 @@ Categories: `pcb1`, `macaroni2`, `capsules`. Dataset: VisA © Amazon, CC BY 4.0 
 > VRAM/host-RAM measurements (§2), and the random-control sanity check (§3.1). **What does not:**
 > every PatchCore number, operating point and escape rate in §4, and any v1-vs-v2 comparison. The
 > interpretations below were also revised where the review showed they claimed more than the
-> evidence supports (F12); the original wording is not kept. v2 results supersede §3–§4 in the
-> E01 report.
+> evidence supports (F12); the original wording is not kept. The protocol-v2 results in
+> [E00-E04-development-findings.md](E00-E04-development-findings.md) supersede §3–§4.
 
 ---
 
