@@ -16,6 +16,7 @@ distribution; p50/p95 model latency is a separate benchmark.
 
 from __future__ import annotations
 
+import math
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -26,6 +27,7 @@ import numpy as np
 from .data.core import DatasetIndex
 from .evaluate import EvalConfig, SplitPredictions, evaluate
 from .models.base import AnomalyModel
+from .utils.memory import PeakRSS, PeakVRAM
 
 NAN = float("nan")
 
@@ -98,6 +100,13 @@ class ExperimentResult:
     eval_seconds: float = NAN
     e2e_ms_per_image: float = NAN
     peak_vram_mb: float = NAN
+    # per stage: host RSS is the binding constraint here, and one end-of-run
+    # peak cannot say which stage caused it (docs/13, F07)
+    peak_rss_fit_mb: float = NAN
+    peak_rss_predict_mb: float = NAN
+    peak_rss_eval_mb: float = NAN
+    peak_vram_fit_mb: float = NAN
+    peak_vram_predict_mb: float = NAN
 
     # diagnostics
     escape_by_defect: dict[str, float] = field(default_factory=dict)
@@ -122,14 +131,9 @@ class ExperimentResult:
         )
 
 
-def _peak_vram_mb() -> float:
-    try:
-        import torch
-    except Exception:
-        return NAN
-    if not torch.cuda.is_available():
-        return NAN
-    return float(torch.cuda.max_memory_allocated() / 1024**2)
+def _max_or_nan(*values: float) -> float:
+    finite = [v for v in values if not math.isnan(v)]
+    return max(finite) if finite else NAN
 
 
 def run_with_predictions(
@@ -147,26 +151,21 @@ def run_with_predictions(
     cfg = eval_config or EvalConfig()
     train, validation, test = indices["train"], indices["validation"], indices[test_split]
 
-    try:
-        import torch
+    with PeakRSS() as rss_fit, PeakVRAM() as vram_fit:
+        t0 = time.perf_counter()
+        model.fit(train)
+        fit_seconds = time.perf_counter() - t0
 
-        if torch.cuda.is_available():
-            torch.cuda.reset_peak_memory_stats()
-    except Exception:
-        pass
+    with PeakRSS() as rss_predict, PeakVRAM() as vram_predict:
+        t0 = time.perf_counter()
+        val_preds = SplitPredictions.from_model(model, validation)
+        test_preds = SplitPredictions.from_model(model, test)
+        predict_seconds = time.perf_counter() - t0
 
-    t0 = time.perf_counter()
-    model.fit(train)
-    fit_seconds = time.perf_counter() - t0
-
-    t0 = time.perf_counter()
-    val_preds = SplitPredictions.from_model(model, validation)
-    test_preds = SplitPredictions.from_model(model, test)
-    predict_seconds = time.perf_counter() - t0
-
-    t0 = time.perf_counter()
-    metrics = evaluate(val_preds, test_preds, cfg)
-    eval_seconds = time.perf_counter() - t0
+    with PeakRSS() as rss_eval:
+        t0 = time.perf_counter()
+        metrics = evaluate(val_preds, test_preds, cfg)
+        eval_seconds = time.perf_counter() - t0
 
     oracle_threshold = metrics.pop("oracle_f1max_threshold", None)
     escape = metrics.pop("escape_by_defect", {})
@@ -192,7 +191,12 @@ def run_with_predictions(
         predict_seconds=predict_seconds,
         eval_seconds=eval_seconds,
         e2e_ms_per_image=1000.0 * predict_seconds / max(1, len(validation) + len(test)),
-        peak_vram_mb=_peak_vram_mb(),
+        peak_vram_mb=_max_or_nan(vram_fit.peak_mb, vram_predict.peak_mb),
+        peak_rss_fit_mb=rss_fit.peak_mb,
+        peak_rss_predict_mb=rss_predict.peak_mb,
+        peak_rss_eval_mb=rss_eval.peak_mb,
+        peak_vram_fit_mb=vram_fit.peak_mb,
+        peak_vram_predict_mb=vram_predict.peak_mb,
         escape_by_defect=escape,
         fit_extra=extra,
         **{k: v for k, v in metrics.items() if k in known},

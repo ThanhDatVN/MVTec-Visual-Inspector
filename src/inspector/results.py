@@ -28,6 +28,8 @@ COLUMNS = [
     "threshold_3sigma", "n_regions", "n_negatives_sampled",
     "smoothing_sigma", "smoothing_units", "metrics_version",
     "fit_seconds", "predict_seconds", "eval_seconds", "e2e_ms_per_image", "peak_vram_mb",
+    "peak_rss_fit_mb", "peak_rss_predict_mb", "peak_rss_eval_mb",
+    "peak_vram_fit_mb", "peak_vram_predict_mb",
     "escape_by_defect", "fit_extra", "notes",
 ]
 

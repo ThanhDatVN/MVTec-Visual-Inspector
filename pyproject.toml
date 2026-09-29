@@ -30,6 +30,9 @@ dependencies = [
     "pillow>=10.0",
     "pyyaml>=6.0",
     "opencv-python-headless>=4.9",
+    # Peak host memory per pipeline stage (utils/memory.py). Host RAM is this
+    # project's binding constraint, so the measurement belongs to every run.
+    "psutil>=5.9",
 ]
 
 [project.optional-dependencies]
@@ -43,7 +46,6 @@ track = [
 notebook = [
     "matplotlib>=3.8",
     "pandas>=2.0",
-    "psutil>=5.9",
     "ipykernel>=6.29",
 ]
 serve = [
