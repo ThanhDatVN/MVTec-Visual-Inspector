@@ -236,10 +236,44 @@ def test_study_pools_seeds_and_separates_configurations(synthetic_root, tmp_path
 
     study = run_studies(registry.root, sizes=(3,), targets=(0.2,), draws=5, n_resamples=20)
     assert {r["rule"] for r in study["aggregation"]} >= {"stored", "max", "mean"}
+    # no patchcore in this registry, so there is no reference to compare against
+    assert study["comparisons"] == []
     assert len(study["normal_shift"]) == 4  # one row per run
     assert all(0.0 <= r["auroc"] <= 1.0 for r in study["normal_shift"])
     text = render_studies(study)
     assert "E02" in text and "E03" in text and "pixel_pca n_components=4" in text
+
+
+def test_method_comparison_is_paired_and_holm_adjusted(tmp_path):
+    from inspector.analysis import RunGroup, method_comparisons
+
+    rng = np.random.default_rng(11)
+    labels = [0] * 40 + [1] * 40
+    ids = [f"img{k}" for k in range(80)]
+
+    def write(run_id, scores):
+        d = tmp_path / run_id
+        for split, sc, lab in (("validation", rng.normal(size=30), [0] * 30), ("test", scores, labels)):
+            p = make_preds(sc, lab, split=split)
+            if split == "test":
+                p.ids = ids
+            p.save(d, with_maps=False)
+
+    base = np.r_[rng.normal(size=40), rng.normal(size=40)]
+    write("ref0", base + np.r_[np.zeros(40), np.full(40, 2.0)])
+    write("same", base + np.r_[np.zeros(40), np.full(40, 2.0)] + rng.normal(0, 0.01, 80))
+    write("worse", base)
+
+    def group(key, method, run):
+        return RunGroup(key, "c", method, method, "test", run_ids=[run], seeds=[0])
+
+    rows = method_comparisons([group("a", "patchcore", "ref0"), group("b", "near", "same"),
+                               group("c", "chance", "worse")], tmp_path, n_resamples=200)
+    by = {r["method"]: r for r in rows}
+    assert by["chance"]["d_auroc"] < -0.3 and by["chance"]["significant_holm"]
+    assert by["chance"]["p_bootstrap"] > 0  # never exactly zero
+    assert abs(by["near"]["d_auroc"]) < 0.02 and not by["near"]["significant_holm"]
+    assert all(r["family_size"] == 2 for r in rows)
 
 
 # --- exchangeability ----------------------------------------------------------
