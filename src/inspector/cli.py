@@ -282,6 +282,8 @@ def cmd_study(args) -> int:
         categories=args.categories,
         draws=args.draws,
         n_resamples=args.resamples,
+        data_root=args.data_root,
+        roi_methods=tuple(args.roi_methods),
     )
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -411,6 +413,10 @@ def build_parser() -> argparse.ArgumentParser:
     p_study.add_argument("--categories", nargs="+", default=None)
     p_study.add_argument("--draws", type=int, default=200, help="calibration subsets per size and seed")
     p_study.add_argument("--resamples", type=int, default=1000, help="bootstrap resamples for E02")
+    p_study.add_argument("--data-root", default=None,
+                         help="dataset root; enables the model-free train-proximity diagnostic")
+    p_study.add_argument("--roi-methods", nargs="*", default=[],
+                         help="run the object-region study (E02b) for these methods; needs --data-root")
     p_study.set_defaults(func=cmd_study)
 
     for name, help_text in (

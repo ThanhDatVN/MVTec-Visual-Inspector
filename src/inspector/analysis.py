@@ -201,12 +201,125 @@ def normal_shift(val_scores: np.ndarray, test: SplitPredictions) -> NormalShift:
     )
 
 
-def exceedance_p_value(fp: int, n: int, bound: float) -> float:
-    """P(X >= fp) for X ~ Binomial(n, bound): how surprising the observed false
-    alarms are if the marginal bound held for this model and these normals."""
-    if n <= 0 or fp <= 0:
+def calibration_source_study(
+    val: SplitPredictions,
+    test: SplitPredictions,
+    *,
+    targets: tuple[float, ...] = (0.02, 0.05, 0.10),
+    draws: int = 500,
+    seed: int = 0,
+) -> list[dict]:
+    """Does the *source* of the calibration normals explain an excess FPR?
+
+    Each draw splits the test normals at random into halves A and B, and draws
+    a validation subset V of the same size n. Both A and V set a rank-k
+    threshold with the same n and k; both are evaluated on B.
+
+    Threshold-from-A is the positive control: A and B are exchangeable by
+    construction, so its expected FPR on B is exactly k/(n+1) whatever the
+    model. If threshold-from-V overshoots while A hits the bound, the excess
+    comes from validation normals not being exchangeable with test normals —
+    not from the rank rule, and not from sampling noise.
+
+    A diagnostic, not an operating procedure: calibrating on test normals
+    spends test data and is never used for a reported operating point.
+    """
+    rng = np.random.default_rng(seed)
+    normals = test.scores[test.labels == 0]
+    anomalies = test.scores[test.labels == 1]
+    n = normals.size // 2
+    if n < 10 or val.scores.size < n:
+        return []
+    rows = []
+    for target in targets:
+        k = conformal_rank(n, target)
+        if k < 1:
+            continue
+        fpr: dict[str, list[float]] = {"validation": [], "test half": []}
+        rec: dict[str, list[float]] = {"validation": [], "test half": []}
+        for _ in range(draws):
+            perm = rng.permutation(normals.size)
+            half_a, half_b = normals[perm[:n]], normals[perm[n:]]
+            subset_v = rng.choice(val.scores, size=n, replace=False)
+            for source, cal in (("validation", subset_v), ("test half", half_a)):
+                thr = np.sort(cal)[::-1][k - 1]
+                fpr[source].append(float(np.mean(half_b > thr)))
+                rec[source].append(float(np.mean(anomalies > thr)) if anomalies.size else float("nan"))
+        for source in fpr:
+            f = np.asarray(fpr[source])
+            rows.append({
+                "source": source, "requested_fpr": target, "n_calibration": n, "rank_k": k,
+                "bound": k / (n + 1), "fpr_mean": float(f.mean()),
+                "fpr_mc_se": float(f.std(ddof=1) / np.sqrt(f.size)),
+                "fpr_p05": float(np.quantile(f, 0.05)), "fpr_p95": float(np.quantile(f, 0.95)),
+                "recall_mean": float(np.mean(rec[source])), "draws": draws,
+            })
+    return rows
+
+
+def train_proximity(indices: dict, *, test_split: str, size: int = 64) -> dict[str, Any]:
+    """How close is each calibration normal, and each test normal, to its
+    nearest *training* image — in plain pixels, independent of any model?
+
+    Validation carved from the training pool may share capture sessions and
+    near-identical frames with the images the model was fitted on. A
+    nearest-neighbour model then scores validation normals lower than fresh
+    normals, and a threshold calibrated on them is too low. Thumbnails are
+    grey, `size` x `size`, standardised per image; distance is Euclidean.
+    `auroc` = P(a test normal is farther from train than a validation image).
+    """
+    from PIL import Image
+
+    from .data.core import NORMAL
+
+    def thumbs(samples) -> np.ndarray:
+        out = []
+        for s in samples:
+            img = Image.open(s.image_path).convert("L").resize((size, size), Image.Resampling.BOX)
+            a = np.asarray(img, dtype=np.float32).ravel()
+            out.append((a - a.mean()) / (a.std() + 1e-6))
+        return np.stack(out)
+
+    train = thumbs(indices["train"])
+    train_sq = (train * train).sum(axis=1)
+
+    def nearest(samples) -> np.ndarray:
+        x = thumbs(samples)
+        d2 = (x * x).sum(axis=1)[:, None] - 2.0 * x @ train.T + train_sq[None, :]
+        return np.sqrt(np.clip(d2.min(axis=1), 0.0, None))
+
+    val_d = nearest(list(indices["validation"]))
+    test_d = nearest([s for s in indices[test_split] if s.label == NORMAL])
+    labels = np.r_[np.zeros(val_d.size, int), np.ones(test_d.size, int)]
+    return {
+        "n_validation": int(val_d.size),
+        "n_test_normals": int(test_d.size),
+        "median_val": float(np.median(val_d)),
+        "median_test": float(np.median(test_d)),
+        "auroc": roc_auc(labels, np.r_[val_d, test_d]),
+        "mannwhitney_p": float(sps.mannwhitneyu(test_d, val_d, alternative="two-sided").pvalue),
+        "thumbnail_size": size,
+    }
+
+
+def exceedance_p_value(fp: int, n_test: int, n_calibration: int, k: int) -> float:
+    """Exact permutation p-value for `fp` test normals above the k-th largest
+    of `n_calibration` calibration normals, if all normals are exchangeable.
+
+    Under exchangeability every ordering of the pooled normals is equally
+    likely, and at least `fp` test normals exceed the threshold iff the top
+    `fp + k - 1` pooled scores contain at least `fp` test normals — a
+    hypergeometric tail.
+
+    A binomial test at the effective rate is the wrong reference here: the
+    bound k/(n+1) is marginal over calibration draws, and conditional on one
+    calibration pool the false-alarm rate is itself random. The binomial
+    version ignores that and overstates the evidence — the random-score
+    control showed it.
+    """
+    if n_test <= 0 or fp <= 0:
         return 1.0
-    return float(sps.binom.sf(fp - 1, n, bound))
+    return float(sps.hypergeom.sf(fp - 1, n_calibration + n_test, n_test, fp + k - 1))
 
 
 # ---------------------------------------------------------------------------
@@ -222,6 +335,7 @@ def aggregation_study(
     reference: str = "stored",
     n_resamples: int = 1000,
     seed: int = 0,
+    extra: dict[str, list[tuple[np.ndarray, np.ndarray]]] | None = None,
 ) -> dict[str, dict]:
     """Compare aggregation rules on the same maps, pooled over fitting seeds.
 
@@ -231,6 +345,9 @@ def aggregation_study(
     AUROC difference over seeds in each resample, so its interval covers
     evaluation-sample uncertainty for the seed-averaged effect. Seed spread is
     reported separately.
+
+    `extra` adds rules computed elsewhere — (validation, test) image scores
+    per seed, in the same order as `runs` — such as region-restricted scores.
     """
     if not runs:
         raise ValueError("no runs")
@@ -242,6 +359,10 @@ def aggregation_study(
     scored = {
         rule: [(aggregate(val, rule), aggregate(test, rule)) for val, test in runs] for rule in rules
     }
+    for rule, per_seed in (extra or {}).items():
+        if len(per_seed) != len(runs):
+            raise ValueError(f"extra rule {rule!r} has {len(per_seed)} seeds, runs have {len(runs)}")
+        scored[rule] = [(np.asarray(v, dtype=np.float64), np.asarray(t, dtype=np.float64)) for v, t in per_seed]
     out: dict[str, dict] = {}
     for rule, per_seed in scored.items():
         aurocs = [roc_auc(labels, t) for _, t in per_seed]
@@ -251,12 +372,17 @@ def aggregation_study(
             thr, eff, met = rank_threshold(v, target_fpr)
             points.append(operating_point(rule, thr, t, labels, requested=target_fpr,
                                           effective=eff, met=met, n_calibration=v.size))
+        k = conformal_rank(per_seed[0][0].size, target_fpr) or 1
         out[rule] = {
             "auroc_mean": float(np.mean(aurocs)),
             "auroc_std": float(np.std(aurocs, ddof=1)) if len(aurocs) > 1 else float("nan"),
             "ap_mean": float(np.mean(aps)),
             "recall_mean": float(np.mean([p.recall for p in points])),
             "fpr_mean": float(np.mean([p.fpr for p in points])),
+            "exceed_p_median": float(np.median([
+                exceedance_p_value(p.test_fp, p.test_normals, v.size, k)
+                for p, (v, _) in zip(points, per_seed)
+            ])),
             "n_seeds": len(per_seed),
         }
 
@@ -264,7 +390,7 @@ def aggregation_study(
     rng = np.random.default_rng(seed)
     pos, neg = np.flatnonzero(labels == 1), np.flatnonzero(labels == 0)
     ref = scored[reference]
-    for rule in rules:
+    for rule in scored:
         if rule == reference:
             continue
         cand = scored[rule]
@@ -369,6 +495,7 @@ class RunGroup:
     test_split: str
     run_ids: list[str] = field(default_factory=list)
     seeds: list[int] = field(default_factory=list)
+    dataset: dict[str, Any] = field(default_factory=dict)
 
 
 def group_runs(registry_root: str | Path, *, role: str = "development") -> list[RunGroup]:
@@ -396,7 +523,8 @@ def group_runs(registry_root: str | Path, *, role: str = "development") -> list[
         category = spec["dataset"]["category"]
         method = spec["model"]["name"]
         if key not in groups:
-            groups[key] = RunGroup(key, category, method, method, spec["dataset"]["test_split"])
+            groups[key] = RunGroup(key, category, method, method, spec["dataset"]["test_split"],
+                                   dataset=spec["dataset"])
             hparams[key] = {**model_hp, "long_side": spec["transform"].get("long_side")}
         groups[key].run_ids.append(record["run_id"])
         groups[key].seeds.append(int(spec["seed"]))
@@ -425,13 +553,27 @@ def run_studies(
     draws: int = 200,
     n_resamples: int = 1000,
     seed: int = 0,
+    data_root: str | Path | None = None,
+    roi_methods: tuple[str, ...] = (),
 ) -> dict[str, Any]:
-    """E02, E03 and the exchangeability diagnostic over a registry."""
+    """E02, E03 and the exchangeability diagnostics over a registry.
+
+    With `data_root`, also measures each category's pixel-space proximity of
+    validation and test normals to the training images (`train_proximity`),
+    and runs the object-region study (E02b) for the methods in `roi_methods`.
+    """
     root = Path(registry_root)
-    out: dict[str, Any] = {"aggregation": [], "calibration": [], "normal_shift": [], "groups": []}
+    out: dict[str, Any] = {
+        "aggregation": [], "calibration": [], "normal_shift": [], "calibration_source": [],
+        "train_proximity": [], "roi": [], "groups": [],
+    }
+    proximity_done: set[str] = set()
     for g in group_runs(root, role=role):
         if (methods and g.method not in methods) or (categories and g.category not in categories):
             continue
+        if data_root is not None and g.category not in proximity_done:
+            out["train_proximity"].append({"category": g.category, **_proximity_for(g, data_root)})
+            proximity_done.add(g.category)
         runs = [
             (SplitPredictions.load(root / rid, "validation"), SplitPredictions.load(root / rid, g.test_split))
             for rid in g.run_ids
@@ -454,15 +596,152 @@ def run_studies(
                 **base, "run_id": g.run_ids[i], "seed": g.seeds[i], **shift.as_dict(),
                 "effective_fpr": eff, "test_fp": op.test_fp, "test_normals": op.test_normals,
                 "realized_fpr": op.fpr, "fpr_upper95": op.fpr_upper95, "recall": op.recall,
-                "exceedance_p": exceedance_p_value(op.test_fp, op.test_normals, eff),
+                "flagged_normals": [
+                    i for i, s, y in zip(test.ids, test.scores, test.labels) if y == 0 and s > thr
+                ],
+                "exceedance_p": exceedance_p_value(
+                    op.test_fp, op.test_normals, int(val.scores.size), conformal_rank(val.scores.size, target_fpr) or 1
+                ),
             })
+            out["calibration_source"] += [
+                {**base, "seed": g.seeds[i], **row}
+                for row in calibration_source_study(val, test, draws=draws, seed=seed + i)
+            ]
         out["calibration"] += [{**base, **row} for row in summarize_calibration(cal_rows)]
+        if data_root is not None and g.method in roi_methods:
+            out["roi"].append(roi_study(g, root, data_root, target_fpr=target_fpr,
+                                        n_resamples=n_resamples, seed=seed))
     out["settings"] = {
         "role": role, "target_fpr": target_fpr, "sizes": list(sizes), "targets": list(targets),
         "draws_per_seed": draws, "bootstrap_resamples": n_resamples, "seed": seed,
         "aggregation_domain": AGGREGATION_DOMAIN,
     }
     return out
+
+
+def _indices_for(group: RunGroup, data_root: str | Path) -> dict:
+    """Rebuild the group's exact splits.
+
+    The split listing is re-hashed and compared with the one recorded in the
+    run spec, so a diagnostic provably looks at the images the runs used.
+    """
+    from .data import ensure_validation, load_category
+    from .runner import split_listing
+
+    ds = group.dataset
+    indices = load_category(data_root, group.category, layout=ds["layout"])
+    indices, _ = ensure_validation(
+        indices, val_fraction=float(ds["val_carve_fraction"]), seed=int(ds["val_carve_seed"])
+    )
+    if split_listing(indices) != ds["split_listing"]:
+        raise ValueError(f"{group.category}: splits differ from the ones the runs used")
+    return indices
+
+
+def _proximity_for(group: RunGroup, data_root: str | Path) -> dict[str, Any]:
+    return train_proximity(_indices_for(group, data_root), test_split=group.test_split)
+
+
+#: Pre-declared before the ROI study was run; the study reports every margin
+#: rather than selecting one (a sensitivity analysis, not a tuning sweep).
+ROI_MARGINS: tuple[float, ...] = (0.01, 0.03, 0.06)
+ROI_DEFAULT_MARGIN = 0.03
+
+
+def roi_study(
+    group: RunGroup,
+    registry_root: str | Path,
+    data_root: str | Path,
+    *,
+    margins: tuple[float, ...] = ROI_MARGINS,
+    reducers: tuple[str, ...] = ("max", "top5%"),
+    target_fpr: float = 0.01,
+    n_resamples: int = 1000,
+    seed: int = 0,
+    max_train_images: int = 100,
+) -> dict[str, Any]:
+    """E02b: restrict the image score to the object region.
+
+    The region comes from `postproc.roi`, fitted on training normals only. The
+    maps are the stored ones; only the aggregation domain changes. Reported
+    alongside: the assumption checks (border foreground share on training
+    images, region size per split) and a *development-only* safety check — the
+    share of annotated defect pixels that fall inside the region. That share
+    is never used to choose a parameter.
+    """
+    from .data.transforms import load_image, load_mask
+    from .postproc.roi import fit_background, mask_on_grid, object_mask
+
+    root = Path(registry_root)
+    indices = _indices_for(group, data_root)
+    train = list(indices["train"])
+    step = max(1, len(train) // max_train_images)
+    background = fit_background(load_image(s.image_path) for s in train[::step])
+    border_share = [background.border_foreground_share(load_image(s.image_path)) for s in train[::step]]
+    train_frac = [float(object_mask(load_image(s.image_path), background).mean()) for s in train[::step * 4]]
+
+    runs = [
+        (SplitPredictions.load(root / rid, "validation"), SplitPredictions.load(root / rid, group.test_split))
+        for rid in group.run_ids
+    ]
+    samples = {s.rel_id(indices["validation"].root): s for split in ("validation", group.test_split)
+               for s in indices[split]}
+
+    # One region per image and margin; the maps' grid is the same for all seeds.
+    regions: dict[str, dict[float, np.ndarray]] = {}
+    coverage: dict[float, list[float]] = {m: [] for m in margins}
+    for image_id, sample in samples.items():
+        image = load_image(sample.image_path)
+        regions[image_id] = {m: object_mask(image, background, margin=m) for m in margins}
+        if sample.mask_path is not None:
+            import cv2
+
+            defect = load_mask(sample.mask_path)
+            for m in margins:
+                region = regions[image_id][m]
+                small = cv2.resize(defect.astype(np.uint8), (region.shape[1], region.shape[0]),
+                                   interpolation=cv2.INTER_NEAREST).astype(bool)
+                if small.any():
+                    coverage[m].append(float(region[small].mean()))
+
+    def region_scores(preds: SplitPredictions, margin: float, reducer: str) -> np.ndarray:
+        fn = AGGREGATIONS[reducer]
+        out = []
+        for image_id, raw in zip(preds.ids, preds.raw_maps):
+            cells = mask_on_grid(regions[image_id][margin], raw.shape)
+            out.append(fn(raw[cells]))
+        return np.asarray(out, dtype=np.float64)
+
+    extra = {
+        f"roi{m:.0%}:{red}": [(region_scores(v, m, red), region_scores(t, m, red)) for v, t in runs]
+        for m in margins for red in reducers
+    }
+    agg = aggregation_study(runs, rules=("stored", *reducers), target_fpr=target_fpr,
+                            n_resamples=n_resamples, seed=seed, extra=extra)
+    val0, test0 = runs[0]
+    return {
+        "category": group.category, "method": group.method, "label": group.label,
+        "rules": agg,
+        "checks": {
+            "border_foreground_share_median": float(np.median(border_share)),
+            "border_foreground_share_max": float(np.max(border_share)),
+            "region_fraction_train_median": float(np.median(train_frac)),
+            "region_fraction_by_split": {
+                f"{m:.0%}": {
+                    "validation": float(np.median([regions[i][m].mean() for i in val0.ids])),
+                    "test": float(np.median([regions[i][m].mean() for i in test0.ids])),
+                } for m in margins
+            },
+            "defect_pixels_inside_median": {
+                f"{m:.0%}": float(np.median(c)) if c else float("nan") for m, c in coverage.items()
+            },
+            "defect_images_fully_inside_share": {
+                f"{m:.0%}": float(np.mean(np.asarray(c) >= 0.999)) if c else float("nan")
+                for m, c in coverage.items()
+            },
+            "defects_measured": len(coverage[margins[0]]),
+        },
+    }
 
 
 def _fmt(value: Any, spec: str = ".3f") -> str:
@@ -507,9 +786,11 @@ def render_studies(study: dict[str, Any]) -> str:
         "## Exchangeability of validation and test normals",
         "",
         "`shift AUROC` = P(a test normal scores above a validation normal); 0.5 under "
-        "exchangeability. `exceed p` = P(at least this many false alarms) if the effective bound "
-        "held for this fitted model and these normals. `FPR 95% UB` is the Clopper-Pearson upper "
-        "bound of the realized rate.",
+        "exchangeability — a test of the *bulk*. `exceed p` is the exact permutation p-value "
+        "of at least this many test normals above the validation threshold if validation and "
+        "test normals were exchangeable — a test of the *upper tail*, which is what the "
+        "threshold depends on. Seeds share their images, so their p-values are not independent. "
+        "`FPR 95% UB` is the Clopper-Pearson upper bound of the realized rate.",
         "",
         "| category | model | seed | n val | n test normals | shift AUROC | MW p | eff. bound | FP | realized FPR | FPR 95% UB | exceed p | recall |",
         "|---|---|---|---|---|---|---|---|---|---|---|---|---|",
@@ -521,6 +802,93 @@ def render_studies(study: dict[str, Any]) -> str:
             f"{r['test_fp']} | {_fmt(r['realized_fpr'], '.1%')} | {_fmt(r['fpr_upper95'], '.1%')} | "
             f"{_fmt(r['exceedance_p'], '.2g')} | {_fmt(r['recall'])} |"
         )
+    lines += [
+        "",
+        "## Calibration source: validation vs exchangeable test normals",
+        "",
+        "Per draw, the test normals are split into halves A and B, and a validation subset V of "
+        "the same size is drawn; A and V each set a rank-k threshold (same n, same k) that is "
+        "evaluated on B. A is the positive control: its expected FPR is exactly the bound. Means "
+        "are over draws, then over seeds. `MC se` is the Monte Carlo error of the mean, not a "
+        "sampling interval. A diagnostic only: no reported operating point uses test normals.",
+        "",
+        "| category | model | request | n | k | bound | FPR from validation | FPR from test half | MC se | recall (val / test half) |",
+        "|---|---|---|---|---|---|---|---|---|---|",
+    ]
+    cs_groups: dict[tuple, dict[str, list[dict]]] = {}
+    for r in study.get("calibration_source", []):
+        key = (r["category"], r["label"], r["requested_fpr"])
+        cs_groups.setdefault(key, {}).setdefault(r["source"], []).append(r)
+    for (category, label, target), by_source in cs_groups.items():
+        v, t = by_source.get("validation", []), by_source.get("test half", [])
+        if not v or not t:
+            continue
+        se = max(max(x["fpr_mc_se"] for x in v), max(x["fpr_mc_se"] for x in t))
+        lines.append(
+            f"| {category} | {label} | {target:.0%} | {v[0]['n_calibration']} | {v[0]['rank_k']} | "
+            f"{v[0]['bound']:.2%} | {np.mean([x['fpr_mean'] for x in v]):.2%} | "
+            f"{np.mean([x['fpr_mean'] for x in t]):.2%} | {se:.2%} | "
+            f"{np.mean([x['recall_mean'] for x in v]):.3f} / {np.mean([x['recall_mean'] for x in t]):.3f} |"
+        )
+    if study.get("train_proximity"):
+        lines += [
+            "",
+            "## Pixel-space proximity to the training images",
+            "",
+            "Distance from each image to its nearest training image (grey thumbnails, standardised "
+            "per image; model-free). `AUROC` = P(a test normal is farther from train than a "
+            "validation image); 0.5 means validation normals are as novel as test normals.",
+            "",
+            "| category | n val | n test normals | median dist (val) | median dist (test) | AUROC | MW p |",
+            "|---|---|---|---|---|---|---|",
+        ]
+        for r in study["train_proximity"]:
+            lines.append(
+                f"| {r['category']} | {r['n_validation']} | {r['n_test_normals']} | "
+                f"{r['median_val']:.2f} | {r['median_test']:.2f} | {r['auroc']:.3f} | "
+                f"{r['mannwhitney_p']:.2g} |"
+            )
+    if study.get("roi"):
+        lines += [
+            "",
+            "## E02b — object-region aggregation domain",
+            "",
+            "The image score is computed only over map cells inside an object region estimated "
+            "from training normals (`inspector.postproc.roi`); maps are unchanged. Margins were "
+            f"declared before the run ({', '.join(f'{m:.0%}' for m in ROI_MARGINS)}; default "
+            f"{ROI_DEFAULT_MARGIN:.0%}) and all are reported. `exceed p` is the median over seeds of "
+            "the exact tail-exchangeability p-value at the operating point. `defects inside` is a "
+            "development-only safety check (median share of annotated defect pixels inside the "
+            "region); it chose nothing.",
+            "",
+            "| category | model | rule | I-AUROC | recall@OP | FPR@OP | exceed p | dAUROC vs stored [95% CI] |",
+            "|---|---|---|---|---|---|---|---|",
+        ]
+        for block in study["roi"]:
+            for rule, r in block["rules"].items():
+                ci = ("-" if "d_auroc_vs_ref" not in r else
+                      f"{r['d_auroc_vs_ref']:+.3f} [{r['d_auroc_ci_low']:+.3f}, {r['d_auroc_ci_high']:+.3f}]")
+                lines.append(
+                    f"| {block['category']} | {block['label']} | {rule} | {_fmt(r['auroc_mean'])} | "
+                    f"{_fmt(r['recall_mean'])} | {_fmt(r['fpr_mean'])} | {_fmt(r['exceed_p_median'], '.2g')} | {ci} |"
+                )
+        lines += [
+            "",
+            "| category | border fg share (median / max) | region share, train | "
+            + " | ".join(f"defects inside @{m:.0%} (median / fully)" for m in ROI_MARGINS) + " |",
+            "|---|---|---|" + "---|" * len(ROI_MARGINS),
+        ]
+        for block in study["roi"]:
+            c = block["checks"]
+            inside = " | ".join(
+                f"{_fmt(c['defect_pixels_inside_median'][f'{m:.0%}'], '.1%')} / "
+                f"{_fmt(c['defect_images_fully_inside_share'][f'{m:.0%}'], '.0%')}"
+                for m in ROI_MARGINS
+            )
+            lines.append(
+                f"| {block['category']} | {c['border_foreground_share_median']:.3f} / "
+                f"{c['border_foreground_share_max']:.3f} | {c['region_fraction_train_median']:.2f} | {inside} |"
+            )
     lines += [
         "",
         "## E03 — calibration rule and calibration-set size",

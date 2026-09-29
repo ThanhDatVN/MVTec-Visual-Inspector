@@ -103,8 +103,16 @@ bold in the final report.
 | C2 | The same on one development category, identical inputs and bank | 1 | Prediction-level agreement on real data, not only a metric match |
 
 **Gate C.** A written tolerance and a met or failed verdict. Every later PatchCore conclusion is
-conditional on it. *Status: not yet run — the reference package is not installed; the corrected
-scoring is tested against hand-computed cases in `tests/models/test_patchcore.py`.*
+conditional on it.
+
+*Status.* **C1 met.** anomalib v2.3.0's scoring and k-center loop, excerpted verbatim as a test
+oracle (`tests/reference/`), agree with ours on identical tensors: patch scores within
+`rtol 1e-4, atol 1e-3` (the float32 error of anomalib's distance expansion), image scores within
+`1e-4`, for support sizes 1, 3 and 9 (`tests/models/test_reference_agreement.py`). The coreset
+matches its greedy order except that anomalib does not return its random start point — recorded
+in the difference ledger. **C2 open:** it needs the full anomalib pipeline on real images, and its
+descriptor (1536-d, no channel reduction) and coreset (all patches, sparse projection) differ from
+ours by design, so C2 will measure the effect of those choices rather than agreement.
 
 ### Stage D — Baseline ladder (E01; laptop)
 

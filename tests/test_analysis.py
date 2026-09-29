@@ -82,6 +82,19 @@ def test_aggregation_study_reports_every_rule_and_a_paired_interval():
     assert out["mean"]["d_auroc_vs_ref"] == pytest.approx(0.0)
 
 
+def test_aggregation_study_accepts_precomputed_rules():
+    rng = np.random.default_rng(10)
+    labels = np.array([0] * 30 + [1] * 30)
+    test = make_preds(np.r_[rng.normal(size=30), rng.normal(1, 1, size=30)], labels)
+    val = make_preds(rng.normal(size=40), [0] * 40, split="validation")
+    perfect = (val.scores * 0.0, labels.astype(float))
+    out = aggregation_study([(val, test)], rules=("stored",), n_resamples=50, extra={"oracle": [perfect]})
+    assert out["oracle"]["auroc_mean"] == 1.0
+    assert out["oracle"]["d_auroc_ci_low"] > 0
+    with pytest.raises(ValueError, match="seeds"):
+        aggregation_study([(val, test)], rules=("stored",), extra={"bad": [perfect, perfect]})
+
+
 def test_aggregation_study_requires_identical_test_images():
     a = (make_preds([0.1] * 5, [0] * 5, split="validation"), make_preds([0.1, 0.9], [0, 1]))
     b = (make_preds([0.1] * 5, [0] * 5, split="validation"), make_preds([0.1, 0.9], [1, 0]))
@@ -140,6 +153,61 @@ def test_calibration_summary_groups_rules_without_a_target():
     assert all(np.isnan(s["requested_fpr"]) for s in heuristic)
 
 
+# --- calibration source -------------------------------------------------------
+
+
+def _source_rows(val_shift: float, seed: int):
+    from inspector.analysis import calibration_source_study
+
+    rng = np.random.default_rng(seed)
+    val = make_preds(rng.normal(val_shift, 1, size=150), [0] * 150, split="validation")
+    test = make_preds(np.r_[rng.normal(size=100), rng.normal(3, 1, size=100)], [0] * 100 + [1] * 100)
+    rows = calibration_source_study(val, test, targets=(0.05,), draws=400, seed=seed)
+    return {r["source"]: r for r in rows}
+
+
+def test_test_half_calibration_hits_the_bound_exactly():
+    """The positive control: A and B are exchangeable by construction."""
+    rows = _source_rows(val_shift=0.0, seed=6)
+    t = rows["test half"]
+    assert t["n_calibration"] == 50 and t["rank_k"] == 2
+    assert t["fpr_mean"] == pytest.approx(t["bound"], abs=4 * t["fpr_mc_se"] + 1e-3)
+
+
+def test_lower_scoring_validation_inflates_the_realized_fpr():
+    """Validation normals that score lower than test normals — the failure
+    mode of calibrating on normals carved from the training pool."""
+    rows = _source_rows(val_shift=-0.7, seed=7)
+    assert rows["validation"]["fpr_mean"] > 2 * rows["test half"]["fpr_mean"]
+
+
+def test_train_proximity_detects_near_copies_of_training_images(tmp_path):
+    from PIL import Image
+
+    from inspector.analysis import train_proximity
+    from inspector.data.core import NORMAL, Sample
+
+    rng = np.random.default_rng(8)
+
+    def sample(name, arr, split):
+        p = tmp_path / f"{name}.png"
+        Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8)).save(p)
+        return Sample(image_path=p, label=NORMAL, defect_type="good", split=split, category="x")
+
+    bases = [rng.integers(0, 255, (32, 32)).astype(float) for _ in range(20)]
+    indices = {
+        "train": [sample(f"tr{i}", b, "train") for i, b in enumerate(bases)],
+        # near-copies of training frames, as a carve from the training pool can be
+        "validation": [sample(f"va{i}", b + rng.normal(0, 3, b.shape), "validation")
+                       for i, b in enumerate(bases[:10])],
+        # genuinely new frames
+        "test": [sample(f"te{i}", rng.integers(0, 255, (32, 32)), "test") for i in range(10)],
+    }
+    out = train_proximity(indices, test_split="test", size=16)
+    assert out["auroc"] > 0.95
+    assert out["median_val"] < out["median_test"]
+
+
 # --- the registry driver ------------------------------------------------------
 
 
@@ -195,7 +263,25 @@ def test_normal_shift_detects_a_shifted_test_set():
     assert shift.mannwhitney_p < 1e-3
 
 
-def test_exceedance_p_value():
-    # 4 false alarms among 100 normals at a 0.73% bound is very unlikely
-    assert exceedance_p_value(4, 100, 1 / 137) < 0.01
-    assert exceedance_p_value(0, 100, 0.01) == 1.0
+def test_exceedance_p_value_matches_the_exact_rank_argument():
+    # k = 1: all 4 top pooled scores must be test normals — 100*99*98*97 / (236*235*234*233)
+    expected = (100 * 99 * 98 * 97) / (236 * 235 * 234 * 233)
+    assert exceedance_p_value(4, 100, 136, 1) == pytest.approx(expected)
+    assert exceedance_p_value(0, 100, 136, 1) == 1.0
+
+
+def test_exceedance_p_value_is_calibrated_under_exchangeability():
+    """Simulate exchangeable calibration and test normals; the permutation
+    p-value must match the simulated tail. The binomial test at k/(n+1) it
+    replaced would have been anti-conservative here."""
+    rng = np.random.default_rng(9)
+    m, n, k, fp = 60, 40, 2, 4
+    hits = 0
+    trials = 20000
+    for _ in range(trials):
+        pool = rng.random(m + n)
+        thr = np.sort(pool[:m])[::-1][k - 1]
+        hits += int(np.sum(pool[m:] > thr) >= fp)
+    assert exceedance_p_value(fp, n, m, k) == pytest.approx(hits / trials, abs=0.01)
+    from scipy import stats as sps
+    assert sps.binom.sf(fp - 1, n, k / (m + 1)) < 0.6 * (hits / trials)
