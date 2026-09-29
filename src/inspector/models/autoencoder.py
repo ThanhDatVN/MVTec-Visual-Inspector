@@ -124,6 +124,7 @@ class ConvAutoencoder(AnomalyModel):
         val_fraction: float = 0.1,
         early_stopping_patience: int = 12,
         residual: str = "multiscale",
+        score_map: str | None = None,
         device: str = "auto",
         seed: int = 0,
         verbose: bool = False,
@@ -134,6 +135,15 @@ class ConvAutoencoder(AnomalyModel):
             raise ValueError(f"unknown loss {loss!r}; use l2, ssim or l2+ssim")
         if residual not in ("raw", "multiscale"):
             raise ValueError(f"unknown residual {residual!r}; use raw or multiscale")
+        # Which residual becomes the anomaly map. Defaults to the training loss,
+        # except that L2+SSIM training scores with SSIM alone — the previous,
+        # implicit behaviour, now explicit and recorded so it can be ablated
+        # (docs/13, F06).
+        default_map = {"l2": "l2", "ssim": "ssim", "l2+ssim": "ssim"}[loss]
+        score_map = score_map or default_map
+        if score_map not in ("l2", "ssim", "l2+ssim"):
+            raise ValueError(f"unknown score_map {score_map!r}")
+        self.score_map = score_map
 
         self.loss_name = loss
         self.latent_dim = latent_dim
@@ -153,6 +163,54 @@ class ConvAutoencoder(AnomalyModel):
         self.history: list[dict[str, float]] = []
         self._stats: dict[str, Any] = {}
         self.name = f"cae_{loss.replace('+', '_')}"
+        # SSIM's stability constants scale with the data range. Inputs are
+        # ImageNet-normalized, spanning roughly 1/std ~ 4.5 units per channel,
+        # not the [0, 1] or [-1, 1] the constants were written for.
+        self._data_range = self._normalized_range()
+
+    def _normalized_range(self) -> float:
+        from ..data.transforms import IMAGENET_STD
+
+        if self.transform.normalize == "imagenet":
+            return float(1.0 / IMAGENET_STD.min())
+        return 1.0
+
+    def hparams(self) -> dict[str, Any]:
+        return {
+            "loss": self.loss_name,
+            "score_map": self.score_map,
+            "latent_dim": self.latent_dim,
+            "base_channels": self.base_channels,
+            "depth": self.depth,
+            "epochs": self.epochs,
+            "lr": self.lr,
+            "batch_size": self.batch_size,
+            "val_fraction": self.val_fraction,
+            "early_stopping_patience": self.patience,
+            "residual": self.residual,
+            "seed": self.seed,
+        }
+
+    # -- geometry ------------------------------------------------------------
+    def _reconstruct(self, batch):
+        """Reconstruct a batch of any spatial size.
+
+        Each of the `depth` stride-2 stages halves the grid, so the network only
+        round-trips sizes divisible by 2**depth. A 1500x1000 image at long side
+        256 is 256x171, which came back as 256x160 — and training compared that
+        with the 171-row input directly (docs/13, F06). Reflect-pad up to the
+        next multiple, reconstruct, crop back: training, validation and scoring
+        all see exactly the original extent.
+        """
+        import torch.nn.functional as F
+
+        h, w = batch.shape[-2:]
+        m = 2**self.depth
+        pad_h, pad_w = (-h) % m, (-w) % m
+        if pad_h or pad_w:
+            batch = F.pad(batch, (0, pad_w, 0, pad_h), mode="reflect")
+        out = self.network(batch)
+        return out[..., :h, :w]
 
     # -- training ----------------------------------------------------------
     def _loss(self, output, target):
@@ -160,7 +218,7 @@ class ConvAutoencoder(AnomalyModel):
 
         if self.loss_name == "l2":
             return F.mse_loss(output, target)
-        structural = 1.0 - ssim_map(output, target).mean()
+        structural = 1.0 - ssim_map(output, target, data_range=self._data_range).mean()
         if self.loss_name == "ssim":
             return structural
         return F.mse_loss(output, target) + structural
@@ -209,7 +267,7 @@ class ConvAutoencoder(AnomalyModel):
             for (batch,) in loader:
                 batch = batch.to(self.device)
                 optimizer.zero_grad(set_to_none=True)
-                loss = self._loss(self.network(batch), batch)
+                loss = self._loss(self._reconstruct(batch), batch)
                 loss.backward()
                 optimizer.step()
                 running += float(loss.item()) * batch.shape[0]
@@ -217,7 +275,7 @@ class ConvAutoencoder(AnomalyModel):
 
             self.network.eval()
             with torch.no_grad():
-                val_loss = float(self._loss(self.network(val_tensor), val_tensor).item())
+                val_loss = float(self._loss(self._reconstruct(val_tensor), val_tensor).item())
 
             self.history.append({"epoch": epoch, "train": train_loss, "val": val_loss})
             if self.verbose:
@@ -247,12 +305,7 @@ class ConvAutoencoder(AnomalyModel):
         }
 
     def fit_extra(self) -> dict[str, Any]:
-        return {
-            **self._stats,
-            "loss": self.loss_name,
-            "latent_dim": self.latent_dim,
-            "residual": self.residual,
-        }
+        return {**self._stats, **self.hparams()}
 
     # -- scoring -----------------------------------------------------------
     def _score(self, image: np.ndarray) -> tuple[float, np.ndarray]:
@@ -264,18 +317,17 @@ class ConvAutoencoder(AnomalyModel):
 
         tensor = torch.as_tensor(image[None, ...], dtype=torch.float32, device=self.device)
         with torch.no_grad():
-            reconstruction = self.network(tensor)
-            if reconstruction.shape[-2:] != tensor.shape[-2:]:
-                reconstruction = F.interpolate(
-                    reconstruction, size=tensor.shape[-2:], mode="bilinear", align_corners=False
-                )
-
-            if self.loss_name in ("ssim", "l2+ssim"):
-                # Score with the same quantity that was optimized, rather than
-                # training on structure and then scoring on intensity.
-                residual = (1.0 - ssim_map(reconstruction, tensor)).mean(dim=1, keepdim=True)
+            reconstruction = self._reconstruct(tensor)
+            structural = (1.0 - ssim_map(reconstruction, tensor, data_range=self._data_range)).mean(
+                dim=1, keepdim=True
+            )
+            intensity = (reconstruction - tensor).pow(2).mean(dim=1, keepdim=True)
+            if self.score_map == "ssim":
+                residual = structural
+            elif self.score_map == "l2":
+                residual = intensity
             else:
-                residual = (reconstruction - tensor).pow(2).mean(dim=1, keepdim=True)
+                residual = structural + intensity
 
             if self.residual == "multiscale":
                 # Raw per-pixel residuals are dominated by edge misalignment;

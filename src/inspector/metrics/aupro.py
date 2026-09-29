@@ -96,6 +96,92 @@ def _region_scores(
     return regions, score[~mask]
 
 
+class PROAccumulator:
+    """Streaming collector for the PRO curve.
+
+    Takes one (map, mask) pair at a time, keeps every defect-region score (the
+    minority) and a seeded Bernoulli sample of negative pixels, so a test split
+    of multi-megapixel maps never has to be resident at once (docs/13, F07).
+
+    Negatives are sampled per image with `rng = default_rng([seed, i])`, so the
+    sample is reproducible and does not depend on how the stream was batched.
+    """
+
+    def __init__(self, *, negative_rate: float = 1.0, seed: int = 0) -> None:
+        if not 0.0 < negative_rate <= 1.0:
+            raise ValueError(f"negative_rate must be in (0, 1], got {negative_rate}")
+        self.negative_rate = negative_rate
+        self.seed = seed
+        self.regions: list[np.ndarray] = []
+        self._negatives: list[np.ndarray] = []
+        self.n_negatives_seen = 0
+        self._count = 0
+
+    def add(self, score: np.ndarray, mask: np.ndarray) -> None:
+        score = np.asarray(score, dtype=np.float64)
+        mask = np.asarray(mask).astype(bool)
+        if score.shape != mask.shape:
+            raise ValueError(f"score shape {score.shape} != mask shape {mask.shape}")
+        regions, negatives = _region_scores(score, mask)
+        self.regions.extend(regions)
+        self.n_negatives_seen += negatives.size
+        if self.negative_rate < 1.0 and negatives.size:
+            rng = np.random.default_rng([self.seed, self._count])
+            negatives = negatives[rng.random(negatives.size) < self.negative_rate]
+        self._negatives.append(negatives)
+        self._count += 1
+
+    def negatives(self) -> np.ndarray:
+        if not self._negatives:
+            return np.empty(0)
+        return np.sort(np.concatenate(self._negatives))
+
+    def curves(
+        self,
+        limits: Sequence[float],
+        *,
+        num_thresholds: int | None = 512,
+        negatives: np.ndarray | None = None,
+    ) -> dict[float, PROCurve]:
+        """One threshold sweep, integrated at every requested limit.
+
+        The grid is the union of the per-limit grids, so the 0.05 curve keeps its
+        full resolution even when 0.30 is computed in the same pass.
+        """
+        for limit in limits:
+            if not 0.0 < limit <= 1.0:
+                raise ValueError(f"integration_limit must be in (0, 1], got {limit}")
+        if not self.regions:
+            raise ValueError("no ground-truth regions found: AU-PRO is undefined")
+        neg = self.negatives() if negatives is None else negatives
+        if neg.size == 0:
+            raise ValueError("no negative pixels found: FPR is undefined")
+
+        grids = [_pick_thresholds(neg, self.regions, limit, num_thresholds) for limit in limits]
+        thresholds = np.unique(np.concatenate(grids))[::-1]
+
+        # count(values >= t) = n - searchsorted(sorted, t, 'left'), vectorized
+        # over every threshold at once instead of a (thresholds x regions) loop.
+        fpr = (neg.size - np.searchsorted(neg, thresholds, side="left")) / neg.size
+        overlap_sum = np.zeros(thresholds.size)
+        for region in self.regions:
+            covered = region.size - np.searchsorted(region, thresholds, side="left")
+            overlap_sum += covered / region.size
+        pro = overlap_sum / len(self.regions)
+
+        return {
+            float(limit): PROCurve(
+                fpr=fpr,
+                pro=pro,
+                thresholds=thresholds,
+                integration_limit=float(limit),
+                n_regions=len(self.regions),
+                n_negative_pixels=int(neg.size),
+            )
+            for limit in limits
+        }
+
+
 def pro_curve(
     scores: Sequence[np.ndarray] | Iterable[np.ndarray],
     masks: Sequence[np.ndarray] | Iterable[np.ndarray],
@@ -105,7 +191,7 @@ def pro_curve(
     max_negative_samples: int | None = 2_000_000,
     seed: int = 0,
 ) -> PROCurve:
-    """Compute the PRO curve.
+    """Compute the PRO curve for in-memory maps.
 
     Args:
         scores: per-image anomaly maps, float, higher = more anomalous. Must be
@@ -113,77 +199,27 @@ def pro_curve(
         masks: per-image binary ground truth, same shapes. Normal images pass an
             all-zero mask and contribute only negatives.
         integration_limit: FPR ceiling, 0.05 for AD 2, 0.30 for classic AD.
-        num_thresholds: how many points to sample the curve at. Thresholds are
-            placed at quantiles of the *negative* score distribution so the FPR
-            axis is sampled uniformly on [0, limit] — sampling uniformly in
-            score space instead would put almost every point outside the
-            integration region and waste the budget. `None` uses every distinct
-            score, which is exact but only tractable on small inputs.
-        max_negative_samples: cap on negative pixels retained for the FPR axis.
-            At 150 images of 8 MP there are ~1.2e9 negatives; a uniform random
-            subsample estimates the same quantiles within noise at a fraction of
-            the memory. Set None to disable.
+        num_thresholds: curve sampling points, placed at quantiles of the
+            *negative* score distribution so the FPR axis is dense on
+            [0, limit]. `None` uses every distinct score: exact, small inputs only.
+        max_negative_samples: cap on negatives kept, drawn uniformly without
+            replacement after collection. The streaming path in `evaluate.py`
+            samples during collection instead.
         seed: for the negative subsample.
-
-    Returns:
-        A `PROCurve`; `.au_pro` is the normalized integral.
     """
     if not 0.0 < integration_limit <= 1.0:
         raise ValueError(f"integration_limit must be in (0, 1], got {integration_limit}")
-
-    regions: list[np.ndarray] = []
-    negative_chunks: list[np.ndarray] = []
-    n_negatives_total = 0
-
+    acc = PROAccumulator()
     for score, mask in zip(scores, masks):
-        score = np.asarray(score, dtype=np.float64)
-        mask = np.asarray(mask).astype(bool)
-        if score.shape != mask.shape:
-            raise ValueError(f"score shape {score.shape} != mask shape {mask.shape}")
-        img_regions, negatives = _region_scores(score, mask)
-        regions.extend(img_regions)
-        n_negatives_total += negatives.size
-        negative_chunks.append(negatives)
+        acc.add(score, mask)
 
-    if not regions:
-        raise ValueError("no ground-truth regions found: AU-PRO is undefined")
-    if n_negatives_total == 0:
-        raise ValueError("no negative pixels found: FPR is undefined")
-
-    negatives = np.concatenate(negative_chunks)
-    del negative_chunks
+    negatives = acc.negatives()
     if max_negative_samples is not None and negatives.size > max_negative_samples:
         rng = np.random.default_rng(seed)
-        negatives = rng.choice(negatives, size=max_negative_samples, replace=False)
-    negatives.sort()
-
-    thresholds = _pick_thresholds(
-        negatives, regions, integration_limit, num_thresholds
-    )
-
-    n_neg = negatives.size
-    fpr = np.empty(thresholds.size)
-    pro = np.empty(thresholds.size)
-    region_sizes = np.array([r.size for r in regions], dtype=np.float64)
-
-    for i, t in enumerate(thresholds):
-        # count of values >= t  ==  n - searchsorted(sorted_values, t, 'left')
-        fpr[i] = (n_neg - np.searchsorted(negatives, t, side="left")) / n_neg
-        overlaps = np.fromiter(
-            (r.size - np.searchsorted(r, t, side="left") for r in regions),
-            dtype=np.float64,
-            count=len(regions),
-        )
-        pro[i] = float(np.mean(overlaps / region_sizes))
-
-    return PROCurve(
-        fpr=fpr,
-        pro=pro,
-        thresholds=thresholds,
-        integration_limit=integration_limit,
-        n_regions=len(regions),
-        n_negative_pixels=n_neg,
-    )
+        negatives = np.sort(rng.choice(negatives, size=max_negative_samples, replace=False))
+    return acc.curves([integration_limit], num_thresholds=num_thresholds, negatives=negatives)[
+        float(integration_limit)
+    ]
 
 
 def _pick_thresholds(

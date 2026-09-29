@@ -8,9 +8,14 @@ Everything the protocol requires around those two is handled here, once:
   cannot accidentally be trained on test data, because the check is in the base
   class rather than in each model's own code.
 * **§4.1 native-resolution scoring** — subclasses return a map at whatever
-  resolution they work in; the base class upsamples to native and smooths. A
-  model that forgot to upsample would report an inflated AU-PRO, because a
-  defect occupies proportionally more of a smaller image.
+  resolution they work in. `postprocess_map` upsamples it to the model's input
+  geometry, smooths it there, and upsamples to native. A model that forgot to
+  upsample would report an inflated AU-PRO, because a defect occupies
+  proportionally more of a smaller image.
+* **Smoothing has units.** `smoothing_sigma` is in *input-image* pixels, as in
+  anomalib's PatchCore. The previous implementation smoothed at native
+  resolution, so sigma=4 meant a filter ~4x narrower than the reference at
+  320 px input on a 1404 px image (docs/13, E05).
 * **Provenance** — the fitted model records what it was fitted on, so a result
   can always be traced back to exact bytes.
 
@@ -41,6 +46,38 @@ class Prediction:
     def __post_init__(self) -> None:
         if not np.isfinite(self.score):
             raise ValueError(f"anomaly score must be finite, got {self.score}")
+
+
+@dataclass(frozen=True)
+class RawPrediction:
+    """What a model emits before any post-processing.
+
+    Stored instead of the native map so that smoothing, aggregation and
+    calibration studies re-evaluate cached predictions without refitting — the
+    native map of one VisA image is 1.5 M floats, the raw PatchCore map 1,200.
+    """
+
+    score: float
+    raw_map: np.ndarray
+    input_size: tuple[int, int]  # (width, height) the model saw
+    native_size: tuple[int, int]  # (width, height) of the source image
+
+
+def postprocess_map(
+    raw_map: np.ndarray,
+    *,
+    input_size: tuple[int, int],
+    native_size: tuple[int, int],
+    sigma: float,
+) -> np.ndarray:
+    """Raw map -> input geometry -> Gaussian(sigma, input px) -> native geometry."""
+    anomaly_map = np.asarray(raw_map, dtype=np.float64)
+    if anomaly_map.ndim != 2:
+        raise ValueError(f"expected a 2-d map, got {anomaly_map.ndim}-d")
+    anomaly_map = upsample_map(anomaly_map, input_size)
+    if sigma > 0:
+        anomaly_map = smooth_map(anomaly_map, sigma)
+    return upsample_map(anomaly_map, native_size)
 
 
 @dataclass
@@ -128,28 +165,52 @@ class AnomalyModel(ABC):
         """Model-specific facts worth recording (memory-bank size, epochs run)."""
         return {}
 
+    def hparams(self) -> dict[str, Any]:
+        """Every constructor setting that changes behaviour.
+
+        Part of the run identity: a run whose hash omitted a default could be
+        silently reused after that default changed (docs/13, F04).
+        """
+        return {}
+
     def _iter_preprocessed(self, index: DatasetIndex) -> Iterator[np.ndarray]:
         for sample in index:
             image = load_image(sample.image_path)
             yield self.transform.normalize_image(self.transform.resize_image(image))
 
     # -- inference ---------------------------------------------------------
-    def predict_image(self, image: np.ndarray) -> Prediction:
-        """Score a native-resolution HxWx3 uint8 image."""
+    def predict_raw(self, image: np.ndarray) -> RawPrediction:
+        """Score a native-resolution HxWx3 uint8 image; no post-processing."""
         if not self._fitted:
             raise RuntimeError(f"{self.name} is not fitted")
 
         native_h, native_w = image.shape[:2]
-        prepared = self.transform.normalize_image(self.transform.resize_image(image))
-        score, raw_map = self._score(prepared)
+        resized = self.transform.resize_image(image)
+        input_h, input_w = resized.shape[:2]
+        score, raw_map = self._score(self.transform.normalize_image(resized))
 
-        anomaly_map = np.asarray(raw_map, dtype=np.float64)
-        if anomaly_map.ndim != 2:
-            raise ValueError(f"{self.name} returned a {anomaly_map.ndim}-d map; expected 2-d")
-        anomaly_map = upsample_map(anomaly_map, (native_w, native_h))
-        if self.smoothing_sigma > 0:
-            anomaly_map = smooth_map(anomaly_map, self.smoothing_sigma)
-        return Prediction(score=float(score), anomaly_map=anomaly_map)
+        raw = np.asarray(raw_map, dtype=np.float32)
+        if raw.ndim != 2:
+            raise ValueError(f"{self.name} returned a {raw.ndim}-d map; expected 2-d")
+        if not np.isfinite(score):
+            raise ValueError(f"{self.name} produced a non-finite image score: {score}")
+        return RawPrediction(
+            score=float(score),
+            raw_map=raw,
+            input_size=(input_w, input_h),
+            native_size=(native_w, native_h),
+        )
+
+    def predict_image(self, image: np.ndarray) -> Prediction:
+        """Score a native-resolution image and return a post-processed native map."""
+        raw = self.predict_raw(image)
+        anomaly_map = postprocess_map(
+            raw.raw_map,
+            input_size=raw.input_size,
+            native_size=raw.native_size,
+            sigma=self.smoothing_sigma,
+        )
+        return Prediction(score=raw.score, anomaly_map=anomaly_map)
 
     def predict_sample(self, sample: Sample) -> Prediction:
         return self.predict_image(load_image(sample.image_path))

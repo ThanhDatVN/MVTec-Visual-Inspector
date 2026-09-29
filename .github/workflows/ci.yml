@@ -70,6 +70,22 @@ jobs:
           path: .coverage
           if-no-files-found: ignore
 
+  # Deep-model behaviour on CPU: scoring geometry, reference agreement,
+  # AE shape handling. No weight downloads: tests that need a pretrained
+  # backbone are marked `slow` and excluded here (docs/13, F11).
+  torch-cpu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install -e ".[dev]"
+      - name: Model tests without pretrained weights
+        run: pytest tests/models -m "not slow" -v
+
   cli-smoke:
     runs-on: ubuntu-latest
     steps:

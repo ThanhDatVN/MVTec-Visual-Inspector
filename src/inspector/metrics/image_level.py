@@ -10,7 +10,8 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 
 import numpy as np
-from sklearn.metrics import average_precision_score, roc_auc_score
+
+from .ranking import average_precision, roc_auc
 
 
 @dataclass(frozen=True)
@@ -52,13 +53,13 @@ def image_auroc(labels, scores) -> float:
     labels, scores = _validate(labels, scores)
     if len(np.unique(labels)) < 2:
         raise ValueError("AUROC needs both classes present")
-    return float(roc_auc_score(labels, scores))
+    return float(roc_auc(labels, scores))
 
 
 def image_aupr(labels, scores) -> float:
     """Average precision. Honest under the class imbalance of a real line."""
     labels, scores = _validate(labels, scores)
-    return float(average_precision_score(labels, scores))
+    return float(average_precision(labels, scores))
 
 
 def f1_max(labels, scores) -> tuple[float, float]:
@@ -74,22 +75,38 @@ def f1_max(labels, scores) -> tuple[float, float]:
 
     tp = np.cumsum(y)
     fp = np.cumsum(1 - y)
+
+    # Evaluate only at the end of each tie group. A threshold cannot separate
+    # equal scores, so a position inside a tie group is not a reachable
+    # operating point, and scoring it lets stable-sort order leak into F1.
+    last = np.r_[np.nonzero(np.diff(s))[0], s.size - 1]
+    tp, fp = tp[last], fp[last]
     fn = y.sum() - tp
     denom = 2 * tp + fp + fn
     with np.errstate(divide="ignore", invalid="ignore"):
         f1 = np.where(denom > 0, 2 * tp / denom, 0.0)
 
     best = int(np.argmax(f1))
-    return float(f1[best]), float(s[best])
+    # Express the operating point for a strict `>` decision: halfway between
+    # the lowest flagged score and the next score down, so `score > threshold`
+    # reproduces exactly the chosen set.
+    cut = last[best]
+    lowest_flagged = s[cut]
+    next_down = s[cut + 1] if cut + 1 < s.size else lowest_flagged - 1.0
+    return float(f1[best]), float((lowest_flagged + next_down) / 2.0)
 
 
 def fpr_at_threshold(labels, scores, threshold: float) -> float:
-    """Realized false-positive rate on normals at a fixed threshold."""
+    """Realized false-positive rate on normals at a fixed threshold.
+
+    Decisions are strict (`score > threshold`), matching `Threshold.apply`; a
+    `>=` here would count calibration-tied normals as alarms (docs/13, F01).
+    """
     labels, scores = _validate(labels, scores)
     normals = scores[labels == 0]
     if normals.size == 0:
         return float("nan")
-    return float(np.mean(normals >= threshold))
+    return float(np.mean(normals > threshold))
 
 
 def recall_at_threshold(labels, scores, threshold: float) -> float:
@@ -98,7 +115,7 @@ def recall_at_threshold(labels, scores, threshold: float) -> float:
     anomalous = scores[labels == 1]
     if anomalous.size == 0:
         return float("nan")
-    return float(np.mean(anomalous >= threshold))
+    return float(np.mean(anomalous > threshold))
 
 
 def compute_image_metrics(
@@ -114,7 +131,7 @@ def compute_image_metrics(
     n_pos = int((labels == 1).sum())
     n_neg = int((labels == 0).sum())
 
-    predicted = scores >= threshold
+    predicted = scores > threshold
     tp = int(np.sum(predicted & (labels == 1)))
     fp = int(np.sum(predicted & (labels == 0)))
     fn = int(np.sum(~predicted & (labels == 1)))
@@ -153,5 +170,5 @@ def escape_rate_by_defect(
     out: dict[str, float] = {}
     for dtype in sorted(set(defect_types[labels == 1].tolist())):
         sel = (labels == 1) & (defect_types == dtype)
-        out[dtype] = float(np.mean(scores[sel] < threshold))
+        out[dtype] = float(np.mean(scores[sel] <= threshold))
     return out

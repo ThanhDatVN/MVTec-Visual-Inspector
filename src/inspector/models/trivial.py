@@ -53,6 +53,9 @@ class RandomScorer(AnomalyModel):
     def fit_extra(self) -> dict[str, Any]:
         return {"seed": self.seed}
 
+    def hparams(self) -> dict[str, Any]:
+        return {"seed": self.seed}
+
 
 class MeanIntensityScorer(AnomalyModel):
     """Gaussian model of the global mean intensity. Four lines of statistics.
@@ -126,6 +129,9 @@ class HistogramScorer(AnomalyModel):
     def fit_extra(self) -> dict[str, Any]:
         return {"bins": self.bins}
 
+    def hparams(self) -> dict[str, Any]:
+        return {"bins": self.bins}
+
 
 class PixelPCAScorer(AnomalyModel):
     """PCA on raw downscaled pixels; score is the reconstruction residual.
@@ -162,27 +168,27 @@ class PixelPCAScorer(AnomalyModel):
         return small.ravel()
 
     def _fit(self, images: Iterator[np.ndarray]) -> None:
-        from sklearn.decomposition import PCA
+        from ..metrics.ranking import pca_fit
 
         matrix = np.stack([self._flatten(image) for image in images])
         if matrix.shape[0] < 2:
             raise ValueError("PCA needs at least 2 training images")
-        # Cannot ask for more components than samples or features.
-        k = min(self.n_components, matrix.shape[0] - 1, matrix.shape[1])
-        self._pca = PCA(n_components=k, svd_solver="full", random_state=0).fit(matrix)
-        self._k = k
+        self._mean, self._components, self._ratio = pca_fit(matrix, self.n_components)
+        self._k = self._components.shape[0]
 
     def _score(self, image: np.ndarray) -> tuple[float, np.ndarray]:
-        flat = self._flatten(image)[None, :]
-        reconstructed = self._pca.inverse_transform(self._pca.transform(flat))
+        from ..metrics.ranking import pca_reconstruct
+
+        flat = self._flatten(image)
+        reconstructed = pca_reconstruct(flat, self._mean, self._components)
         residual = np.abs(flat - reconstructed).reshape(self.work_size, self.work_size)
         return float(residual.mean()), residual.astype(np.float64)
 
     def fit_extra(self) -> dict[str, Any]:
-        return {
-            "n_components": self._k,
-            "explained_variance_ratio": float(self._pca.explained_variance_ratio_.sum()),
-        }
+        return {"n_components": self._k, "explained_variance_ratio": self._ratio}
+
+    def hparams(self) -> dict[str, Any]:
+        return {"n_components": self.n_components, "work_size": self.work_size}
 
 
 TIER0_MODELS: dict[str, type[AnomalyModel]] = {

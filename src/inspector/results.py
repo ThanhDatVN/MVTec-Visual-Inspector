@@ -16,13 +16,18 @@ from .pipeline import ExperimentResult
 #: Column order for reports/results.csv. `threshold_source` and `oracle_flag`
 #: are mandatory, not optional: they are what make the table auditable.
 COLUMNS = [
-    "run_name", "method", "tier", "owner", "category", "dataset", "split", "seed",
-    "config_hash", "git_sha", "dirty", "resolution",
+    "run_id", "run_name", "status", "method", "tier", "owner", "category", "dataset",
+    "split", "seed", "config_hash", "implementation_id", "git_sha", "dirty", "resolution",
     "n_train", "n_validation", "n_test",
     "image_auroc", "image_aupr", "f1max_oracle", "fpr_at_op1", "recall_at_op1",
+    "tp", "fp", "tn", "fn",
+    "requested_fpr", "effective_fpr", "calibration_count", "threshold_rank", "target_met",
+    "threshold_op1", "threshold_method", "threshold_comparator", "threshold_source",
+    "oracle_flag",
     "pixel_auroc", "aupro_005", "aupro_030", "segf1_3sigma", "iou_3sigma",
-    "threshold_op1", "threshold_3sigma", "threshold_source", "oracle_flag",
-    "fit_seconds", "predict_seconds", "latency_per_image_ms",
+    "threshold_3sigma", "n_regions", "n_negatives_sampled",
+    "smoothing_sigma", "smoothing_units", "metrics_version",
+    "fit_seconds", "predict_seconds", "eval_seconds", "e2e_ms_per_image", "peak_vram_mb",
     "escape_by_defect", "fit_extra", "notes",
 ]
 
@@ -41,7 +46,8 @@ _DISPLAY = [
     ("AU-PRO@0.05", "aupro_005", "{:.4f}"),
     ("AU-PRO@0.30", "aupro_030", "{:.4f}"),
     ("SegF1", "segf1_3sigma", "{:.4f}"),
-    ("ms/img", "latency_per_image_ms", "{:.1f}"),
+    ("target FPR", "requested_fpr", "{:.2%}"),
+    ("eff. FPR", "effective_fpr", "{:.2%}"),
 ]
 
 
@@ -56,6 +62,19 @@ def append_results(results: Sequence[ExperimentResult], path: str | Path) -> Pat
         if new_file:
             writer.writeheader()
         for result in results:
+            writer.writerow(result.as_row())
+    return path
+
+
+def write_results(results: Sequence[ExperimentResult], path: str | Path) -> Path:
+    """Write a complete table (overwriting), sorted for stable diffs."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    ordered = sorted(results, key=lambda r: (r.category, r.tier, r.method, r.seed, r.run_id))
+    with open(path, "w", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(fh, fieldnames=COLUMNS, extrasaction="ignore")
+        writer.writeheader()
+        for result in ordered:
             writer.writerow(result.as_row())
     return path
 

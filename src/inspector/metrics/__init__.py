@@ -17,12 +17,14 @@ from .image_level import (
     recall_at_threshold,
 )
 from .pixel_level import PixelMetrics, compute_pixel_metrics, pixel_auroc, segmentation_metrics
+from .ranking import average_precision, pca_fit, pca_reconstruct, roc_auc
 
 __all__ = [
     "ImageMetrics",
     "PROCurve",
     "PixelMetrics",
     "au_pro",
+    "average_precision",
     "compute_image_metrics",
     "compute_pixel_metrics",
     "escape_rate_by_defect",
@@ -30,8 +32,11 @@ __all__ = [
     "fpr_at_threshold",
     "image_aupr",
     "image_auroc",
+    "pca_fit",
+    "pca_reconstruct",
     "pixel_auroc",
     "pro_curve",
     "recall_at_threshold",
+    "roc_auc",
     "segmentation_metrics",
 ]

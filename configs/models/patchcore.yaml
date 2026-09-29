@@ -1,8 +1,10 @@
-# PatchCore reference configuration (docs/03, Tier 3).
-# This is the row every ablation is measured against, so it is frozen at
-# Gate G5 and changed only via an ADR.
+# PatchCore reference configuration (docs/03, Tier 3; corrected per docs/13).
+# The row every ablation is measured against: changed only via an ADR.
 
-_base_: ../base.yaml
+# A FRAGMENT, not a full config: compose it after a data config,
+#   inspector run -c configs/data/visa_pcb1.yaml -c configs/models/patchcore.yaml
+# It deliberately has no _base_: inheriting base.yaml here would re-apply the
+# base defaults over the data config's layout and category when composed.
 
 experiment:
   tier: T3
@@ -11,12 +13,19 @@ experiment:
 model:
   name: patchcore
   backbone: wide_resnet50_2
-  weights: imagenet
   layers: [layer2, layer3]
-  patch_pool: 3              # 3x3 average pooling = local neighbourhood awareness
-  projection_dim: 1024
-  coreset_ratio: 0.01        # greedy k-center; ablate 0.001 / 0.1 / 0.25 / 1.0
-  coreset_presubsample: 0.1  # random pre-subsample before greedy (VRAM, docs/06 §3)
-  k: 1                       # neighbours for the anomaly map
-  image_score_reweight: true # the paper's image-level re-weighting
-  feature_dtype: float16     # distances still accumulate in fp32
+  patch_pool: 3                 # 3x3 local neighbourhood aggregation
+  projection_dim: 1024          # adaptive channel pooling, not learned PCA
+  candidate_fraction: 0.1       # per-image random sample DURING extraction (bounded memory)
+  bank_ratio: 0.01              # of all patches; capped by candidates and logged (F08)
+  bank_size: null               # set instead of bank_ratio for a fixed absolute budget
+  coreset_projection_dim: 128   # JL projection for greedy selection, as in the author code
+  patch_neighbors: 1
+  patch_reduction: nearest      # nearest | mean | kth  (a k sweep needs mean/kth — F02)
+  reweight: true                # reference re-weighting from the query patch (F03)
+  reweight_neighbors: 9         # anomalib default support size
+  batch_size: 4
+  feature_dtype: float16
+
+preprocess:
+  long_side: 320                # host-RAM bound; see reports/P3-visa-findings.md

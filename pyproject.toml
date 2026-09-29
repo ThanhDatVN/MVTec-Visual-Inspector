@@ -11,26 +11,40 @@ requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "thanh" }]
 
-# Core dependencies. Deliberately split: the data/metrics/fixture layers are
-# torch-free so the test suite runs in CI without a GPU or a 2.5 GB wheel.
+# Core dependencies: exactly what `src/inspector` imports on the torch-free path,
+# verified by grep (review F11). The data, metrics, EDA, transforms and fixture
+# layers need these and nothing else, so CI runs the suite without a GPU or a
+# 2.5 GB wheel.
+#
+# numpy>=2.0 is a real floor, not a guess: the metrics call `np.trapezoid`,
+# which does not exist before NumPy 2.0.
+#
+# scikit-learn is deliberately absent. It was used for two functions, and on
+# Windows it imports pyarrow, whose DLL Smart App Control blocks; sklearn's own
+# guard catches ModuleNotFoundError but not the ImportError that a blocked DLL
+# raises, so one unused transitive package made the whole suite unimportable.
+# ROC-AUC, average precision and PCA are implemented in metrics/ranking.py.
 dependencies = [
-    "numpy>=1.26",
+    "numpy>=2.0",
     "scipy>=1.11",
-    "scikit-learn>=1.3",
-    "scikit-image>=0.22",
     "pillow>=10.0",
     "pyyaml>=6.0",
-    "pandas>=2.0",
+    "opencv-python-headless>=4.9",
 ]
 
 [project.optional-dependencies]
 torch = [
     "torch>=2.2",
     "torchvision>=0.17",
-    "opencv-python-headless>=4.9",
 ]
 track = [
     "mlflow>=2.12",
+]
+notebook = [
+    "matplotlib>=3.8",
+    "pandas>=2.0",
+    "psutil>=5.9",
+    "ipykernel>=6.29",
 ]
 serve = [
     "fastapi>=0.110",

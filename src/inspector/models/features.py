@@ -160,10 +160,31 @@ class FeatureExtractor:
         out_dtype = torch.float16 if self.spec.dtype == "float16" else torch.float32
         return flat.to(out_dtype), (h, w)
 
+    def iter_embeddings(
+        self, batches: Iterable[np.ndarray]
+    ) -> Iterator[tuple[np.ndarray, tuple[int, int]]]:
+        """Yield `(descriptors, grid)` one image at a time, as host fp16/fp32 arrays.
+
+        This is the bounded-memory path (docs/13, F07). A caller that samples
+        from each image as it arrives never holds more than one batch of full
+        descriptors plus whatever it chooses to keep, whereas `embed_all`
+        materializes every patch of every image — 37 GB for `pcb1` at native
+        resolution.
+        """
+        for batch in batches:
+            descriptors, grid = self.embed_batch(batch)
+            host = descriptors.cpu().numpy()
+            for image_descriptors in host:
+                yield image_descriptors, grid
+
     def embed_all(
         self, batches: Iterable[np.ndarray], *, progress=None
     ) -> tuple[np.ndarray, tuple[int, int]]:
-        """Descriptors for every image, concatenated on the host as fp16."""
+        """Descriptors for every image, concatenated on the host.
+
+        Unbounded in memory: prefer `iter_embeddings` with sampling for anything
+        larger than a fixture. Kept for small diagnostics and exact comparisons.
+        """
         chunks: list[np.ndarray] = []
         grid: tuple[int, int] = (0, 0)
         seen = 0

@@ -16,22 +16,46 @@ from typing import Literal
 
 import numpy as np
 
-ThresholdMethod = Literal["percentile", "sigma", "f1_max", "manual"]
+ThresholdMethod = Literal["conformal", "sigma", "f1_max", "manual", "always_accept"]
+
+#: What to do when the requested false-alarm rate is finer than `n` calibration
+#: normals can resolve. Chosen explicitly by the caller and recorded, because
+#: every option changes what the reported FPR target means:
+#:
+#: * ``reject``        — raise. The honest default for a library call.
+#: * ``relax``         — use the finest achievable rank (the calibration
+#:                       maximum, effective rate 1/(n+1)) and record that the
+#:                       requested target was *not* met.
+#: * ``always_accept`` — an explicit never-flag threshold (+inf). Meets any
+#:                       FPR target trivially, with zero recall, and says so.
+InsufficientPolicy = Literal["reject", "relax", "always_accept"]
 
 
 @dataclass(frozen=True)
 class Threshold:
-    """A decision threshold that knows where it came from."""
+    """A decision threshold that knows where it came from.
+
+    The decision is **strict**: a score is flagged only if it is *greater than*
+    the threshold. That is not a style choice. With the threshold set to a
+    calibration order statistic, `>` makes the finite-sample exceedance bound
+    hold even when scores tie; `>=` flags every future score equal to the
+    calibration value, and on a model that emits repeated scores it flagged
+    100% of normal samples in the review's diagnostic (docs/13, F01).
+    """
 
     value: float
     method: ThresholdMethod
     source_split: str
     oracle: bool = False
-    #: Free-form detail, e.g. {"percentile": 99} or {"n_sigma": 3}.
+    #: Free-form detail, e.g. {"requested_fpr": 0.01, "effective_fpr": 0.0073}.
     params: dict[str, float] | None = None
 
     def __post_init__(self) -> None:
-        if not np.isfinite(self.value):
+        if np.isnan(self.value):
+            raise ValueError("threshold must not be NaN")
+        # +inf is the explicit never-flag threshold and is allowed only when it
+        # is labelled as such; anywhere else an infinite value is a bug.
+        if np.isinf(self.value) and self.method != "always_accept":
             raise ValueError(f"threshold must be finite, got {self.value}")
         if self.oracle and self.source_split == "validation":
             raise ValueError("a validation-derived threshold is not an oracle")
@@ -45,36 +69,53 @@ class Threshold:
     def label(self) -> str:
         return f"{self.method}@{self.source_split}" + (" (oracle)" if self.oracle else "")
 
+    @property
+    def comparator(self) -> str:
+        return ">"
+
     def as_dict(self) -> dict[str, object]:
         return asdict(self)
 
     def apply(self, scores: np.ndarray) -> np.ndarray:
-        return np.asarray(scores) >= self.value
+        """Boolean decisions: True where a score is strictly above the threshold."""
+        return np.asarray(scores) > self.value
 
 
-def min_achievable_fpr(n_validation: int) -> float:
-    """The lowest false-alarm rate calibratable from `n` normal validation images.
+def min_achievable_fpr(n_calibration: int) -> float:
+    """The finest false-alarm rate a rank-based rule can resolve from `n` normals.
 
-    Distribution-free result: if the threshold is the k-th largest of n
-    exchangeable validation scores, a fresh normal sample exceeds it with
-    probability k/(n+1). The most extreme choice is k = 1, the sample maximum,
-    which gives 1/(n+1).
+    For exchangeable calibration and test scores, flagging a test score strictly
+    above the k-th largest calibration score has marginal false-alarm
+    probability at most k/(n+1). The smallest nontrivial rule is k = 1 — the
+    calibration maximum — so the finest resolvable rate is 1/(n+1).
 
-    This has sharp consequences for MVTec AD 2, whose validation splits hold
-    19-48 images:
+    This is the resolution of a finite order-statistic procedure, **not** a
+    universal impossibility theorem: a parametric tail model can claim finer
+    rates, at the price of assumptions the data cannot check. It is also a
+    *marginal* statement, averaged over calibration draws; it does not bound the
+    conditional FPR of one fitted model, and distribution shift (lighting, a new
+    camera) breaks the exchangeability it rests on.
 
-        sheet_metal  n=19  ->  minimum achievable FPR 5.0%
-        fruit_jelly  n=37  ->  2.6%
-        walnuts      n=48  ->  2.0%
+    Consequences for the datasets in use:
 
-    So `OP-FPR1`'s nominal 1% target is **not reachable** on any of the three
-    study categories. Asking numpy for the 99th percentile of 19 numbers does
-    not fail; it returns a threshold that will produce roughly 5% false alarms
-    while the report claims 1%. Naming the limit is what stops that.
+        MVTec AD 2  sheet_metal  n=19   -> 5.00%
+        VisA        capsules     n=81   -> 1.22%
+        VisA        pcb1         n=136  -> 0.73%
     """
-    if n_validation < 1:
-        raise ValueError("need at least one validation score")
-    return 1.0 / (n_validation + 1)
+    if n_calibration < 1:
+        raise ValueError("need at least one calibration score")
+    return 1.0 / (n_calibration + 1)
+
+
+def conformal_rank(n: int, target_fpr: float) -> int:
+    """The largest k with k/(n+1) <= target_fpr; 0 if none exists.
+
+    Equivalently, the threshold is the ``ceil((n+1)(1-alpha))``-th smallest
+    calibration score (Angelopoulos & Bates, arXiv:2107.07511). A tiny tolerance
+    absorbs floating-point error at exact boundaries, where k/(n+1) equals the
+    target exactly and the bound still holds.
+    """
+    return math.floor(target_fpr * (n + 1) + 1e-9)
 
 
 def from_validation_fpr(
@@ -82,55 +123,69 @@ def from_validation_fpr(
     *,
     target_fpr: float = 0.01,
     split_name: str = "validation",
-    strict: bool = True,
+    policy: InsufficientPolicy = "reject",
 ) -> Threshold:
-    """Threshold targeting `target_fpr` false alarms, via order statistics.
+    """Conservative threshold for a target image-level false-alarm rate.
 
-    Picks k = ceil(target_fpr * (n + 1)) and uses the k-th largest validation
-    score. The exceedance probability of that order statistic is k/(n+1) for any
-    continuous score distribution, so this is distribution-free — unlike a
-    linearly-interpolated percentile, which assumes a tail shape the data cannot
-    support at these sample sizes.
+    Uses the k-th largest calibration score with ``k = floor(target * (n+1))``
+    and a strict ``>`` decision, so the marginal false-alarm probability is
+    ``k/(n+1) <= target`` for exchangeable scores, ties included.
 
-    Args:
-        strict: if True, raise when `target_fpr` is below `min_achievable_fpr`.
-            Silently clamping would mean the reported target and the achievable
-            rate disagree, which is exactly the failure this function exists to
-            prevent.
+    The previous rule used ``ceil`` instead of ``floor``, which made the
+    effective rate *exceed* the target — 2/137 = 1.46% for a 1% request on
+    `pcb1`. The reported target was then an optimistic label rather than a
+    bound (docs/13, F01).
+
+    Both the requested and the effective rate are recorded; they are different
+    numbers and conflating them was the original defect.
     """
     scores = np.asarray(validation_scores, dtype=np.float64).ravel()
     n = scores.size
     if n < 4:
         raise ValueError(
-            f"need at least 4 validation scores to set an operating point, got {n}"
+            f"need at least 4 calibration scores to set an operating point, got {n}"
         )
+    if not np.isfinite(scores).all():
+        raise ValueError("calibration scores contain NaN or inf")
     if not 0.0 < target_fpr < 1.0:
         raise ValueError(f"target_fpr must be in (0, 1), got {target_fpr}")
 
     floor = min_achievable_fpr(n)
-    if target_fpr < floor:
-        message = (
-            f"target FPR {target_fpr:.1%} is below the {floor:.1%} floor achievable from "
-            f"{n} validation images (1/(n+1)). Either accept {floor:.1%}, or obtain more "
-            "normal validation images; no estimator can calibrate past this."
-        )
-        if strict:
-            raise ValueError(message)
-        target_fpr = floor
+    k = conformal_rank(n, target_fpr)
+    base = {
+        "requested_fpr": float(target_fpr),
+        "n_calibration": float(n),
+        "min_achievable_fpr": float(floor),
+    }
 
-    k = max(1, math.ceil(target_fpr * (n + 1)))
-    k = min(k, n)
+    if k == 0:
+        message = (
+            f"requested FPR {target_fpr:.2%} is finer than the {floor:.2%} resolution of a "
+            f"rank-based rule on {n} calibration normals (1/(n+1)). Relax the target, use "
+            "more calibration normals, or choose policy='relax'/'always_accept' explicitly."
+        )
+        if policy == "reject":
+            raise ValueError(message)
+        if policy == "always_accept":
+            return Threshold(
+                value=float("inf"),
+                method="always_accept",
+                source_split=split_name,
+                params={**base, "effective_fpr": 0.0, "order_rank_k": 0.0, "target_met": 1.0},
+            )
+        k = 1  # relax: finest achievable rank, recorded as not meeting the target
+
     ordered = np.sort(scores)[::-1]  # descending
+    effective = k / (n + 1)
     return Threshold(
         value=float(ordered[k - 1]),
-        method="percentile",
+        method="conformal",
         source_split=split_name,
         params={
-            "target_fpr": float(target_fpr),
-            "expected_fpr": float(k / (n + 1)),
-            "order_statistic_k": float(k),
-            "n_validation": float(n),
-            "min_achievable_fpr": float(floor),
+            **base,
+            "effective_fpr": float(effective),
+            "order_rank_k": float(k),
+            "target_met": float(effective <= target_fpr + 1e-12),
         },
     )
 
@@ -140,19 +195,20 @@ def from_validation_percentile(
     *,
     percentile: float = 99.0,
     split_name: str = "validation",
-    strict: bool = False,
+    policy: InsufficientPolicy = "reject",
 ) -> Threshold:
-    """`OP-FPR1` expressed as a percentile; delegates to `from_validation_fpr`.
+    """`OP-FPR1` stated as a percentile; delegates to `from_validation_fpr`.
 
-    Kept because the protocol states the operating point as "the 99th percentile
-    of validation scores", but implemented through the order-statistic rule so
-    that the achievability floor is enforced rather than silently exceeded.
+    The protocol phrases the operating point as "the 99th percentile of
+    validation scores". It is implemented through the conservative rank rule,
+    never through `numpy.percentile`, whose interpolation assumes a tail shape
+    a few dozen scores cannot support.
     """
     return from_validation_fpr(
         validation_scores,
         target_fpr=(100.0 - percentile) / 100.0,
         split_name=split_name,
-        strict=strict,
+        policy=policy,
     )
 
 
@@ -200,8 +256,7 @@ def sigma_from_stats(
     """`OP-3SIGMA` from pooled statistics computed in a streaming pass.
 
     Exists because the anomaly maps of a real validation split do not fit in
-    memory: `PredictionStore.map_stats` accumulates mean and std over the maps
-    one at a time, and this turns those two numbers into the threshold without
+    memory: the evaluator accumulates mean and std over the maps one at a time, and this turns those two numbers into the threshold without
     ever materializing the pixels.
     """
     return Threshold(

@@ -1,6 +1,9 @@
 # Convolutional autoencoder baseline (docs/03, Tier 1).
 
-_base_: ../base.yaml
+# A FRAGMENT, not a full config: compose it after a data config,
+#   inspector run -c configs/data/visa_pcb1.yaml -c configs/models/cae.yaml
+# It deliberately has no _base_: inheriting base.yaml here would re-apply the
+# base defaults over the data config's layout and category when composed.
 
 experiment:
   tier: T1
@@ -8,11 +11,17 @@ experiment:
 
 model:
   name: cae
+  loss: l2                      # l2 | ssim | l2+ssim
+  score_map: null               # null = follow the loss (l2+ssim scores with ssim)
   latent_dim: 128
   base_channels: 32
   depth: 4
-  loss: l2                   # l2 | ssim | l2+ssim
-  residual: multiscale       # raw | multiscale
-  epochs: 100
+  epochs: 60
   lr: 0.0002
-  early_stopping_patience: 15
+  batch_size: 16
+  val_fraction: 0.1             # inner hold-out from TRAIN, not the calibration split
+  early_stopping_patience: 12
+  residual: multiscale
+
+preprocess:
+  long_side: 256

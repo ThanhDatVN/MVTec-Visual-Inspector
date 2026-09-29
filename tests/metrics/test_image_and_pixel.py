@@ -83,10 +83,26 @@ def test_aupr_reflects_imbalance():
 
 
 def test_f1_max_finds_the_separating_threshold():
+    """The returned threshold is for a strict `>` decision: halfway between the
+    lowest flagged score and the next one down, so applying it reproduces the
+    chosen set exactly."""
     labels = np.array([0, 0, 1, 1])
-    best, threshold = f1_max(labels, np.array([0.1, 0.2, 0.8, 0.9]))
+    scores = np.array([0.1, 0.2, 0.8, 0.9])
+    best, threshold = f1_max(labels, scores)
     assert best == pytest.approx(1.0)
-    assert threshold == pytest.approx(0.8)
+    assert threshold == pytest.approx(0.5)
+    assert np.array_equal(scores > threshold, labels.astype(bool))
+
+
+def test_f1_max_ignores_positions_inside_a_tie_group():
+    """A threshold cannot split tied scores. Evaluating F1 inside a tie group
+    lets the stable-sort order leak into the result: here the sorted order puts
+    the anomaly first among the three 0.5s, which would falsely claim F1 = 1."""
+    labels = np.array([1, 0, 0, 0])
+    scores = np.array([0.5, 0.5, 0.5, 0.1])
+    best, threshold = f1_max(labels, scores)
+    assert best == pytest.approx(0.5)  # precision 1/3, recall 1 -> F1 0.5
+    assert np.array_equal(scores > threshold, scores >= 0.5)
 
 
 def test_fpr_and_recall_at_a_fixed_threshold():
@@ -128,10 +144,10 @@ def test_pixel_auroc_perfect_and_inverted():
     assert pixel_auroc([1.0 - mask.astype(float)], [mask]) == pytest.approx(0.0, abs=1e-6)
 
 
-def test_pixel_auroc_matches_sklearn_on_a_small_case():
+def test_pixel_auroc_matches_the_exact_rank_based_auroc():
     """The histogram implementation exists for memory reasons; it must still
-    agree with the exact computation where the exact one is affordable."""
-    from sklearn.metrics import roc_auc_score
+    agree with the exact rank-based computation where that one is affordable."""
+    from inspector.metrics.ranking import roc_auc
 
     rng = np.random.default_rng(3)
     masks, scores = [], []
@@ -141,8 +157,8 @@ def test_pixel_auroc_matches_sklearn_on_a_small_case():
         masks.append(m)
         scores.append(rng.random((40, 40)) + 0.5 * m)
 
-    exact = roc_auc_score(
-        np.concatenate([m.ravel() for m in masks]),
+    exact = roc_auc(
+        np.concatenate([m.ravel() for m in masks]).astype(int),
         np.concatenate([s.ravel() for s in scores]),
     )
     assert pixel_auroc(scores, masks) == pytest.approx(exact, abs=1e-4)

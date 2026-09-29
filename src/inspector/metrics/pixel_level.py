@@ -6,7 +6,7 @@ the normal-pixel majority and saturates near 1.0 while localization is still
 visibly poor. AU-PRO and AUPIMO are the metrics that decide anything here.
 
 Memory note: 150 test images at 8 MP is 1.2e9 pixels. Materialising that as a
-float64 array for `sklearn.roc_auc_score` needs ~10 GB. The AUROC here is
+float64 array for a pooled rank-based AUROC needs ~10 GB. The AUROC here is
 therefore computed from score histograms in a single streaming pass, which is
 O(bins) in memory and exact to the bin width.
 """
@@ -48,43 +48,59 @@ def _score_range(
     return lo, hi
 
 
+class PixelHistogram:
+    """Streaming pixel-AUROC accumulator over a fixed score range.
+
+    The range must be known before the pass. For post-processed maps it is:
+    bilinear upsampling and Gaussian smoothing are convex combinations, so no
+    output value leaves the [min, max] of the raw maps they came from.
+    """
+
+    def __init__(self, lo: float, hi: float, *, bins: int = 1 << 16) -> None:
+        self.lo, self.hi, self.bins = float(lo), float(hi), bins
+        self.constant = not hi > lo
+        self.edges = np.linspace(lo, hi if hi > lo else lo + 1.0, bins + 1)
+        self.pos = np.zeros(bins, dtype=np.int64)
+        self.neg = np.zeros(bins, dtype=np.int64)
+
+    def add(self, score: np.ndarray, mask: np.ndarray) -> None:
+        score = np.asarray(score, dtype=np.float64).ravel()
+        mask = np.asarray(mask).astype(bool).ravel()
+        if score.size != mask.size:
+            raise ValueError("score and mask sizes differ")
+        idx = np.clip(np.searchsorted(self.edges, score, side="right") - 1, 0, self.bins - 1)
+        self.pos += np.bincount(idx[mask], minlength=self.bins)
+        self.neg += np.bincount(idx[~mask], minlength=self.bins)
+
+    def auroc(self) -> float:
+        n_pos, n_neg = int(self.pos.sum()), int(self.neg.sum())
+        if n_pos == 0 or n_neg == 0:
+            raise ValueError("pixel AUROC needs both defect and normal pixels")
+        if self.constant:  # constant maps carry no ranking information
+            return 0.5
+        # Sweep from the highest bin down; trapezoid over (FPR, TPR), which
+        # gives tied scores within a bin half credit.
+        tpr = np.concatenate(([0.0], np.cumsum(self.pos[::-1]) / n_pos))
+        fpr = np.concatenate(([0.0], np.cumsum(self.neg[::-1]) / n_neg))
+        return float(np.trapezoid(tpr, fpr))
+
+
 def pixel_auroc(
     scores: Sequence[np.ndarray],
     masks: Sequence[np.ndarray],
     *,
     bins: int = 1 << 16,
 ) -> float:
-    """Streaming, histogram-based pixel AUROC.
+    """Histogram-based pixel AUROC for in-memory maps.
 
     With 65 536 bins the quantization error is far below the run-to-run spread
-    of any model we will compare, and memory stays constant regardless of image
-    size. Ties inside a bin are handled by the trapezoidal rule, which is the
-    standard treatment for tied scores.
+    of any model compared here, and memory is constant in image size.
     """
     lo, hi = _score_range(scores)
-    if hi <= lo:  # constant map: no ranking information at all
-        return 0.5
-    edges = np.linspace(lo, hi, bins + 1)
-
-    pos = np.zeros(bins, dtype=np.int64)
-    neg = np.zeros(bins, dtype=np.int64)
+    hist = PixelHistogram(lo, hi, bins=bins)
     for score, mask in zip(scores, masks):
-        score = np.asarray(score, dtype=np.float64).ravel()
-        mask = np.asarray(mask).astype(bool).ravel()
-        if score.size != mask.size:
-            raise ValueError("score and mask sizes differ")
-        idx = np.clip(np.searchsorted(edges, score, side="right") - 1, 0, bins - 1)
-        pos += np.bincount(idx[mask], minlength=bins)
-        neg += np.bincount(idx[~mask], minlength=bins)
-
-    n_pos, n_neg = int(pos.sum()), int(neg.sum())
-    if n_pos == 0 or n_neg == 0:
-        raise ValueError("pixel AUROC needs both defect and normal pixels")
-
-    # Sweep from the highest bin down; trapezoid over (FPR, TPR).
-    tpr = np.concatenate(([0.0], np.cumsum(pos[::-1]) / n_pos))
-    fpr = np.concatenate(([0.0], np.cumsum(neg[::-1]) / n_neg))
-    return float(np.trapezoid(tpr, fpr))
+        hist.add(score, mask)
+    return hist.auroc()
 
 
 def segmentation_metrics(
@@ -102,7 +118,7 @@ def segmentation_metrics(
     """
     tp = fp = fn = tn = 0
     for score, mask in zip(scores, masks):
-        pred = np.asarray(score) >= threshold
+        pred = np.asarray(score) > threshold
         gt = np.asarray(mask).astype(bool)
         if pred.shape != gt.shape:
             raise ValueError(f"score shape {pred.shape} != mask shape {gt.shape}")

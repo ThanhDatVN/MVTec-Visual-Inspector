@@ -1,16 +1,17 @@
 """The experiment pipeline.
 
-One function, `run_experiment`, executes the protocol end to end in the only
-order the protocol permits:
+`run_experiment` executes the protocol in the only order it permits:
 
-    fit on train  ->  score validation  ->  freeze normalizer and thresholds
-                  ->  score test        ->  compute metrics  ->  emit one row
+    fit on train  ->  predict validation  ->  predict test  ->  evaluate
 
-The ordering is the point. Thresholds and normalization statistics are fixed
-*before* a single test image is scored, so there is no code path in which the
-test split can influence them (rules L3, L4). Every model in the ladder goes
-through this same function, which is also what makes the comparison between
-them controlled.
+Every threshold and normalization statistic is derived inside `evaluate` from
+the validation predictions, so no code path lets the test split reach an
+operating point (rules L3, L4). All models go through this function, which is
+what keeps comparisons between them controlled.
+
+Timing note (docs/13, F12): `e2e_ms_per_image` is end-to-end — it includes
+reading the image from disk and resizing it. It is **not** a model latency
+distribution; p50/p95 model latency is a separate benchmark.
 """
 
 from __future__ import annotations
@@ -23,16 +24,15 @@ from typing import Any
 import numpy as np
 
 from .data.core import DatasetIndex
-from .metrics import compute_image_metrics, compute_pixel_metrics, escape_rate_by_defect, pro_curve
+from .evaluate import EvalConfig, SplitPredictions, evaluate
 from .models.base import AnomalyModel
-from .postproc import ScoreNormalizer, from_validation_percentile
-from .postproc.thresholds import from_test_f1_max, sigma_from_stats
-from .predictions import PredictionStore
+
+NAN = float("nan")
 
 
 @dataclass
 class ExperimentResult:
-    """One row of the canonical results table (docs/02 §4)."""
+    """One row of the canonical results table (docs/02 §4, extended by docs/13 §9)."""
 
     # identity
     run_name: str
@@ -43,9 +43,12 @@ class ExperimentResult:
     dataset: str
     split: str
     seed: int
+    run_id: str = ""
     config_hash: str = ""
+    implementation_id: str = ""
     git_sha: str = ""
     dirty: bool = True
+    status: str = "completed"
 
     # configuration
     resolution: str = ""
@@ -53,30 +56,48 @@ class ExperimentResult:
     n_validation: int = 0
     n_test: int = 0
 
-    # image level
-    image_auroc: float = float("nan")
-    image_aupr: float = float("nan")
-    f1max_oracle: float = float("nan")
-    fpr_at_op1: float = float("nan")
-    recall_at_op1: float = float("nan")
+    # image level, at the validation-calibrated operating point
+    image_auroc: float = NAN
+    image_aupr: float = NAN
+    f1max_oracle: float = NAN
+    fpr_at_op1: float = NAN
+    recall_at_op1: float = NAN
+    tp: int = 0
+    fp: int = 0
+    tn: int = 0
+    fn: int = 0
 
-    # pixel level
-    pixel_auroc: float = float("nan")
-    aupro_005: float = float("nan")
-    aupro_030: float = float("nan")
-    segf1_3sigma: float = float("nan")
-    iou_3sigma: float = float("nan")
-
-    # provenance of the operating points
-    threshold_op1: float = float("nan")
-    threshold_3sigma: float = float("nan")
+    # the operating point itself: requested and effective are different numbers
+    requested_fpr: float = NAN
+    effective_fpr: float = NAN
+    calibration_count: int = 0
+    threshold_rank: int = 0
+    target_met: bool = False
+    threshold_op1: float = NAN
+    threshold_method: str = ""
+    threshold_comparator: str = ">"
     threshold_source: str = "validation"
     oracle_flag: bool = False
 
-    # systems
-    fit_seconds: float = float("nan")
-    predict_seconds: float = float("nan")
-    latency_per_image_ms: float = float("nan")
+    # pixel level
+    pixel_auroc: float = NAN
+    aupro_005: float = NAN
+    aupro_030: float = NAN
+    segf1_3sigma: float = NAN
+    iou_3sigma: float = NAN
+    threshold_3sigma: float = NAN
+    n_regions: int = 0
+    n_negatives_sampled: int = 0
+    smoothing_sigma: float = NAN
+    smoothing_units: str = ""
+    metrics_version: str = ""
+
+    # resources and time
+    fit_seconds: float = NAN
+    predict_seconds: float = NAN
+    eval_seconds: float = NAN
+    e2e_ms_per_image: float = NAN
+    peak_vram_mb: float = NAN
 
     # diagnostics
     escape_by_defect: dict[str, float] = field(default_factory=dict)
@@ -93,116 +114,67 @@ class ExperimentResult:
 
     def summary(self) -> str:
         return (
-            f"{self.method:<16s} {self.category:<14s} "
+            f"{self.method:<16s} {self.category:<11s} s{self.seed} "
             f"I-AUROC={self.image_auroc:.4f}  AU-PRO@5%={self.aupro_005:.4f}  "
-            f"AU-PRO@30%={self.aupro_030:.4f}  P-AUROC={self.pixel_auroc:.4f}  "
-            f"SegF1={self.segf1_3sigma:.4f}  FPR@OP1={self.fpr_at_op1:.3f}  "
-            f"recall@OP1={self.recall_at_op1:.3f}"
+            f"P-AUROC={self.pixel_auroc:.4f}  SegF1={self.segf1_3sigma:.4f}  "
+            f"FPR={self.fpr_at_op1:.3f} (target {self.requested_fpr:.2%}, "
+            f"effective {self.effective_fpr:.2%})  recall={self.recall_at_op1:.3f}"
         )
 
 
-def run_experiment(
+def _peak_vram_mb() -> float:
+    try:
+        import torch
+    except Exception:
+        return NAN
+    if not torch.cuda.is_available():
+        return NAN
+    return float(torch.cuda.max_memory_allocated() / 1024**2)
+
+
+def run_with_predictions(
     model: AnomalyModel,
     indices: dict[str, DatasetIndex],
     *,
-    workdir: str | Path,
     seed: int = 0,
     test_split: str = "test_public",
-    fpr1_percentile: float = 99.0,
-    sigma_n: float = 3.0,
-    aupro_limits: tuple[float, ...] = (0.05, 0.30),
-    aupro_num_thresholds: int | None = 512,
-    report_oracle: bool = True,
-    keep_predictions: bool = False,
-) -> ExperimentResult:
-    """Fit, calibrate, evaluate, and return one results row."""
+    eval_config: EvalConfig | None = None,
+) -> tuple[ExperimentResult, SplitPredictions, SplitPredictions]:
+    """Fit, predict and evaluate; also return the raw predictions for storage."""
     for required in ("train", "validation", test_split):
         if required not in indices:
             raise KeyError(f"missing split {required!r}; have {sorted(indices)}")
-
+    cfg = eval_config or EvalConfig()
     train, validation, test = indices["train"], indices["validation"], indices[test_split]
-    workdir = Path(workdir)
 
-    # -- 1. fit, on train only ------------------------------------------
+    try:
+        import torch
+
+        if torch.cuda.is_available():
+            torch.cuda.reset_peak_memory_stats()
+    except Exception:
+        pass
+
     t0 = time.perf_counter()
     model.fit(train)
     fit_seconds = time.perf_counter() - t0
 
-    # -- 2. calibrate, on validation only -------------------------------
-    # Everything that defines an operating point is frozen here, before any
-    # test image has been seen. This ordering is the enforcement of L3/L4.
-    with PredictionStore(workdir / "validation", keep=False) as val_store:
-        for sample, prediction in model.predict_index(validation):
-            val_store.add(sample, prediction, validation.root)
-
-        threshold_op1 = from_validation_percentile(
-            val_store.score_array, percentile=fpr1_percentile
-        )
-        # Pooled map statistics are accumulated in a streaming pass; a real
-        # validation split's maps do not fit in memory.
-        val_stats = val_store.map_stats()
-        threshold_sigma = sigma_from_stats(
-            val_stats["mean"], val_stats["std"], n_sigma=sigma_n, n_pixels=val_stats["n"]
-        )
-        normalizer = ScoreNormalizer().fit_bounds(
-            val_stats["min"], val_stats["max"], split_name="validation"
-        )
-
-    # -- 3. score the test split ----------------------------------------
     t0 = time.perf_counter()
-    test_store = PredictionStore(workdir / test_split, keep=keep_predictions)
-    for sample, prediction in model.predict_index(test):
-        test_store.add(sample, prediction, test.root)
+    val_preds = SplitPredictions.from_model(model, validation)
+    test_preds = SplitPredictions.from_model(model, test)
     predict_seconds = time.perf_counter() - t0
 
-    try:
-        result = _evaluate(
-            model=model,
-            store=test_store,
-            train=train,
-            validation=validation,
-            test=test,
-            seed=seed,
-            threshold_op1=threshold_op1,
-            threshold_sigma=threshold_sigma,
-            aupro_limits=aupro_limits,
-            aupro_num_thresholds=aupro_num_thresholds,
-            report_oracle=report_oracle,
-            fit_seconds=fit_seconds,
-            predict_seconds=predict_seconds,
-        )
-        result.fit_extra["normalizer_bounds"] = f"{normalizer.bounds[0]:.4g}..{normalizer.bounds[1]:.4g}"
-        if keep_predictions:
-            test_store.save_index()
-        return result
-    finally:
-        if not keep_predictions:
-            test_store.cleanup()
+    t0 = time.perf_counter()
+    metrics = evaluate(val_preds, test_preds, cfg)
+    eval_seconds = time.perf_counter() - t0
 
+    oracle_threshold = metrics.pop("oracle_f1max_threshold", None)
+    escape = metrics.pop("escape_by_defect", {})
+    extra = dict(model.fit_record.extra) if model.fit_record else {}
+    if oracle_threshold is not None:
+        extra["oracle_f1max_threshold"] = f"{oracle_threshold:.6g}"
 
-def _evaluate(
-    *,
-    model: AnomalyModel,
-    store: PredictionStore,
-    train: DatasetIndex,
-    validation: DatasetIndex,
-    test: DatasetIndex,
-    seed: int,
-    threshold_op1,
-    threshold_sigma,
-    aupro_limits: tuple[float, ...],
-    aupro_num_thresholds: int | None,
-    report_oracle: bool,
-    fit_seconds: float,
-    predict_seconds: float,
-) -> ExperimentResult:
-    labels = store.label_array
-    scores = store.score_array
-
-    image_metrics = compute_image_metrics(
-        labels, scores, threshold=threshold_op1.value, threshold_source=threshold_op1.source_split
-    )
-
+    known = set(ExperimentResult.__dataclass_fields__)
     result = ExperimentResult(
         run_name=f"{model.name}-{test.category}-s{seed}",
         method=model.name,
@@ -216,51 +188,65 @@ def _evaluate(
         n_train=len(train),
         n_validation=len(validation),
         n_test=len(test),
-        image_auroc=image_metrics.auroc,
-        image_aupr=image_metrics.aupr,
-        f1max_oracle=image_metrics.f1_max_oracle if report_oracle else float("nan"),
-        fpr_at_op1=image_metrics.fpr,
-        recall_at_op1=image_metrics.recall,
-        threshold_op1=threshold_op1.value,
-        threshold_3sigma=threshold_sigma.value,
-        threshold_source=threshold_op1.source_split,
-        oracle_flag=False,
         fit_seconds=fit_seconds,
         predict_seconds=predict_seconds,
-        latency_per_image_ms=1000.0 * predict_seconds / max(1, len(store)),
-        fit_extra=dict(model.fit_record.extra) if model.fit_record else {},
+        eval_seconds=eval_seconds,
+        e2e_ms_per_image=1000.0 * predict_seconds / max(1, len(validation) + len(test)),
+        peak_vram_mb=_peak_vram_mb(),
+        escape_by_defect=escape,
+        fit_extra=extra,
+        **{k: v for k, v in metrics.items() if k in known},
     )
+    return result, val_preds, test_preds
 
-    result.escape_by_defect = escape_rate_by_defect(
-        labels, scores, np.asarray(store.defect_types), threshold_op1.value
+
+def run_experiment(
+    model: AnomalyModel,
+    indices: dict[str, DatasetIndex],
+    *,
+    workdir: str | Path | None = None,
+    seed: int = 0,
+    test_split: str = "test_public",
+    fpr1_percentile: float = 99.0,
+    sigma_n: float = 3.0,
+    aupro_limits: tuple[float, ...] = (0.05, 0.30),
+    aupro_num_thresholds: int | None = 512,
+    smoothing_sigma: float | None = None,
+    threshold_policy: str = "relax",
+    report_oracle: bool = True,
+    keep_predictions: bool = False,
+) -> ExperimentResult:
+    """Fit, calibrate on validation, evaluate on test, return one results row.
+
+    `smoothing_sigma` defaults to the model's own setting so direct callers keep
+    their behaviour; the runner always passes it explicitly from the config, so
+    two methods in one table cannot silently differ in post-processing — which
+    is exactly what happened to the first VisA comparison (Tier 0 at sigma 4
+    through the CLI, PatchCore at sigma 0 through an inline script).
+    """
+    cfg = EvalConfig(
+        smoothing_sigma=model.smoothing_sigma if smoothing_sigma is None else smoothing_sigma,
+        target_fpr=(100.0 - fpr1_percentile) / 100.0,
+        threshold_policy=threshold_policy,
+        sigma_n=sigma_n,
+        aupro_limits=tuple(aupro_limits),
+        aupro_num_thresholds=aupro_num_thresholds or 512,
+        report_oracle=report_oracle,
     )
-
-    # Pixel metrics need both classes of pixel present.
-    if any(label == 1 for label in store.labels):
-        pixel_metrics = compute_pixel_metrics(
-            list(store.maps()),
-            list(store.masks()),
-            threshold=threshold_sigma.value,
-            threshold_source=threshold_sigma.source_split,
-        )
-        result.pixel_auroc = pixel_metrics.auroc
-        result.segf1_3sigma = pixel_metrics.seg_f1
-        result.iou_3sigma = pixel_metrics.iou
-
-        for limit in aupro_limits:
-            curve = pro_curve(
-                list(store.maps()),
-                list(store.masks()),
-                integration_limit=limit,
-                num_thresholds=aupro_num_thresholds,
-            )
-            if abs(limit - 0.05) < 1e-9:
-                result.aupro_005 = curve.au_pro
-            elif abs(limit - 0.30) < 1e-9:
-                result.aupro_030 = curve.au_pro
-
-    if report_oracle:
-        oracle = from_test_f1_max(labels, scores, split_name=test.split_name)
-        result.fit_extra["oracle_f1max_threshold"] = f"{oracle.value:.6g}"
-
+    result, val_preds, test_preds = run_with_predictions(
+        model, indices, seed=seed, test_split=test_split, eval_config=cfg
+    )
+    if keep_predictions and workdir is not None:
+        val_preds.save(workdir)
+        test_preds.save(workdir)
     return result
+
+
+def aggregate_seeds(results: list[ExperimentResult], metric: str) -> tuple[float, float, int]:
+    """(mean, sample std, n) of one metric across seeds."""
+    values = np.asarray([getattr(r, metric) for r in results], dtype=float)
+    values = values[np.isfinite(values)]
+    if values.size == 0:
+        return NAN, NAN, 0
+    std = float(values.std(ddof=1)) if values.size > 1 else NAN
+    return float(values.mean()), std, int(values.size)

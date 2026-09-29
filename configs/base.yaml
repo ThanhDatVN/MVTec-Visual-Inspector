@@ -37,11 +37,18 @@ model:
 postproc:
   # Fitted once on validation and frozen (protocol rule L3).
   normalize_scores: true
+  # In INPUT-image pixels (anomalib's convention): raw map -> input geometry ->
+  # Gaussian -> native. Previously applied at native resolution, i.e. a filter
+  # ~4x narrower than the reference at 320 px input on a 1404 px image.
   gaussian_sigma: 4.0
   upsample_to_native: true      # all metrics computed at native resolution
 
 thresholds:
-  op_fpr1_percentile: 99.0      # OP-FPR1: target 1% false alarms on normals
+  # OP-FPR1: conservative rank rule, strict `score > threshold` (ADR-9). The
+  # effective rate k/(n+1) never exceeds the target; if the target is finer
+  # than 1/(n+1), `policy` decides and the result records target_met=false.
+  target_fpr: 0.01
+  policy: relax                 # reject | relax | always_accept
   op_sigma_n: 3.0               # OP-3SIGMA: the official AD 2 rule
   report_oracle: true           # OP-F1MAX, always labelled (oracle)
 
@@ -50,6 +57,7 @@ metrics:
   aupro_num_thresholds: 512
   pixel_auroc_bins: 65536
   max_negative_samples: 2000000
+  sampling_seed: 0              # seeds the per-image Bernoulli negative sample
 
 run:
   seed: 0

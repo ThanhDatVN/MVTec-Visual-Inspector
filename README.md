@@ -4,9 +4,11 @@ Industrial surface-defect **detection and localization** trained on normal image
 (cold-start / one-class anomaly detection), benchmarked under a pre-registered protocol,
 with an explainability case book, a robustness study, and a containerized demo service.
 
-> **Status:** Phases P0–P2 complete and committed; the models and experiment plan for P3–P7 are in
-> place. 243 tests pass, `ruff` and `mypy` clean. No result on real data has been produced yet —
-> everything measured so far is on synthetic fixtures and proves only that the code is correct.
+> **Status:** Phases P0–P3 complete. Stages A–C of the
+> [run register](docs/11-experiment-plan.md) have run on real VisA data: split audit 15/15,
+> Gate G2's metric control validated at scale, Tier 0 floors, and the PatchCore reference
+> configuration at 3 seeds. 243 tests pass, `ruff` and `mypy` clean.
+> Results: [reports/P3-visa-findings.md](reports/P3-visa-findings.md).
 
 ---
 
@@ -92,9 +94,31 @@ The 4 GB ceiling is a first-class design constraint — see the memory-bank arit
 remote constraint is the weekly quota, not the session limit; the plan budgets ~41 GPU-hours of
 the ~360 available.
 
-## Findings so far
+## Headline results (VisA, 320 px, 3 seeds)
 
-Three came out of building the measurement apparatus, before any model result existed:
+PatchCore reference configuration against the Tier 0 floors. Full table and caveats in
+[reports/P3-visa-findings.md](reports/P3-visa-findings.md).
+
+| category | image AUROC | AU-PRO@0.05 | SegF1 | escape rate @ operating point |
+|----------|-------------|-------------|-------|-------------------------------|
+| `pcb1` | 0.937 ± 0.001 | 0.732 ± 0.010 | 0.217 | **40.7%** |
+| `macaroni2` | 0.717 ± 0.011 | 0.678 ± 0.030 | 0.043 | **88.7%** |
+| `capsules` | 0.697 ± 0.047 | 0.430 ± 0.025 | 0.527 | **82.7%** |
+
+Three things this table says that a leaderboard row would not:
+
+- **The pretrained prior buys localization, not detection.** PatchCore beats the best Tier 0
+  floor by +0.31 to +0.50 AU-PRO@0.05, and *loses* to linear PCA on 64×64 pixels by 0.09 image
+  AUROC on `capsules` and 0.02 on `macaroni2`.
+- **PatchCore's published AU-PRO/SegF1 divergence reproduces here** — `macaroni2` gets 0.678
+  AU-PRO and 0.043 SegF1 — but `capsules` inverts it (0.430 / 0.527), so the property belongs to
+  the category, not the method.
+- **A 0.937 image AUROC still misses four defects in ten** at the threshold you can actually pick
+  from normal-only validation data.
+
+## Findings from building the apparatus
+
+Three came out before any model result existed:
 
 1. **No downscale is safe for small-defect categories.** At `sheet_metal`'s real scale
    (4224×1056, 1.5–3.5 px scratches), resizing to 256 puts **100%** of defect regions below one

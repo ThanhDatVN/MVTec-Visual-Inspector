@@ -22,69 +22,107 @@ from inspector.postproc import (
 )
 from inspector.results import COLUMNS, append_results, render_markdown
 
-# --- the achievability floor ------------------------------------------------
+# --- the conservative rank rule (docs/13, F01) ------------------------------
 
-#: Validation split sizes for the three study categories, from the AD 2 paper.
+#: Validation split sizes for the three AD 2 categories, from the AD 2 paper.
 AD2_VALIDATION_SIZES = {"sheet_metal": 19, "fruit_jelly": 37, "walnuts": 48}
 
 
-def test_floor_is_one_over_n_plus_one():
+def test_resolution_is_one_over_n_plus_one():
     assert min_achievable_fpr(19) == pytest.approx(1 / 20)
     assert min_achievable_fpr(99) == pytest.approx(1 / 100)
 
 
 @pytest.mark.parametrize(("category", "n"), sorted(AD2_VALIDATION_SIZES.items()))
-def test_one_percent_fpr_is_unreachable_on_every_study_category(category, n):
-    """The finding. `OP-FPR1` claims a 1% false-alarm target; none of the three
-    categories has enough validation images to calibrate below 2%."""
+def test_one_percent_is_not_resolvable_on_ad2_categories(category, n):
+    """A rank rule on 19-48 normals cannot express a 1% false-alarm rate."""
     assert min_achievable_fpr(n) > 0.01, category
 
 
-def test_strict_mode_refuses_an_unachievable_target():
-    """Refusing beats clamping: a silently clamped target means the report says
-    1% while the model delivers 5%, which is the exact failure this prevents."""
+@pytest.mark.parametrize(("n", "target"), [(136, 0.01), (135, 0.01), (81, 0.05), (48, 0.05), (19, 0.05), (999, 0.001)])
+def test_effective_rate_never_exceeds_the_target(n, target):
+    """The defect the review found: `ceil` made the effective rate exceed the
+    target (2/137 = 1.46% for a 1% request on pcb1). `floor` makes k/(n+1) an
+    upper bound."""
+    rng = np.random.default_rng(n)
+    threshold = from_validation_fpr(rng.normal(size=n), target_fpr=target)
+    assert threshold.params["effective_fpr"] <= target + 1e-12
+    assert threshold.params["target_met"] == 1.0
+
+
+def test_pcb1_case_from_the_review():
+    """n=136 at 1%: the old rule took the 2nd largest (1.46%); the conservative
+    rule takes the maximum (1/137 = 0.73%)."""
+    scores = np.arange(136, dtype=float)
+    threshold = from_validation_fpr(scores, target_fpr=0.01)
+    assert threshold.params["order_rank_k"] == 1
+    assert threshold.value == 135.0
+    assert threshold.params["effective_fpr"] == pytest.approx(1 / 137)
+
+
+def test_exact_boundary_is_achievable():
+    """k/(n+1) exactly equal to the target satisfies the bound; floating-point
+    error must not push it to the next rank down."""
+    threshold = from_validation_fpr(np.arange(19, dtype=float), target_fpr=0.05)
+    assert threshold.params["order_rank_k"] == 1
+    assert threshold.params["effective_fpr"] == pytest.approx(0.05)
+
+
+def test_default_policy_refuses_an_unresolvable_target():
+    """Refusing beats silently relaxing: a relaxed target reported as the
+    requested one is the failure this rule exists to prevent."""
     rng = np.random.default_rng(0)
-    with pytest.raises(ValueError, match=r"below the .* floor"):
-        from_validation_fpr(rng.normal(size=19), target_fpr=0.01, strict=True)
+    with pytest.raises(ValueError, match="finer than"):
+        from_validation_fpr(rng.normal(size=81), target_fpr=0.01)
 
 
-def test_non_strict_mode_clamps_and_records_what_it_did():
+def test_relax_policy_records_that_the_target_was_not_met():
     rng = np.random.default_rng(0)
-    threshold = from_validation_fpr(rng.normal(size=19), target_fpr=0.01, strict=False)
-    assert threshold.params["target_fpr"] == pytest.approx(0.05)
-    assert threshold.params["expected_fpr"] == pytest.approx(0.05)
-    assert threshold.params["min_achievable_fpr"] == pytest.approx(0.05)
+    threshold = from_validation_fpr(rng.normal(size=81), target_fpr=0.01, policy="relax")
+    assert threshold.params["requested_fpr"] == pytest.approx(0.01)
+    assert threshold.params["effective_fpr"] == pytest.approx(1 / 82)
+    assert threshold.params["target_met"] == 0.0
 
 
-def test_order_statistic_delivers_its_advertised_rate():
-    """Distribution-free claim: the k-th largest of n validation scores is
-    exceeded by a fresh normal sample with probability k/(n+1). Verified by
-    simulation, and on a skewed distribution to show it does not rely on
-    normality the way an interpolated percentile does."""
+def test_always_accept_is_explicit_and_never_flags():
+    rng = np.random.default_rng(0)
+    threshold = from_validation_fpr(rng.normal(size=81), target_fpr=0.01, policy="always_accept")
+    assert threshold.method == "always_accept"
+    assert np.isinf(threshold.value)
+    assert not threshold.apply(np.array([1e9, -1e9])).any()
+
+
+def test_ties_do_not_flag_normals():
+    """With `>=`, identical calibration and future scores flagged 100% of normal
+    samples in the review's diagnostic. Decisions are strict."""
+    calibration = np.full(200, 0.7)
+    threshold = from_validation_fpr(calibration, target_fpr=0.01)
+    assert not threshold.apply(np.full(50, 0.7)).any()
+
+
+def test_conservative_bound_holds_by_simulation():
+    """Marginal exceedance of the k-th largest of n exchangeable scores is
+    k/(n+1) <= target — including on a skewed distribution, where an
+    interpolated percentile has no such guarantee."""
     rng = np.random.default_rng(7)
     n, target = 48, 0.05
     realized = []
-    for _ in range(400):
-        validation = rng.lognormal(sigma=1.5, size=n)
-        threshold = from_validation_fpr(validation, target_fpr=target)
-        fresh = rng.lognormal(sigma=1.5, size=2000)
-        realized.append(float((fresh >= threshold.value).mean()))
-
-    expected = np.ceil(target * (n + 1)) / (n + 1)
-    assert np.mean(realized) == pytest.approx(expected, abs=0.015)
+    for _ in range(600):
+        threshold = from_validation_fpr(rng.lognormal(sigma=1.5, size=n), target_fpr=target)
+        realized.append(float(threshold.apply(rng.lognormal(sigma=1.5, size=2000)).mean()))
+    expected = np.floor(target * (n + 1)) / (n + 1)
+    assert np.mean(realized) == pytest.approx(expected, abs=0.012)
+    assert np.mean(realized) <= target + 0.01
 
 
-def test_threshold_is_an_actual_validation_score():
-    """An order statistic, not an interpolation between two of them: at these
-    sample sizes an interpolated value assumes a tail shape the data cannot
-    support."""
+def test_threshold_is_an_actual_calibration_score():
     rng = np.random.default_rng(1)
     scores = rng.normal(size=40)
     threshold = from_validation_fpr(scores, target_fpr=0.1)
     assert threshold.value in set(scores.tolist())
 
 
-def test_percentile_api_delegates_to_the_order_statistic_rule():
+def test_percentile_api_delegates_to_the_rank_rule():
     rng = np.random.default_rng(2)
     scores = rng.normal(size=48)
     assert from_validation_percentile(scores, percentile=95.0).value == pytest.approx(
@@ -92,7 +130,12 @@ def test_percentile_api_delegates_to_the_order_statistic_rule():
     )
 
 
-def test_refuses_an_underpowered_validation_split():
+def test_rejects_non_finite_calibration_scores():
+    with pytest.raises(ValueError, match="NaN or inf"):
+        from_validation_fpr(np.array([0.1, 0.2, np.nan, 0.3, 0.4]), target_fpr=0.2)
+
+
+def test_refuses_an_underpowered_calibration_split():
     with pytest.raises(ValueError, match="at least 4"):
         from_validation_fpr(np.array([0.1, 0.2, 0.3]), target_fpr=0.2)
 

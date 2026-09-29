@@ -132,14 +132,16 @@ def test_L4_validation_threshold_cannot_claim_oracle():
 
 
 def test_L4_percentile_threshold_records_its_source(rng):
-    threshold = from_validation_percentile(rng.random(50), percentile=99.0)
+    threshold = from_validation_percentile(rng.random(50), percentile=99.0, policy="relax")
     assert threshold.source_split == "validation"
     assert threshold.oracle is False
     assert "(oracle)" not in threshold.label
-    # Provenance must state what was actually achieved, not what was asked for:
-    # with n=50 the 1% target is below the 1/(n+1) floor (ADR-7).
-    assert threshold.params["n_validation"] == 50.0
-    assert threshold.params["expected_fpr"] >= threshold.params["min_achievable_fpr"]
+    # Provenance states what was requested and what was achievable; with n=50 a
+    # 1% target is finer than the 1/(n+1) resolution, so it is recorded unmet.
+    assert threshold.params["n_calibration"] == 50.0
+    assert threshold.params["requested_fpr"] == pytest.approx(0.01)
+    assert threshold.params["effective_fpr"] == pytest.approx(1 / 51)
+    assert threshold.params["target_met"] == 0.0
 
 
 def test_L4_refuses_too_few_validation_scores():

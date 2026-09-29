@@ -175,9 +175,96 @@ separately for exactly this reason.
 
 ## 4. Stage C — PatchCore
 
-*(Running at the time of writing; results appended when the three categories × three seeds
-complete. Configuration: WideResNet50-2, `layer2+layer3`, 3×3 aggregation, 1% greedy coreset,
-k=1, 320 px — reduced from native by the host-RAM constraint in §2.2.)*
+WideResNet50-2, `layer2+layer3`, 3×3 aggregation, 1% greedy coreset, k=1, **320 px** — reduced
+from native by the host-RAM constraint in §2.2, and therefore handicapped by the amount §2.1
+quantifies (13.2% / 43.9% / 9.6% of regions below one pixel).
+
+| category | image AUROC | AU-PRO@0.05 | pixel AUROC | SegF1 | bank | fit |
+|----------|-------------|-------------|-------------|-------|------|-----|
+| `pcb1` | 0.9373 ± 0.0010 | 0.7317 ± 0.0099 | 0.996 | 0.2173 ± 0.0024 | 9,523 | 119 s |
+| `macaroni2` | 0.7166 ± 0.0108 | 0.6784 ± 0.0300 | 0.961 | 0.0433 ± 0.0044 | 8,262 | 102 s |
+| `capsules` | 0.6967 ± 0.0469 | 0.4299 ± 0.0253 | 0.967 | 0.5268 ± 0.0207 | 4,979 | 93 s |
+
+Peak VRAM 1.0–2.3 GB, comfortably inside the 4 GB card — consistent with §2.2 and further
+confirmation that VRAM was never the constraint.
+
+### 4.1 The pretrained prior is worth a great deal — for localization only
+
+| category | metric | best Tier 0 | PatchCore | gain |
+|----------|--------|-------------|-----------|------|
+| `pcb1` | AU-PRO@0.05 | 0.365 (`pixel_pca`) | 0.732 | **+0.367** |
+| `macaroni2` | AU-PRO@0.05 | 0.177 (`pixel_pca`) | 0.678 | **+0.502** |
+| `capsules` | AU-PRO@0.05 | 0.119 (`pixel_pca`) | 0.430 | **+0.311** |
+| `pcb1` | image AUROC | 0.831 (`histogram`) | 0.937 | +0.106 |
+| `macaroni2` | image AUROC | 0.734 (`pixel_pca`) | 0.717 | **−0.017** |
+| `capsules` | image AUROC | 0.789 (`pixel_pca`) | 0.697 | **−0.092** |
+
+This is the measurement the Tier 0 floors exist to make, and it splits cleanly in two.
+
+**Localization: PatchCore wins by a factor of 2 to 4.** That is what the ImageNet prior buys, and
+it is a large, unambiguous result.
+
+**Detection: PatchCore loses on two of three categories.** Linear PCA on 64×64 downscaled pixels
+detects `capsules` better than PatchCore by 0.09 image AUROC, and `macaroni2` by 0.02 — while
+localizing them 3–4× worse. A project that had started at PatchCore would have reported 0.70 on
+`capsules` with nothing to compare it against; the floor row is what turns that into a finding.
+
+And on `pcb1`, PatchCore's 0.937 sits only **0.106 above a colour histogram**. Every image-level
+claim on that category has to be read against that.
+
+### 4.2 The AU-PRO / SegF1 divergence reproduces on VisA
+
+[docs/02](../docs/02-metrics-and-baselines.md) flagged PatchCore's published MVTec AD 2 profile —
+28.8% AU-PRO@0.05 against 3.7% SegF1 — as a pre-identified research question. It reproduces here,
+independently, on a different dataset:
+
+| category | AU-PRO@0.05 | SegF1 | SegF1/AU-PRO | reading |
+|----------|-------------|-------|--------------|---------|
+| `macaroni2` | 0.678 | **0.043** | **0.06** | ranks well, will not calibrate |
+| `pcb1` | 0.732 | 0.217 | 0.30 | middling |
+| `capsules` | 0.430 | **0.527** | **1.23** | calibrates better than it ranks |
+
+`macaroni2` is the AD 2 phenomenon exactly: strong threshold-free localization, and a
+`mean + 3σ` threshold that lands nowhere useful. `capsules` is its mirror image — the worst
+AU-PRO of the three, yet the best SegF1 — which rules out "PatchCore cannot calibrate" as a
+general statement. The property belongs to the **interaction of the score distribution with the
+category**, not to the method.
+
+That is a sharper formulation of the open question than the one the plan started with, and it is
+what Phase P8 should attack: not "why does PatchCore fail to calibrate" but "what property of a
+category's score distribution makes `mean + 3σ` land correctly".
+
+### 4.3 The deployment number is far worse than the AUROC suggests
+
+At the validation-derived operating point, with the threshold frozen:
+
+| category | realized FPR | recall | **escape rate** | image AUROC for contrast |
+|----------|--------------|--------|-----------------|--------------------------|
+| `pcb1` | 0.067 | 0.593 | **40.7%** | 0.937 |
+| `macaroni2` | 0.030 | 0.113 | **88.7%** | 0.717 |
+| `capsules` | 0.000 | 0.173 | **82.7%** | 0.697 |
+
+A model with 0.937 image AUROC misses **four defects in ten** at its own operating point.
+`macaroni2` misses nearly nine in ten. Nothing here is a bug: AUROC integrates over all
+thresholds, and the one threshold you can actually pick from normal-only validation data sits
+where it sits.
+
+This is the single most important number on the page, and it is the one that never appears in a
+leaderboard. It is also why the protocol requires the operating point to be reported at all
+(§4.4) rather than AUROC alone.
+
+### 4.4 Seed variance sets the noise floor for the ablation sweep
+
+| category | image AUROC std | AU-PRO@0.05 std |
+|----------|-----------------|-----------------|
+| `pcb1` | 0.0010 | 0.0099 |
+| `macaroni2` | 0.0108 | 0.0300 |
+| `capsules` | 0.0469 | 0.0253 |
+
+The coreset start point is the only stochastic element, and on `capsules` — the smallest training
+split at 461 images — it moves image AUROC by ±0.047. **Any Stage E ablation difference below
+about 0.05 on `capsules` is noise**, and single-seed sweep results there cannot be trusted. This
+is exactly what Gate C exists to establish before the sweep runs.
 
 ## 5. What these results do not establish
 
@@ -186,8 +273,15 @@ k=1, 320 px — reduced from native by the host-RAM constraint in §2.2.)*
 - **AUPIMO is still unimplemented**, so paired tests pair over three categories rather than ~200
   images and have very little power. This remains the highest-priority gap in
   [docs/11 §6](../docs/11-experiment-plan.md).
-- **The PatchCore numbers are at reduced resolution** and are handicapped by the amount §2.1
-  quantifies. They are a development measurement, not the study's headline.
+- **The PatchCore numbers are at 320 px, not native**, and are handicapped by the amount §2.1
+  quantifies. They are a development measurement, not the study's headline. The resolution
+  ablation (Stage E3) is what turns them into one.
+- **No ablation has run.** Every PatchCore number here is the single reference configuration.
+  Whether `layer2+layer3` beats `layer3` alone, whether a 10% coreset beats 1%, and whether the
+  detection loss against `pixel_pca` survives a better aggregation are all open.
+- **The Tier 1 autoencoder has not run on real data**, so the comparison that the whole ladder
+  exists to make — what the pretrained prior is worth against a model trained on this data alone
+  — is still only half complete.
 - **VisA has no lighting-shifted split**, so the robustness validity question stays blocked on
   MVTec AD 2.
 
