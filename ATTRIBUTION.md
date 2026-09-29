@@ -46,13 +46,23 @@ Accessed 2026-09-22 from https://registry.opendata.aws/visa
 **Changes made:** images were resized and photometrically/geometrically corrupted for
 robustness evaluation; model-generated anomaly heatmaps are overlaid on some images.
 
-> **Licence discrepancy, recorded rather than resolved.** The AWS Open Data registry and
-> the source paper state CC BY 4.0. Some third-party documentation states CC BY-NC-SA 4.0.
-> Until that is settled this project behaves as if the stricter reading applied: it stays
-> non-commercial and redistributes no images. See
-> [docs/10-datasets.md](docs/10-datasets.md) §2.
+> **Licence discrepancy, resolved.** Some third-party documentation states CC BY-NC-SA 4.0.
+> The archive `VisA_20220922.tar` ships a `LICENSE-DATASET` file containing the CC BY 4.0
+> text, which agrees with the AWS Open Data registry and the source paper; see
+> [reports/P3-visa-findings.md](reports/P3-visa-findings.md) §0. The project still redistributes
+> no images, so the repository guard needs no dataset-specific exception.
 
 **No VisA images are redistributed in this repository.**
+
+---
+
+## Third-party code used as a test oracle
+
+`tests/reference/anomalib_patchcore.py` excerpts PatchCore scoring and k-center selection from
+[anomalib](https://github.com/open-edge-platform/anomalib) v2.3.0 (commit `091ca6a`),
+© 2022-2025 Intel Corporation, under the Apache License 2.0 (full text in
+`tests/reference/LICENSE-APACHE-2.0.txt`). The modifications are listed at the top of that
+file. It is used only by the agreement tests and is not part of the `inspector` package.
 
 
 ---

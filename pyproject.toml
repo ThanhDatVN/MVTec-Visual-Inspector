@@ -96,6 +96,8 @@ filterwarnings = ["error::DeprecationWarning:inspector.*"]
 line-length = 100
 target-version = "py310"
 src = ["src", "tests"]
+# Third-party code excerpted verbatim as a test oracle; linting it would mean editing it.
+extend-exclude = ["tests/reference"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "RUF", "NPY"]

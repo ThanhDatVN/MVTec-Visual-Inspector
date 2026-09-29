@@ -410,16 +410,25 @@ class PatchCore(AnomalyModel):
         A reproduction report should cite these rather than rediscover them.
         """
         return [
-            "Coreset: exact greedy k-center on a 128-d Gaussian projection; the author code "
-            "uses an approximate greedy with 10 random starting points on a 128-d linear map.",
+            "Scoring: patch scores and the re-weighted image score agree with anomalib "
+            "v2.3.0 (commit 091ca6a) on identical tensors to float32 tolerance "
+            "(tests/models/test_reference_agreement.py).",
+            "Coreset start: anomalib v2.3.0 uses its random start as a centre but does not "
+            "return it, so its coreset is the next n greedy picks; ours returns the start "
+            "plus n-1 greedy picks. Same greedy order otherwise (tested).",
+            "Coreset projection: exact greedy k-center on a 128-d Gaussian projection, as in "
+            "the author code's dimension; anomalib v2.3.0 uses a sparse random projection "
+            "with eps=0.9 (dimension from the Johnson-Lindenstrauss bound), and the author "
+            "code an approximate greedy with 10 random starting points.",
             "Candidates: a uniform per-image random sample (candidate_fraction) precedes the "
-            "coreset, to bound memory; the author code selects from all patches.",
+            "coreset, to bound memory; the author code and anomalib select from all patches.",
             "Descriptor: channel-wise adaptive average pooling to projection_dim after 3x3 "
-            "local aggregation; matches the paper's description, but pooling order relative "
-            "to layer alignment has not been checked line by line against the author code.",
-            "Smoothing: applied by the evaluator in input-image pixels (sigma=4) before "
-            "upsampling to native resolution, as in anomalib; not verified against the "
-            "author repository.",
+            "local aggregation, following the author code; anomalib v2.3.0 concatenates the "
+            "pooled layers without channel reduction (1536-d for WRN50 layer2+3).",
+            "Smoothing: the evaluator upsamples the patch grid to the model input size and "
+            "blurs there (sigma=4 input px), the same order and sigma as anomalib's anomaly "
+            "map generator, then resizes to native for evaluation. Interpolation and kernel "
+            "truncation are not compared element-wise, nor against the author repository.",
         ]
 
     # -- persistence -------------------------------------------------------
