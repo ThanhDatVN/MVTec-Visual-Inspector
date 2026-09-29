@@ -72,22 +72,32 @@ def affects_results(rel_path: str) -> bool:
     )
 
 
+def source_hash(root: Path) -> str:
+    """SHA-256 over the result-producing Python sources under `root`.
+
+    Line endings are normalized first. Hashing raw bytes made the id depend on
+    the checkout rather than the code: a Windows worktree (CRLF) and a working
+    tree with LF-written files produced different ids for identical sources.
+    """
+    h = hashlib.sha256()
+    for path in sorted(root.rglob("*.py")):
+        rel = path.relative_to(root).as_posix()
+        if not affects_results(rel):
+            continue
+        h.update(rel.encode())
+        h.update(path.read_bytes().replace(b"\r\n", b"\n"))
+    return h.hexdigest()
+
+
 @cache
 def implementation_id() -> str:
-    """SHA-256 over the result-producing Python sources, in sorted path order.
+    """The package's `source_hash`, in sorted path order.
 
     Changes only when code that can move a number changes — unlike a git SHA, a
     documentation commit or a new analysis module does not invalidate every
     completed run, while any edit to data, model or evaluation code does.
     """
-    h = hashlib.sha256()
-    for path in sorted(PACKAGE_ROOT.rglob("*.py")):
-        rel = path.relative_to(PACKAGE_ROOT).as_posix()
-        if not affects_results(rel):
-            continue
-        h.update(rel.encode())
-        h.update(path.read_bytes())
-    return h.hexdigest()
+    return source_hash(PACKAGE_ROOT)
 
 
 def split_listing(indices: dict[str, DatasetIndex]) -> dict[str, str]:

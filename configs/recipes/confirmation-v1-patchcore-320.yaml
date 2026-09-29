@@ -1,0 +1,28 @@
+# FROZEN comparator for confirmation v1 (ADR-11). Do not edit.
+#
+# Identical to confirmation-v1-patchcore-640.yaml except the input resolution, so the
+# pre-registered resolution hypothesis (H1) compares exactly one changed factor.
+
+experiment:
+  tier: T3
+  owner: own
+
+model:
+  name: patchcore
+  backbone: wide_resnet50_2
+  layers: [layer2, layer3]
+  patch_pool: 3
+  projection_dim: 1024
+  candidate_fraction: 0.1
+  bank_ratio: null
+  bank_size: 10000
+  coreset_projection_dim: 128
+  patch_neighbors: 1
+  patch_reduction: nearest
+  reweight: true
+  reweight_neighbors: 9
+  batch_size: 4
+  feature_dtype: float16
+
+preprocess:
+  long_side: 320

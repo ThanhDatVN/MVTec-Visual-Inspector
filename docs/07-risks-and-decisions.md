@@ -282,6 +282,67 @@ transfer across VisA's object types, not industrial generality.
 
 ---
 
+### ADR-11 — Confirmation v1: frozen recipe and pre-registered analysis
+**Status:** Accepted. Committed and pushed **before** any confirmation run, so the git history
+timestamps the plan ahead of the data.
+
+**Context.** Development (E01–E04, [report](../reports/E00-E04-development-findings.md)) selected
+PatchCore at 640 px with a memory bank fixed at 10,000 entries, and produced three claims worth
+confirming: resolution is the dominant factor; at that resolution PatchCore beats a linear floor;
+and the conservative rank threshold holds its false-alarm bound except where the normal upper
+tail is not exchangeable (`pcb1`). Everything about them was chosen on `pcb1`, `macaroni2` and
+`capsules`, so none of it is evidence yet.
+
+**Decision.**
+
+1. **Recipe.** [`configs/recipes/confirmation-v1-patchcore-640.yaml`](../configs/recipes/confirmation-v1-patchcore-640.yaml),
+   composed after `configs/data/visa_pcb1.yaml` (VisA layout, official split, 15% validation
+   carve with seed 0), evaluation protocol v2 from `configs/base.yaml`, implementation id
+   `a2d2dcd0c230`, seeds 0, 1, 2, `role = confirmation`. The result-producing code is the E04
+   code: `git diff 469e9b3 -- src/` touches only the presentation modules and the
+   implementation-id function itself, which now normalizes line endings (a CRLF worktree and an
+   LF working tree had produced different ids for identical sources). The analysis is frozen too:
+   [`scripts/confirmation_analysis.py`](../scripts/confirmation_analysis.py), smoke-tested on the
+   development categories only.
+2. **Comparators, run once each with `role = confirmation`:** the same recipe at 320 px
+   ([`confirmation-v1-patchcore-320.yaml`](../configs/recipes/confirmation-v1-patchcore-320.yaml),
+   seed 0); pixel PCA and the colour histogram at their defaults and a 320 px long side, as in
+   E01; the random scorer, seed 0, as a sanity control.
+3. **Categories:** `candle`, `cashew`, `chewinggum`, `fryum`, `macaroni1`, `pcb2`, `pcb3`, `pcb4`,
+   `pipe_fryum`. Each is fitted on its own training normals, calibrated on its own validation
+   normals, and evaluated once on its official test split.
+4. **Confirmatory hypotheses.** One family of 18 tests, Holm-adjusted together at α = 0.05; each
+   test is a paired, class-stratified image bootstrap (10,000 resamples) of an image-AUROC
+   difference with a two-sided (count + 1)/(n + 1) p-value:
+   - **H1, resolution** (9 tests): AUROC(640 px, seed 0) − AUROC(320 px, seed 0) > 0.
+   - **H2, against a linear floor** (9 tests): mean AUROC(640 px, seeds 0–2) − AUROC(pixel PCA) > 0.
+   - **Dataset-level reading**, decided now: H1 (or H2) is *confirmed* if at least 6 of the 9
+     categories are significant in the positive direction after Holm **and** none is
+     significant in the negative direction; *not confirmed* otherwise. The macro-mean difference
+     and its interval are reported either way.
+5. **Calibration (a separate, descriptive family).** Per category, the exact tail-permutation
+   p-value of the seed-0 false alarms above the validation threshold (Holm over 9), the realized
+   FPR against the effective bound for all seeds, and the pooled count of false alarms against
+   the pooled expected count. Development predicts that most categories hold their bound; any
+   category that does not gets the `pcb1` diagnostics (calibration-source control, locations of
+   the flagged peaks).
+6. **Descriptive only, not tested:** AU-PRO@0.05 and @0.30, recall at the operating point, seed
+   spread, resources, the histogram-shortcut flag (> 0.80 image AUROC), and — explicitly
+   exploratory — the object-region variant computed on the stored maps.
+7. **No retuning.** Nothing is rerun or changed after a result is seen. A run that fails (for
+   example out of memory) is reported as a failure. A code fix is admissible only if it cannot
+   change any completed run's numbers; otherwise the affected category loses its confirmation
+   status, and the report says so.
+
+**Consequences.** (+) The first evidence in this project that was not used to choose what it
+evaluates. (+) A negative result is as reportable as a positive one, and the thresholds for
+calling either were fixed in advance. (−) Nine categories from one dataset and one capture setup:
+this confirms recipe transfer across VisA's object types, not industrial generality. (−) H1 uses
+one seed per arm; the 3-seed spread at 640 px on development (≤ 0.006 AUROC) is small against the
+effects being tested, but the test does not include fitting variance.
+
+---
+
 ### Open decisions (resolve before the stated gate)
 
 | # | Question | Resolve by |

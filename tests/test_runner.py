@@ -65,6 +65,20 @@ def test_implementation_id_is_a_source_hash():
     assert len(implementation_id()) == 64
 
 
+def test_implementation_id_ignores_line_endings(tmp_path):
+    """A CRLF checkout and an LF checkout of the same code are the same code."""
+    from inspector.runner import source_hash
+
+    lf, crlf = tmp_path / "lf", tmp_path / "crlf"
+    for root, eol in ((lf, b"\n"), (crlf, b"\r\n")):
+        (root / "models").mkdir(parents=True)
+        (root / "models" / "m.py").write_bytes(eol.join([b"def f():", b"    return 1", b""]))
+        (root / "analysis.py").write_bytes(b"x = 1" + eol)
+    assert source_hash(lf) == source_hash(crlf)
+    (crlf / "models" / "m.py").write_bytes(b"def f():\r\n    return 2\r\n")
+    assert source_hash(lf) != source_hash(crlf), "a real code change must still change the id"
+
+
 @pytest.mark.parametrize(
     ("rel_path", "hashed"),
     [

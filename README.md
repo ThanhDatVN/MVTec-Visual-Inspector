@@ -81,7 +81,7 @@ Both are **generated** by `scripts/build_notebooks.py`, never hand-edited. Opera
 | 04 | [Roadmap & gates](docs/04-roadmap.md) | 12 phases, gates, compute allocation |
 | 05 | [Robustness protocol](docs/05-robustness-protocol.md) | Corruption suite, severities, reporting |
 | 06 | [Engineering & test strategy](docs/06-engineering-mlops-and-testing.md) | Repo layout, MLflow, pytest tiers, VRAM budget |
-| 07 | [Risks & decision log](docs/07-risks-and-decisions.md) | Risk register, ADR-1 … ADR-10 |
+| 07 | [Risks & decision log](docs/07-risks-and-decisions.md) | Risk register, ADR-1 … ADR-11 |
 | 08 | [Licensing & attribution](docs/08-licensing-and-attribution.md) | **Read before publishing anything** |
 | 09 | [References](docs/09-references.md) | Bibliography, each tagged ✅/◐/⚠ by verification status |
 | 10 | [Dataset survey](docs/10-datasets.md) | What is downloadable today, and why VisA |
