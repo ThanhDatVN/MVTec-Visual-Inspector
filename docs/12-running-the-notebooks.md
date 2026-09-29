@@ -136,10 +136,13 @@ Each stage is sized to finish inside ~4 hours, comfortably under the 9-hour comm
 
 | Cells | Stage | Est. |
 |-------|-------|------|
-| §3 | Reference config, 9 runs (also runnable on the laptop) | ~2 GPU-h |
-| §4 | Ablation screen, ~51 runs | ~20 GPU-h — **split across several sessions** |
-| §5 | Autoencoder, 45 runs | ~12 GPU-h |
+| §3 | Reference = the ADR-11 recipe (640 px, fixed 10 k bank), 9 runs; also runnable on the laptop | ~1 GPU-h |
+| §4 | Ablation screen around it, ~51 runs, including 960 and 1280 px | ~12 GPU-h — **split across several sessions** |
+| §5 | Autoencoder at 640 px, 3 losses × 3 seeds × 3 categories, up to 150 epochs | ~6 GPU-h |
 | §6 | Robustness grid, one fit per category | ~4 GPU-h |
+
+All of it runs on the **development** categories. The nine confirmation categories are touched
+only by the pre-registered ADR-11 runs.
 
 Run §4 in chunks by commenting out axes in the `AXES` dict. The registry makes the chunking
 invisible in the results.
