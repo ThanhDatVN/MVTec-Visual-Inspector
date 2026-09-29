@@ -8,7 +8,7 @@ confirmation categories. Dataset: VisA © Amazon, CC BY 4.0 — see [ATTRIBUTION
 
 | | |
 |---|---|
-| Runs | 63 runs in `reports/runs/` (spec, result, predictions per run); [results_registry.csv](results_registry.csv) is generated from them by `inspector results` |
+| Runs | 69 runs in `reports/runs/` (spec, result, predictions per run); [results_registry.csv](results_registry.csv) is generated from them by `inspector results` |
 | Code | E01–E03: commit `c53e7f6`, implementation id `b76d4f8dd1b6`. E04: commit `469e9b3`, implementation id `e76083ff5305`. Both from clean worktrees |
 | Generated tables | [studies/studies.md](studies/studies.md) — `inspector study --implementation b76d4f8dd1b6 ...`, computed from stored predictions, no refits |
 | Protocol | v2 — conservative rank threshold at a 1% request with the `relax` policy (ADR-9); smoothing σ = 4 input px; AU-PRO over 512 thresholds with ≤ 2 M sampled negatives |
