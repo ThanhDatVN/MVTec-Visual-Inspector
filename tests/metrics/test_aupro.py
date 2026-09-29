@@ -1,8 +1,7 @@
 """AU-PRO correctness (Gate G2).
 
-These are the analytic tests. The reference-implementation comparison that Gate
-G2 also requires lives in `test_aupro_reference.py` and is skipped until
-anomalib is installed.
+These are the analytic tests. The comparison against an algorithmically
+independent (FPR-parametrized) oracle lives in `test_aupro_reference.py`.
 """
 
 from __future__ import annotations
