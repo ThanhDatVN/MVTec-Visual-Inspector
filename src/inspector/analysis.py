@@ -22,6 +22,7 @@ from __future__ import annotations
 import json
 from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
+from itertools import pairwise
 from pathlib import Path
 from typing import Any
 
@@ -496,6 +497,7 @@ class RunGroup:
     run_ids: list[str] = field(default_factory=list)
     seeds: list[int] = field(default_factory=list)
     dataset: dict[str, Any] = field(default_factory=dict)
+    long_side: int | None = None
 
 
 def group_runs(registry_root: str | Path, *, role: str = "development") -> list[RunGroup]:
@@ -524,7 +526,7 @@ def group_runs(registry_root: str | Path, *, role: str = "development") -> list[
         method = spec["model"]["name"]
         if key not in groups:
             groups[key] = RunGroup(key, category, method, method, spec["dataset"]["test_split"],
-                                   dataset=spec["dataset"])
+                                   dataset=spec["dataset"], long_side=spec["transform"].get("long_side"))
             hparams[key] = {**model_hp, "long_side": spec["transform"].get("long_side")}
         groups[key].run_ids.append(record["run_id"])
         groups[key].seeds.append(int(spec["seed"]))
@@ -555,6 +557,7 @@ def run_studies(
     seed: int = 0,
     data_root: str | Path | None = None,
     roi_methods: tuple[str, ...] = (),
+    region_size: bool = False,
 ) -> dict[str, Any]:
     """E02, E03 and the exchangeability diagnostics over a registry.
 
@@ -565,7 +568,7 @@ def run_studies(
     root = Path(registry_root)
     out: dict[str, Any] = {
         "aggregation": [], "calibration": [], "normal_shift": [], "calibration_source": [],
-        "train_proximity": [], "roi": [], "groups": [],
+        "train_proximity": [], "roi": [], "region_size": [], "groups": [],
     }
     proximity_done: set[str] = set()
     selected = [
@@ -611,6 +614,21 @@ def run_studies(
                 for row in calibration_source_study(val, test, draws=draws, seed=seed + i)
             ]
         out["calibration"] += [{**base, **row} for row in summarize_calibration(cal_rows)]
+        if region_size and data_root is not None:
+            sigma = float(json.loads((root / g.run_ids[0] / "spec.json").read_text(encoding="utf-8"))
+                          ["evaluation"]["smoothing_sigma"])
+            per_seed = []
+            for rid in g.run_ids:
+                test = SplitPredictions.load(root / rid, g.test_split, root=data_root)
+                per_seed.append(region_size_study(test, sigma=sigma, seed=seed))
+            for b, rows_b in enumerate(zip(*per_seed)):
+                out["region_size"].append({
+                    **base, "resolution": g.long_side, "bin": b,
+                    "area_min": rows_b[0]["area_min"], "area_max": rows_b[0]["area_max"],
+                    "regions": rows_b[0]["regions"],
+                    "overlap_mean": float(np.mean([r["overlap_mean"] for r in rows_b])),
+                    "detected_share": float(np.mean([r["detected_share"] for r in rows_b])),
+                })
         if data_root is not None and g.method in roi_methods:
             out["roi"].append(roi_study(g, root, data_root, target_fpr=target_fpr,
                                         n_resamples=n_resamples, seed=seed))
@@ -620,6 +638,62 @@ def run_studies(
         "aggregation_domain": AGGREGATION_DOMAIN,
     }
     return out
+
+
+#: Region-area bin edges in native pixels. Fixed in advance so that runs at
+#: different input resolutions are binned identically; VisA's median region
+#: areas run from ~26 px (macaroni2) to ~1,200 px (capsules).
+REGION_AREA_BINS: tuple[float, ...] = (0, 64, 256, 1024, 4096, float("inf"))
+
+
+def region_size_study(
+    test: SplitPredictions,
+    *,
+    sigma: float,
+    fpr_limit: float = 0.05,
+    negative_rate: float = 0.02,
+    bins: tuple[float, ...] = REGION_AREA_BINS,
+    seed: int = 0,
+) -> list[dict]:
+    """Per-region overlap at a fixed pixel false-positive rate, by region size.
+
+    The pixel threshold is the (1 - fpr_limit) quantile of negative pixels —
+    every non-defect pixel of every test image, sampled at `negative_rate` —
+    so it sits at the same FPR as AU-PRO's integration limit. Each annotated
+    connected region then contributes the share of its pixels above it. The
+    mean overlap per area bin shows whether small defects are the ones lost,
+    which a pooled AU-PRO averages away.
+    """
+    import cv2
+
+    rng = np.random.default_rng(seed)
+    negatives = []
+    for native, mask in zip(test.native_maps(sigma), test.masks()):
+        neg = native[~mask]
+        take = rng.random(neg.size) < negative_rate
+        negatives.append(neg[take].astype(np.float32))
+    threshold = float(np.quantile(np.concatenate(negatives), 1.0 - fpr_limit))
+
+    regions: list[tuple[int, float]] = []
+    for native, mask, label in zip(test.native_maps(sigma), test.masks(), test.labels):
+        if label != 1 or not mask.any():
+            continue
+        n, comp = cv2.connectedComponents(mask.astype(np.uint8), connectivity=8)
+        above = native > threshold
+        for k in range(1, n):
+            region = comp == k
+            regions.append((int(region.sum()), float(above[region].mean())))
+
+    rows = []
+    for lo, hi in pairwise(bins):
+        overlaps = [o for a, o in regions if lo <= a < hi]
+        rows.append({
+            "area_min": lo, "area_max": hi, "regions": len(overlaps),
+            "overlap_mean": float(np.mean(overlaps)) if overlaps else float("nan"),
+            "detected_share": float(np.mean([o >= 0.3 for o in overlaps])) if overlaps else float("nan"),
+            "pixel_threshold": threshold, "fpr_limit": fpr_limit,
+        })
+    return rows
 
 
 def method_comparisons(
@@ -964,6 +1038,25 @@ def render_studies(study: dict[str, Any]) -> str:
             lines.append(
                 f"| {block['category']} | {c['border_foreground_share_median']:.3f} / "
                 f"{c['border_foreground_share_max']:.3f} | {c['region_fraction_train_median']:.2f} | {inside} |"
+            )
+    if study.get("region_size"):
+        lines += [
+            "",
+            "## Localization by defect size",
+            "",
+            "Each annotated connected region's overlap with the map thresholded at the pixel "
+            "false-positive rate of AU-PRO's 0.05 limit (threshold from sampled negative pixels of "
+            "the test images), averaged over seeds. `detected` = share of regions with overlap "
+            ">= 0.3. Area bins are in native pixels and fixed across resolutions.",
+            "",
+            "| category | model | input long side | region area (px) | regions | mean overlap | detected |",
+            "|---|---|---|---|---|---|---|",
+        ]
+        for r in study["region_size"]:
+            hi = "inf" if r["area_max"] == float("inf") else f"{r['area_max']:.0f}"
+            lines.append(
+                f"| {r['category']} | {r['label']} | {r['resolution']} | {r['area_min']:.0f}-{hi} | "
+                f"{r['regions']} | {_fmt(r['overlap_mean'])} | {_fmt(r['detected_share'], '.0%')} |"
             )
     lines += [
         "",

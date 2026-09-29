@@ -276,6 +276,33 @@ def test_method_comparison_is_paired_and_holm_adjusted(tmp_path):
     assert all(r["family_size"] == 2 for r in rows)
 
 
+def test_region_size_study_separates_small_and_large_regions():
+    from inspector.analysis import region_size_study
+
+    rng = np.random.default_rng(12)
+    h, w = 64, 64
+    maps = [rng.normal(0, 1, (h, w)).astype(np.float32) for _ in range(10)]
+    masks: list = [None] * 6  # six normal images
+    labels = [0] * 6 + [1] * 4
+    for m in maps[6:]:  # one large detected region and one small missed region each
+        gt = np.zeros((h, w), bool)
+        gt[10:40, 10:40] = True           # 900 px, clearly above the normal tail
+        m[10:40, 10:40] += 6.0
+        gt[50:53, 50:53] = True           # 9 px, no signal
+        masks.append(gt)
+    preds = SplitPredictions(
+        split="test", ids=[f"i{k}" for k in range(10)], labels=np.asarray(labels),
+        defect_types=["x"] * 10, scores=np.zeros(10), raw_maps=maps,
+        input_sizes=[(w, h)] * 10, native_sizes=[(w, h)] * 10, mask_paths=[None] * 10,
+        mask_overrides=masks,
+    )
+    rows = {(r["area_min"], r["area_max"]): r for r in region_size_study(preds, sigma=0.0, negative_rate=1.0)}
+    small, large = rows[(0, 64)], rows[(256, 1024)]
+    assert small["regions"] == 4 and large["regions"] == 4
+    assert large["overlap_mean"] > 0.95 and large["detected_share"] == 1.0
+    assert small["overlap_mean"] < 0.3
+
+
 # --- exchangeability ----------------------------------------------------------
 
 
