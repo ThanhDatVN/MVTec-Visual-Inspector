@@ -146,8 +146,13 @@ Source: `reports/studies/comparisons_10k.json`.
 - **The pretrained prior is not isolated here.** Architecture, input scale, descriptor and scoring
   all differ between PatchCore and the floors or the CAE, and the CAE is not converged, so no
   difference in this table is "the value of ImageNet pretraining".
-- **CAE-SSIM ranks `pcb1` below chance** (0.408 ± 0.076) while its L2 twin sits near chance. Not
-  yet explained; a case-book item.
+- **CAE-SSIM ranks `pcb1` below chance** (0.408 ± 0.076) while its L2 twin sits near chance. The
+  mechanism is visible in the maps: on every image, normal or defective, the SSIM error peaks on
+  the two ultrasonic transducers' fine metal mesh, a high-frequency texture the autoencoder does
+  not reconstruct. The image maximum therefore ranks images by how hard their mesh is to
+  reconstruct (pose, glare) and not by defects, which are smaller errors elsewhere. The classic
+  failure of a reconstruction model on high-frequency normal texture, and the reason its map mean
+  (0.612) beats its maximum on this category (§3).
 - **Resources.** PatchCore at 320 px fits in 27–49 s and peaks at 0.7–1.5 GB of VRAM. The CAE
   takes 3–6× longer to fit. `e2e` timings in the registry include image decoding and map storage;
   they are throughput figures, not a latency distribution.
@@ -190,8 +195,8 @@ class-stratified image bootstrap intervals. Selected rows; every rule for every 
   the map. This rule was picked after looking at test labels, so 0.824 is a development upper
   bound, not a result.
 - **CAE-SSIM's below-chance `pcb1` ranking is an aggregation artefact in part:** its map mean
-  scores 0.612 instead of 0.408. The maximum of an SSIM error map is dominated by something that
-  is *more* extreme on normal images than on defective ones.
+  scores 0.612 instead of 0.408. The maximum of its SSIM error map sits on the transducer mesh on
+  every image (§2), so it measures a normal texture, not a defect.
 - Localization metrics are unchanged by construction (same maps), which the evaluator tests assert.
 
 ## 4. The `pcb1` calibration failure, diagnosed
