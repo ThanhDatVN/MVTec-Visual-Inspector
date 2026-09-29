@@ -55,16 +55,37 @@ PROTOCOL_VERSION = "2"
 PACKAGE_ROOT = Path(__file__).resolve().parent
 
 
+#: Modules that read, analyse or present stored results but cannot change the
+#: numbers a run produces. Editing them must not invalidate hours of completed
+#: runs. Everything else — data, features, models, metrics, post-processing,
+#: evaluation, and this runner — is hashed. When unsure, a module stays in.
+PRESENTATION_MODULES: tuple[str, ...] = (
+    "analysis.py", "cli.py", "report.py", "results.py", "stats.py", "tracking.py",
+    "api/", "app/", "viz/",
+)
+
+
+def affects_results(rel_path: str) -> bool:
+    """Whether a package-relative source path is part of the implementation id."""
+    return not any(
+        rel_path.startswith(m) if m.endswith("/") else rel_path == m for m in PRESENTATION_MODULES
+    )
+
+
 @cache
 def implementation_id() -> str:
-    """SHA-256 over the package's Python sources, in sorted path order.
+    """SHA-256 over the result-producing Python sources, in sorted path order.
 
-    Changes only when code changes — unlike a git SHA, a documentation commit
-    does not invalidate every completed run, while any code edit does.
+    Changes only when code that can move a number changes — unlike a git SHA, a
+    documentation commit or a new analysis module does not invalidate every
+    completed run, while any edit to data, model or evaluation code does.
     """
     h = hashlib.sha256()
     for path in sorted(PACKAGE_ROOT.rglob("*.py")):
-        h.update(path.relative_to(PACKAGE_ROOT).as_posix().encode())
+        rel = path.relative_to(PACKAGE_ROOT).as_posix()
+        if not affects_results(rel):
+            continue
+        h.update(rel.encode())
         h.update(path.read_bytes())
     return h.hexdigest()
 

@@ -93,7 +93,11 @@ def render_markdown(results: Sequence[ExperimentResult]) -> str:
     caption = (
         f"Split: `{', '.join(splits)}`. Thresholded metrics use the "
         f"`{', '.join(sources)}`-derived operating point "
-        "(`OP-FPR1` for image, `OP-3SIGMA` for pixel). "
+        "(`OP-FPR1` for image, `OP-3SIGMA` for pixel), with strict decisions "
+        "(`score > threshold`). `target FPR` is what was requested and `eff. FPR` the "
+        "rank rule's finite-sample marginal bound; `FPR@OP1` is what the test normals "
+        "actually showed, and may exceed the bound — the bound is marginal, not conditional "
+        "on one fitted model, and assumes exchangeable calibration and test normals. "
         "Columns marked (oracle) use test labels and are upper bounds only.\n"
     )
 

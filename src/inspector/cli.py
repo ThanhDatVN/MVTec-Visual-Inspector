@@ -270,6 +270,27 @@ def cmd_results(args) -> int:
     return 0
 
 
+def cmd_study(args) -> int:
+    """E02 aggregation, E03 calibration and the exchangeability diagnostic,
+    computed from stored predictions — no model is refitted."""
+    from .analysis import render_studies, run_studies
+
+    study = run_studies(
+        args.registry,
+        role=args.role,
+        methods=args.methods,
+        categories=args.categories,
+        draws=args.draws,
+        n_resamples=args.resamples,
+    )
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "studies.json").write_text(json.dumps(study, indent=2, default=float), encoding="utf-8")
+    (out / "studies.md").write_text(render_studies(study), encoding="utf-8")
+    print(f"{len(study['groups'])} run groups -> {out / 'studies.md'}")
+    return 0
+
+
 def cmd_fetch(args) -> int:
     """Download a dataset that does not require an account."""
     from .fetch import REGISTRY, fetch, verify
@@ -381,6 +402,16 @@ def build_parser() -> argparse.ArgumentParser:
     p_res.add_argument("--out", default="reports/results_registry.csv")
     p_res.add_argument("--markdown", action="store_true")
     p_res.set_defaults(func=cmd_results)
+
+    p_study = sub.add_parser("study", help="E02/E03 studies on stored predictions (no refits)")
+    p_study.add_argument("--registry", default="reports/runs")
+    p_study.add_argument("--out", default="reports/studies")
+    p_study.add_argument("--role", default="development", choices=["development", "confirmation"])
+    p_study.add_argument("--methods", nargs="+", default=None)
+    p_study.add_argument("--categories", nargs="+", default=None)
+    p_study.add_argument("--draws", type=int, default=200, help="calibration subsets per size and seed")
+    p_study.add_argument("--resamples", type=int, default=1000, help="bootstrap resamples for E02")
+    p_study.set_defaults(func=cmd_study)
 
     for name, help_text in (
         ("bench", "measure latency and memory (P9)"),

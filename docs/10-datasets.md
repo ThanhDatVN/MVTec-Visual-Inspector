@@ -113,8 +113,9 @@ category, and **every anomalous test image has a mask**.
 
 ### VisA sharpens ADR-7 rather than escaping it
 
-The achievability floor `1/(n+1)` from [ADR-7](07-risks-and-decisions.md) applies here too, and
-VisA makes it a more interesting constraint than a blanket rule:
+The achievability floor `1/(n+1)` from [ADR-7](07-risks-and-decisions.md) — with the corrected,
+conservative rank rule of ADR-9 — applies here too, and VisA makes it a more interesting
+constraint than a blanket rule:
 
 - Large categories (`candle`, `macaroni*`, `pcb*`, ~135 validation images) reach **0.73–0.74%**,
   so the 1% target **is** achievable.
@@ -141,9 +142,11 @@ reason. Picking three PCBs would test one difficulty three times.
 | **`macaroni2`** | multiple instances | High variance in the normal arrangement with subtle defects — reported as the hardest VisA category. The **false-positive** axis, analogous to `walnuts`. | 900 |
 | **`capsules`** | multiple instances | Transparent, reflective shells; specularities look like defects. The **optics/ambiguity** axis, analogous to `fruit_jelly`. Smallest train split of the three, so the fastest to iterate on. | 542 |
 
-`cashew` (single instance, aligned, the easiest group) is kept as an optional contrast row: a
-method that cannot separate `cashew` is broken, which makes it a useful sanity control rather than
-a study category.
+The other nine VisA categories — `candle`, `cashew`, `chewinggum`, `fryum`, `macaroni1`, `pcb2`,
+`pcb3`, `pcb4`, `pipe_fryum` — are **frozen as confirmation categories** (ADR-10). Only their split
+counts above have been read; their images, masks and results stay unseen until a frozen recipe is
+run on them once. An earlier draft kept `cashew` as an easy sanity row; that would have spent a
+confirmation category on development, and was withdrawn.
 
 
 ## 4b. A second dataset, for the generalization question

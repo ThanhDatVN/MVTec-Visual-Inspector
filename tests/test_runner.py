@@ -65,6 +65,27 @@ def test_implementation_id_is_a_source_hash():
     assert len(implementation_id()) == 64
 
 
+@pytest.mark.parametrize(
+    ("rel_path", "hashed"),
+    [
+        ("models/patchcore.py", True),
+        ("metrics/aupro.py", True),
+        ("evaluate.py", True),
+        ("runner.py", True),
+        ("data/visa.py", True),
+        ("analysis.py", False),
+        ("results.py", False),
+        ("viz/heatmap.py", False),
+    ],
+)
+def test_only_result_producing_code_is_in_the_implementation_id(rel_path, hashed):
+    """An analysis or table-formatting edit must not force hours of reruns;
+    a model, metric or data edit must."""
+    from inspector.runner import affects_results
+
+    assert affects_results(rel_path) is hashed
+
+
 def test_execute_records_complete_provenance(cfg, synthetic_root, tmp_path):
     registry = Registry(tmp_path / "runs")
     spec, model, indices = make(cfg, synthetic_root)

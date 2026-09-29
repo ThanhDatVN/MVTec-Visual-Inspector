@@ -5,8 +5,14 @@ Where that document says *what kinds of method* the study covers, this one says 
 happen*, in what order, on which machine, at what cost, and what decides whether each one was
 worth doing.
 
-**Scope of this document:** VisA, three study categories, laptop + Kaggle. The MVTec AD 2 plan is
-unchanged and resumes when that download completes; see [ADR-8](07-risks-and-decisions.md).
+**Scope of this document:** VisA, three development categories plus nine frozen confirmation
+categories, laptop + Kaggle. The MVTec AD 2 plan is unchanged and resumes when that download
+completes; see [ADR-8](07-risks-and-decisions.md).
+
+**Protocol v2 (ADR-9, ADR-10).** This register was revised after the external review
+([docs/13](13-project-review-and-research-roadmap.md)). Every VisA number produced before the
+F01–F11 corrections is archived as exploratory (`reports/archive/`) and is not compared with v2
+numbers. Stages below carry the review's experiment ids (E00–E12) where they map onto them.
 
 A run that is not in this register does not get reported. That is not bureaucracy — it is the
 only defence against the pattern where thirty exploratory runs happen, three look good, and those
@@ -26,24 +32,38 @@ across a 12-week plan is ~360 GPU-hours total, and §3 budgets ~78 of them. The 
 deliberate: sweeps overrun, and a plan that consumes its entire quota on the first pass has no
 capacity to re-run anything after a bug is found.
 
-**Session-limit discipline.** Every Kaggle stage writes to a JSONL checkpoint keyed by
-configuration, so a killed session resumes instead of restarting. Any single stage is sized to
-finish inside ~4 hours, well under the 9-hour commit cap, so a stage never straddles a session
-boundary.
+**Session-limit discipline.** Every run on every venue goes through `inspector.runner` and lands
+in a run registry (`reports/runs/<run_id>/`), so a killed session resumes instead of restarting,
+and a failed run leaves a `failed` record with its reason. Any single stage is sized to finish
+inside ~4 hours, well under the 9-hour commit cap.
+
+**Measured, not assumed (P3).** The laptop's VRAM is *not* the binding constraint: a
+WideResNet50-2 forward pass at VisA's native ~1.5 MP costs under 1 GB at batch 1. What binds is
+host RAM for the patch matrix (37 GB in fp16 at native resolution), which per-image candidate
+sampling bounds. The corrected PatchCore reference at 320 px therefore runs on the laptop, and
+Stage D moved there.
 
 ---
 
-## 2. Run-ID scheme
+## 2. Run identity
 
-```
-{stage}|{variant}|{category}|{resolution}|s{seed}
-```
+The v1 scheme — a readable key `{stage}|{variant}|{category}|{resolution}|s{seed}` — omitted
+settings, so a resumed run could silently reuse a result produced under different code or
+evaluation settings (review F04). A run id is now a hash of a `RunSpec`:
 
-e.g. `ref|patchcore|pcb1|320|s0`, `abl-backbone|resnet18|macaroni2|320|s0`.
+| part | what it pins |
+|---|---|
+| dataset | layout, category, test split, validation carve fraction and seed, a hash of each split's image-id listing |
+| model | name, class, and **effective** hyperparameters — constructor defaults included |
+| transform | resize mode, long side, normalisation |
+| evaluation | smoothing sigma and units, target FPR, threshold policy, AU-PRO limits and grid, negative-sampling budget and seed, metrics version |
+| seed, role, protocol version | `development` or `confirmation`; protocol `2` |
+| `implementation_id` | SHA-256 over the result-producing source modules (data, features, models, metrics, post-processing, evaluation, runner); analysis and presentation modules are excluded |
 
-The ID is the checkpoint key, the MLflow run name, and the `notes` column of `results.csv`. One
-string ties a row in a table to the exact configuration that produced it, which is what makes the
-table auditable rather than merely printed.
+The registry directory holds `spec.json`, `result.json` (status, metrics, provenance: git sha,
+dirty flag, dataset manifests, library versions, device), per-split predictions (`*.predictions.json`),
+and raw anomaly maps (`*.maps.npz`, git-ignored). `inspector results` regenerates
+`reports/results_registry.csv` from the registry; the table is never edited by hand.
 
 ---
 
@@ -75,38 +95,55 @@ score, not an error, so it has to be excluded mechanically before any number exi
 **Gate B.** B1 within tolerance. Any category where B2 exceeds 0.80 image AUROC is flagged in
 bold in the final report.
 
-### Stage C — Development PatchCore (laptop, ~2 h)
+### Stage C — Reference agreement (E00; laptop)
 
 | # | Run | n | Purpose |
 |---|-----|---|---------|
-| C1 | `resnet18`, 256², 1% coreset × 3 categories | 3 | Confirm the pipeline runs end to end on real data and measure laptop peak VRAM |
-| C2 | Same, 3 seeds, best category | 3 | Coreset seed variance — how much of a difference is noise? |
+| C1 | Own PatchCore vs a pinned reference (anomalib) on identical small tensors | — | Scoring, re-weighting and distance units agree to a stated tolerance; the difference ledger (`PatchCore.reference_differences()`) lists what cannot match |
+| C2 | The same on one development category, identical inputs and bank | 1 | Prediction-level agreement on real data, not only a metric match |
 
-**Gate C.** Peak VRAM recorded. C2's seed spread establishes the noise floor below which no
-ablation difference in Stage E may be called real.
+**Gate C.** A written tolerance and a met or failed verdict. Every later PatchCore conclusion is
+conditional on it. *Status: not yet run — the reference package is not installed; the corrected
+scoring is tested against hand-computed cases in `tests/models/test_patchcore.py`.*
 
-### Stage D — Reference configuration (Kaggle, ~4 GPU-h)
+### Stage D — Baseline ladder (E01; laptop)
+
+All at a common 320 px long side, so the comparison is not also a resolution comparison.
 
 | # | Run | n | Purpose |
 |---|-----|---|---------|
-| D1 | PatchCore WRN50-2, `layer2+3`, 320², 1% coreset × 3 categories × 3 seeds | 9 | **The row every ablation is measured against.** Frozen; changes need an ADR. |
+| D1 | Corrected PatchCore reference (`configs/models/patchcore.yaml`) × 3 categories × 3 seeds | 9 | **The row every ablation is measured against.** Frozen; changes need an ADR. Seeds vary candidate sampling and the coreset start. |
+| D2 | CAE, L2 and SSIM loss × 3 × 3 | 18 | The from-scratch baseline; what the pretrained prior buys |
+| D3 | Tier 0 floors at 320 px (Stage B rerun under protocol v2) | 18 | Same evaluator, same smoothing — the v1 Tier 0 table used a different sigma |
 
-**Gate D.** Mean ± std reported per category. If the seed std exceeds C2's noise floor by a wide
-margin, the coreset pre-subsample is too aggressive — investigate before sweeping.
+**Gate D.** Mean ± std over seeds per category, and the realized test FPR next to the effective
+bound. The seed spread is the noise floor below which no Stage E difference is called real.
+
+### Stage D′ — Aggregation and calibration on stored predictions (E02, E03; laptop, no refits)
+
+| # | Study | Question |
+|---|-------|----------|
+| D′1 | E02: image score = stored (re-weighted) / max / mean / mean of top 0.1%, 1%, 5% of the map | Is the detection gap a map-quality problem or a map-to-scalar problem? Maps are fixed, so localization metrics must not move — an informative control. Paired class-stratified bootstrap per category. |
+| D′2 | E03: rank rule vs mean+3σ vs median+3·MAD, on calibration subsets of 20/40/80 normals and the full pool, at 1/2/5% targets | Distribution of threshold, realized FPR and recall per rule and size; which targets a given `n` can support |
+| D′3 | Exchangeability diagnostic | Are validation and test normals exchangeable? AUROC of validation-vs-test-normal scores (0.5 under exchangeability) and a Mann-Whitney p; a realized FPR far above the bound with a shift here is a split problem, not a threshold bug |
+
+Both reuse the registry's predictions (`inspector.analysis`), so they cost minutes, not GPU-hours.
 
 ### Stage E — Ablation sweep (Kaggle, ~25 GPU-h)
 
-Staged, one axis at a time from D1, single seed. A full grid is ~10⁴ runs; this is ~60 and
-captures the main effects.
+Staged, one axis at a time from D1, single seed. A full grid is ~10⁴ runs; this is ~50 and
+captures the main effects. It is a **screen**: it nominates variants for 3-seed reruns and a
+paired test, and adopts nothing by itself.
 
 | Axis | Values | n | Question |
 |------|--------|---|----------|
-| E1 backbone | resnet18, resnet50, wide_resnet50_2 | 9 | Does backbone capacity pay for itself at this resolution? |
-| E2 layers | L2, L3, L2+L3, L2+L3+L4 | 12 | Feature granularity vs semantic level. **Tests the layer3-only hypothesis** from docs/09 — treat that claim as unverified. |
-| E3 resolution | 224, 320, 448 | 9 | Expected to be the largest single effect |
-| E4 coreset ratio | 0.001, 0.01, 0.1, 0.25 | 12 | The accuracy/memory/latency Pareto figure |
-| E5 k | 1, 3, 9 | 9 | Score robustness to memory-bank noise |
-| E6 projection dim | 128, 384, 1024 | 9 | Memory reduction at fixed accuracy |
+| E1 backbone | resnet18, resnet50 (vs WRN50-2 in D1) | 6 | Does backbone capacity pay for itself at this resolution? |
+| E2 layers | L2, L3, L2+L3+L4 (vs L2+L3) | 9 | Feature granularity vs semantic level. **Tests the layer3-only hypothesis** from docs/09 — treat that claim as unverified. |
+| E3 resolution | 224, 448 (vs 320) | 6 | Expected to be the largest single effect; the 448 row is bounded by host RAM, not VRAM |
+| E4 bank ratio | 0.001, 0.01, 0.05, 0.1, all with `candidate_fraction = 0.25` | 12 | The accuracy/memory/latency Pareto figure. The bank is selected from the per-image candidates, so a ratio above `candidate_fraction` is capped — the v1 axis {0.1, 0.25} at 10% candidates would have measured the same bank twice (F08). `bank_effective` and `bank_capped` are logged per run. |
+| E5 neighbours | k ∈ {3, 9} with `mean` reduction, k = 3 with `kth` | 9 | Score robustness to bank noise. With `nearest` reduction k does not enter the patch score at all, so the v1 axis k ∈ {1, 3, 9} would have been three copies of one run (F02). |
+| E6 projection dim | 256, 512 (vs 1024) | 6 | Memory reduction at fixed accuracy |
+| E6b re-weighting | off (vs on) | 3 | What the reference image-score re-weighting (F03) contributes on these categories |
 
 **E7 — joint re-vary.** Take the two axes with the largest measured effects and vary them
 together (~12 runs). One interaction, chosen by evidence rather than guessed in advance.
@@ -121,7 +158,7 @@ any adoption decision.
 | F1 | loss ∈ {L2, SSIM, L2+SSIM} × 3 categories × 3 seeds | 27 | The most instructive Tier 1 ablation. L2 blurs; a blurry reconstruction errs everywhere rather than at the defect. |
 | F2 | latent ∈ {32, 128} at the best loss | 18 | Capacity vs the identity-function failure |
 | F3 | residual ∈ {raw, multiscale} | 18 | Raw residuals are dominated by edge misalignment |
-| F4 | aggregation ∈ {mean, max, top-k mean} | 27 | **From the P2 finding:** `pixel_pca` reached 0.985 pixel AUROC at 0.53 image AUROC. Map quality and map-to-scalar aggregation are separate abilities and must be ablated separately. |
+| F4 | aggregation ∈ {mean, max, top-k mean} | 0 | **From the P2 finding:** `pixel_pca` reached high pixel AUROC at chance image AUROC. Map quality and map-to-scalar aggregation are separate abilities. Now done by E02 (Stage D′) on stored maps for every model, without refitting. |
 
 **Gate F.** The headline comparison — what the pretrained prior bought, in points, per category —
 is computed and written down, including any category where it bought nothing.
@@ -129,7 +166,10 @@ is computed and written down, including any category where it bought nothing.
 ### Stage G — Robustness (laptop for inference, ~6 h wall-clock)
 
 Models are fitted once on clean data and **never re-thresholded**. Re-thresholding under
-corruption answers a different and much easier question.
+corruption answers a different and much easier question. Both normal and anomalous test images
+are corrupted — only normals can show a false alarm — each with its own corruption seed (a stable
+hash of its path) shared across severities and methods, and all metrics come from the same
+evaluator as the clean runs, so the clean and corrupted negative populations match (F09).
 
 | # | Run | n | Purpose |
 |---|-----|---|---------|
@@ -156,6 +196,17 @@ and its absence is a real limitation of a VisA-only study.
 **Gate H.** One paragraph. Tuning on MPDD would turn three study categories into nine and is
 exactly the scope creep R7 exists to prevent.
 
+### Stage H′ — Confirmation (E12; laptop + Kaggle)
+
+| # | Run | n | Purpose |
+|---|-----|---|---------|
+| H′1 | The frozen recipe on the nine confirmation categories (ADR-10), `role = confirmation`, 3 seeds where stochastic | 27 per method | Does the development conclusion hold on categories that shaped nothing? |
+
+**Gate H′.** The recipe and `implementation_id` are recorded *before* the first confirmation
+run. Every category is reported, including failures and resource-limit outcomes, with the macro
+mean, the worst category, and development vs confirmation shown separately. Retuning after this
+point starts a new development cycle.
+
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 
 | # | Deliverable | Spec |
@@ -174,18 +225,20 @@ exactly the scope creep R7 exists to prevent.
 |-------|-------|------|-----------|
 | A | laptop | — | 2 h |
 | B | laptop | 36 | 1 h |
-| C | laptop | 6 | 2 h |
-| D | **Kaggle** | 9 | 4 GPU-h |
-| E | **Kaggle** | ~72 | 25 GPU-h |
-| F | **Kaggle** | ~90 | 12 GPU-h |
-| G | laptop | 246 (inference only) | 6 h |
+| C | laptop | — | 3 h |
+| D | laptop | 45 | ~6 h wall-clock (measured in `reports/runs`) |
+| D′ | laptop | — (stored predictions) | < 1 h |
+| E | **Kaggle** | ~51 | ~20 GPU-h |
+| F | **Kaggle** | 45 | ~12 GPU-h |
+| G | **Kaggle** | ~108 cells (one fit per category) | ~4 GPU-h |
 | H | laptop | 6 | 1 h |
+| H′ | laptop + Kaggle | ~27 per method | ~6 GPU-h |
 | I | laptop | — | 8 h |
-| **Total** | | **~465 runs** | **~41 GPU-h on Kaggle**, ~20 h laptop |
+| **Total** | | **~320 runs** | **~42 GPU-h on Kaggle**, ~22 h laptop |
 
-41 GPU-hours is under a week and a half of Kaggle quota, leaving room for the re-runs that a real
-study needs. If Stage E overruns, cut E5 and E6 before cutting seeds: a three-seed result on four
-axes is worth more than a one-seed result on six.
+Under a week and a half of Kaggle quota, leaving room for the re-runs a real study needs. If
+Stage E overruns, cut E6 and E6b before cutting seeds: a three-seed result on four axes is worth
+more than a one-seed result on seven. Confirmation (H′) is never the stage that gets cut.
 
 ---
 
@@ -194,10 +247,12 @@ axes is worth more than a one-seed result on six.
 Restated here so a decision can be checked against them without leaving this document.
 
 **DR-1, adoption.** A change enters the main line only if: AU-PRO@0.05 improves on ≥2 of 3
-categories and regresses the third by ≤1 point; the paired test gives p < 0.05 after
-Holm–Bonferroni within its family; p95 latency stays within budget; peak VRAM stays under 3.5 GB.
-Passing (1)–(2) but failing (3)–(4) makes it an *accuracy-only variant*, reported but not
-deployed.
+categories and regresses the third by ≤1 point; the paired image-level bootstrap interval of the
+difference (class-stratified, `inspector.stats.paired_bootstrap_difference`) excludes zero after
+Holm correction over the family of variants screened; p95 latency stays within budget; peak VRAM
+stays under 3.5 GB. Passing (1)–(2) but failing (3)–(4) makes it an *accuracy-only variant*,
+reported but not deployed. Adoption on development categories is a development result; it
+becomes a finding only if it holds on the confirmation categories.
 
 **DR-2, "better".** Never on a mean. The paired test, the effect size, and the per-category table
 are all shown. Where a method wins on one category and loses on another, that disagreement is the
@@ -213,9 +268,12 @@ Anything test-selected is marked `(test-selected)` and read as an upper bound.
 saying so. Our VisA numbers are on its official test split; published AD 2 numbers are on
 `TEST_priv`. These are not comparable quantities.
 
-**DR-6 (new, from ADR-7), operating points.** Each category's operating point targets its own
-achievable FPR floor `1/(n+1)`, which on VisA ranges 0.73%–1.45%. No single headline FPR is
-quoted across categories, and every reported FPR carries the target it was calibrated to.
+**DR-6 (ADR-7, corrected by ADR-9), operating points.** The requested rate is 1%; the threshold
+is the conservative rank `k = floor(α(n+1))` with strict `score > threshold`. Where `α(n+1) < 1`
+the threshold relaxes to the sample maximum and the row is flagged `target_met = false` — on VisA
+the effective rate spans 0.73%–1.45%. Every reported FPR states the requested rate, the effective
+bound and the realized test rate separately, and no single headline FPR is quoted across
+categories.
 
 ---
 
@@ -225,10 +283,11 @@ Stated because a plan that lists no gaps has not been read carefully.
 
 | Gap | Effect | Status |
 |-----|--------|--------|
-| **AUPIMO not implemented** | The paired tests in DR-1/DR-2 currently pair over *categories* (n=3), which has very little power. Per-image AUPIMO would pair over ~200 images. | Blocks the statistical strength of every adoption decision. Highest-priority gap. |
-| **No reference-implementation metric check on real data** | Gate G2's analytic half passes; the external-agreement half does not exist | Gate G5 |
-| **No PatchCore reproduction of a published number** | We cannot yet distinguish "our PatchCore" from "PatchCore" | Gate G5 |
-| **Single-pass VRAM budget is an assumption** | The resolution decision uses 1.0 MP from docs/06 §3, not a measurement | Gate G5, Stage C |
+| **AUPIMO not implemented** | Image-level AUROC differences are now paired over images by a class-stratified bootstrap; localization differences still have no per-image paired measure | Needed before any localization adoption claim |
+| **No reference-implementation agreement (E00)** | We cannot yet distinguish "our PatchCore" from "PatchCore"; the corrected scoring is only checked against hand-computed cases | Stage C, before any PatchCore conclusion is written as a finding |
+| **No PatchCore reproduction of a published number** | Three categories cannot reproduce a 12-category mean | After E00; needs all VisA categories under the published protocol |
+| ~~Single-pass VRAM budget is an assumption~~ | Measured in P3: under 1 GB at native resolution, batch 1. Host RAM binds instead. | Closed |
+| **Group structure unknown** | VisA has no lot or session ids, so image independence in bootstrap intervals cannot be checked | Stated as a limitation |
 | **Robustness validity unanswerable on VisA** | The strongest evidence P7 could produce is unavailable | Blocked on AD 2 |
 | **Tier 4 comparators not planned here** | EfficientAD, RD++, Dinomaly are in docs/03 but have no stage yet | Add after Stage F, budget ~15 GPU-h |
 | **No AD 2 leaderboard submission planned** | Our only truly held-out number would be missing | Decide at Gate E (OD-6) |
@@ -238,11 +297,12 @@ Stated because a plan that lists no gaps has not been read carefully.
 ## 7. Execution order
 
 ```
-A ──► B ──► C ──► D ──► E ──► F ──► G ──► H ──► I
-│     │     │     │     │
-│     │     │     │     └─ winners re-run at 3 seeds before DR-1 is applied
-│     │     │     └─ frozen; an ADR is required to change it
-│     │     └─ establishes the noise floor that Stage E differences are judged against
+A ──► B ──► C ──► D ──► D′ ──► E ──► F ──► G ──► H ──► H′ ──► I
+│     │     │     │     │      │
+│     │     │     │     │      └─ winners re-run at 3 seeds before DR-1 is applied
+│     │     │     │     └─ no refits: aggregation and calibration on stored predictions
+│     │     │     └─ frozen reference; its seed spread is the noise floor for Stage E
+│     │     └─ E00: PatchCore conclusions are conditional on reference agreement
 │     └─ Gate G2: if the random control is off, stop and fix the metric
 └─ Gate A: if a split leaks, nothing downstream means anything
 ```

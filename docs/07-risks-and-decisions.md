@@ -125,6 +125,8 @@ measured answer instead of an assumption.
 
 ### ADR-7 — `OP-FPR1` targets the achievable rate, not 1%
 **Status:** Accepted (P2). **Supersedes** the 1% figure in the original protocol §4.4.
+**Decisions 2 and 3 are superseded by ADR-9:** the `ceil` rank rule overshoots the target
+(review F01), and "raise on an unachievable target" became an explicit, recorded policy.
 
 **Context.** The protocol defined the primary operating point as "the 99th percentile of scores
 over `validation/good`", targeting 1% false alarms. Implementing it at P2 exposed that the target
@@ -202,6 +204,81 @@ stated in the report rather than glossed.
 (−) Lower resolution than `sheet_metal`, so the resolution axis is less punishing and the
 tiling-is-mandatory finding cannot be reproduced on VisA.
 (−) Two datasets in flight means two sets of numbers, and every table must say which.
+
+---
+
+### ADR-9 — The operating threshold is a conservative split-conformal rank
+**Status:** Accepted (protocol v2). **Supersedes** ADR-7 decisions 2 and 3.
+
+**Context.** ADR-7 set `k = ceil(target * (n+1))` and took the k-th largest validation score as
+the threshold. The external review (docs/13, F01) showed this is the wrong direction: `ceil` picks a
+*larger* `k`, a *lower* threshold, and an expected false-alarm rate `k/(n+1)` that can exceed the
+target — at `n = 136` and a 1% target it gives `k = 2` and 1.46%, not ≤ 1%. Decisions also used
+`>=`, so a test score tied with the threshold raised an alarm, which the rank argument does not
+cover.
+
+**Decision.**
+1. `k = floor(α(n+1))`; the threshold is the k-th largest calibration score; a test image is flagged
+   iff `score > threshold` (strict). The expected rate `k/(n+1) ≤ α` for a fresh normal that is
+   exchangeable with the calibration normals.
+2. When `α(n+1) < 1` no rank meets the target. The behaviour is a declared **policy**, never an
+   accident: `reject` raises; `relax` uses `k = 1` (the sample maximum) and records an effective
+   rate `1/(n+1) > α` with `target_met = false`; `always_accept` returns an infinite threshold
+   that never alarms and says so. The evaluation default is `relax`, because development tables must
+   still show recall at the best achievable point — and the table carries the flag.
+3. Every result records the requested rate, `n`, `k`, the effective rate, `target_met`, the
+   comparator, and the realized test FPR, as separate columns. They answer different questions and
+   are never merged into one "FPR".
+4. The guarantee is stated with its limits wherever it is quoted: it is **marginal** over
+   calibration draws, not conditional on one fitted model and one calibration set; it assumes the
+   calibration and test normals are exchangeable; and its resolution is `1/(n+1)`.
+
+**Consequences.** (+) A reported target is now an upper bound in expectation rather than a
+number the rule can overshoot. (+) VisA's large categories (`n ≈ 135`) calibrate to 0.73–0.74% at a
+1% request; its small ones (`n = 68`, and `capsules` at 81) cannot reach 1% and are visibly
+relaxed. (−) The realized test FPR of one fitted model can still exceed the bound — the first
+corrected PatchCore pilot showed 4% on `pcb1` against a 0.73% bound. Whether that is sampling
+noise or a validation-vs-test shift is tested explicitly (E03, `analysis.normal_shift`), not
+assumed. (−) Conservative thresholds cost recall; the study reports how much.
+
+---
+
+### ADR-10 — Protocol v2: development and confirmation roles, frozen before inspection
+**Status:** Accepted (protocol v2).
+
+**Context.** The three study categories have shaped the EDA, the resolution choice, the
+hypotheses and the review. Their test results are development evidence and can no longer support
+a held-out claim, however the configuration is frozen afterwards (docs/13 §5.1). Separately, the
+review found that results were keyed by human-readable strings that omitted settings, so a
+resumed run could silently reuse a result produced under different code or evaluation settings
+(F04), and that every pre-fix PatchCore number used the uncorrected scoring (F02, F03).
+
+**Decision.**
+1. **Development categories:** VisA `pcb1`, `macaroni2`, `capsules`. All comparisons, ablations,
+   failure analysis and recipe selection happen here, and their numbers are labelled development.
+2. **Confirmation categories, frozen now:** VisA `candle`, `cashew`, `chewinggum`, `fryum`,
+   `macaroni1`, `pcb2`, `pcb3`, `pcb4`, `pipe_fryum`. Up to this decision only their split
+   *counts* (from the official `1cls.csv`) have been read — no image, mask, defect statistic or
+   model output. Until confirmation: no EDA on their test splits, no per-image viewing, no runs.
+   The docs/10 idea of `cashew` as an easy sanity row is withdrawn; it is a confirmation category.
+3. **A confirmation run** uses a recipe frozen beforehand (config plus `implementation_id`),
+   fits each category on its own training normals, calibrates on its own validation normals, runs
+   once with `role = "confirmation"`, and is reported whatever it shows. Retuning after seeing a
+   confirmation result starts a new development cycle, and those categories lose the confirmation
+   label.
+4. **Run identity.** A run's id hashes the dataset split listing, the model's effective
+   hyperparameters (defaults included), the transform, the evaluation settings, the seed, the
+   role, the protocol version, and an `implementation_id` over the result-producing source
+   modules. A completed run is reused only under an identical id.
+5. **Protocol version 2** starts with the F01–F11 corrections. Earlier VisA numbers are archived
+   as exploratory (`reports/archive/`) and are not compared with v2 numbers in any table.
+
+**Consequences.** (+) A confirmation table is possible at all, and cheap: nine categories, one
+frozen recipe. (+) Reuse is safe by construction rather than by naming discipline. (−) Any
+change to data, model, metric or evaluation code invalidates reuse; analysis and table-formatting
+modules are deliberately outside the hash so that studying results does not force refits.
+(−) Nine confirmation categories are a single dataset from a single source: they test recipe
+transfer across VisA's object types, not industrial generality.
 
 ---
 
