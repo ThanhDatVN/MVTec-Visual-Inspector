@@ -104,15 +104,15 @@ the ~360 available.
 
 ## Headline results (VisA development categories, protocol v2)
 
-PatchCore reference configuration; operating point from a conservative rank threshold at a 1%
+PatchCore reference configuration, mean ± sd over 3 seeds; operating point from a conservative rank threshold at a 1%
 false-alarm request. Development evidence only — these categories shaped the hypotheses. Details,
 controls and caveats: [reports/E00-E04-development-findings.md](reports/E00-E04-development-findings.md).
 
-| category | image AUROC, 320 px (3 seeds) | image AUROC, 640 px (fixed 10 k bank) | AU-PRO@0.05, 320 → 640 px | realized FPR at 640 px (bound) |
+| category | image AUROC, 320 px | image AUROC, 640 px (fixed 10 k bank) | AU-PRO@0.05, 320 → 640 px | realized FPR at 640 px (bound) |
 |----------|------|------|------|------|
-| `pcb1` | 0.944 ± 0.003 | **0.979** | 0.734 → 0.862 | **5.0%** (0.73%) |
-| `macaroni2` | 0.708 ± 0.011 | **0.887** | 0.645 → 0.882 | 2.0% (0.74%) |
-| `capsules` | 0.710 ± 0.044 | **0.916** | 0.430 → 0.853 | 1.7% (1.22%) |
+| `pcb1` | 0.944 ± 0.003 | **0.979 ± 0.001** | 0.734 → 0.857 | **4.7%** (0.73%) |
+| `macaroni2` | 0.708 ± 0.011 | **0.884 ± 0.005** | 0.645 → 0.874 | 1.7% (0.74%) |
+| `capsules` | 0.710 ± 0.044 | **0.919 ± 0.006** | 0.430 → 0.864 | 2.8% (1.22%) |
 
 What the controls behind this table say:
 

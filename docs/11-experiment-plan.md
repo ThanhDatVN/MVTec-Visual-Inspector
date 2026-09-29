@@ -154,7 +154,8 @@ and §8 of the report above; generated tables in `reports/studies/`.
 | D″2 | 640 px, fixed 10 k bank, seeds 1–2 | 6 | Seed spread of the candidate recipe |
 
 *Status: D″1 done* — the largest effect measured (+0.03 / +0.19 / +0.25 image AUROC from 320 to
-640 px, intervals excluding zero), with no measurable cost from fixing the bank at 10 k. Report §7.
+640 px, intervals excluding zero), with no measurable cost from fixing the bank at 10 k. *D″2
+done:* 0.979 ± 0.001 / 0.884 ± 0.005 / 0.919 ± 0.006 over 3 seeds at ~4 GB peak host RSS. Report §7.
 Native resolution is open; it needs a smaller candidate fraction or tiling to stay within 16 GB RAM.
 
 ### Stage E — Ablation sweep (Kaggle, ~25 GPU-h)

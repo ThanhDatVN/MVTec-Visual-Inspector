@@ -25,7 +25,9 @@ uncorrected scoring and threshold (protocol v1).
    bank.** From 320 to 640 px, PatchCore's image AUROC rises 0.946 → 0.977 on `pcb1`,
    0.702 → 0.890 on `macaroni2` and 0.661 → 0.910 on `capsules`, and AU-PRO@0.05 to 0.85–0.88 on
    all three. A bank fixed at 10,000 entries matches a bank that grows with the pixel count to
-   within 0.007 AUROC. Single seed, development categories (E04, §7).
+   within 0.007 AUROC. Over 3 seeds the 640 px / fixed-bank configuration reaches 0.979 ± 0.001,
+   0.884 ± 0.005 and 0.919 ± 0.006 image AUROC, with ~4 GB peak host memory on the laptop.
+   Development categories (E04, §7).
 1. **E00 — reference agreement: met on tensors.** Our PatchCore reproduces anomalib v2.3.0's patch
    scores and re-weighted image scores on identical inputs to float32 tolerance; the coreset
    differs in one documented way. AU-PRO agrees with an independent FPR-parametrized oracle.
@@ -374,9 +376,26 @@ Reading:
   pool, not the bank: both policies peak at the same RSS.
 - **Calibration does not improve with resolution.** `pcb1` stays at 4–9% realized false alarms
   against a 0.73% bound: sharper maps find the background debris as readily as the defects.
-- **Single seed.** At 320 px the seed spread is ≤ 0.011 AUROC on `pcb1` and `macaroni2` and 0.044
-  on `capsules`; the 320 → 640 differences are 6–17× larger, but the 448 vs 640 and bank-policy
-  comparisons need the 3-seed rerun before any adoption decision.
+- **The 640 px / fixed-bank configuration is stable across seeds** (seeds 0–2; candidate
+  sampling and the coreset start vary):
+
+  | category | I-AUROC | AU-PRO@0.05 | AU-PRO@0.30 | recall@OP | FPR@OP (bound) | fit s | peak RSS |
+  |---|---|---|---|---|---|---|---|
+  | `pcb1` | 0.979 ± 0.001 | 0.857 ± 0.008 | 0.948 ± 0.002 | 0.85 ± 0.02 | 4.7% ± 0.6 (0.73%) | 114 | 4.0 GB |
+  | `macaroni2` | 0.884 ± 0.005 | 0.874 ± 0.007 | 0.960 ± 0.004 | 0.39 ± 0.14 | 1.7% ± 0.6 (0.74%) | 103 | 3.9 GB |
+  | `capsules` | 0.919 ± 0.006 | 0.864 ± 0.012 | 0.956 ± 0.009 | 0.54 ± 0.05 | 2.8% ± 1.9 (1.22%) | 62 | 3.0 GB |
+
+  Against 320 px (3 seeds, E01) the seed spread of image AUROC shrank on `capsules` from 0.044 to
+  0.006. Recall at the operating point is the unstable quantity: on `macaroni2` it moves between
+  0.23 and 0.47 with the seed while AUROC moves by 0.008, because the threshold is the single
+  highest validation score.
+- **The object region adds little at 640 px** (fixed bank, 3 seeds, 3% margin): +0.006
+  [+0.001, +0.017] on `pcb1`, +0.035 [+0.014, +0.060] on `macaroni2`, −0.012 [−0.025, −0.002] on
+  `capsules`. Most of what it recovered at 320 px, resolution recovers on its own, and it still
+  fails the regression clause on `capsules`.
+- **The calibration pattern is unchanged at 640 px.** `pcb1`: 5 flagged test normals, exact tail
+  p = 0.013, bulk shift AUROC 0.48–0.50. `macaroni2` (2 flagged, p = 0.18) and `capsules`
+  (1 flagged, p = 0.43) are consistent with their bounds.
 
 ## 8. E03 — calibration rule and calibration-set size
 
@@ -420,14 +439,20 @@ points of FPR; single-point differences in this table are within that granularit
   candidate sampling differ from anomalib's by design.
 - **The CAE is under-trained**, so the ladder does not yet measure what a reconstruction model can
   do with this data.
-- **E04 is one seed and stops at 640 px.** Native resolution (≈ 1,400–1,500 px) and a 3-seed
-  rerun of the 640 px configuration are open; so is whether the object region still helps at 640.
+- **E04 stops at 640 px, and only the 640 px / fixed-bank row has 3 seeds.** Native resolution
+  (≈ 1,400–1,500 px) is open: at a 10% candidate pool it would need ~4× the host memory measured
+  at 640 px, so it needs a smaller pool or tiling on this laptop.
 
 ## 10. Next
 
-1. Re-run PatchCore at 640 px with a fixed 10 k bank on 3 seeds, and repeat E02b (object region)
-   and the calibration diagnostics on it — the candidate recipe for confirmation.
-2. A longer CAE schedule, scored with a top-k rule chosen on validation normals only, to establish
+1. ~~Re-run PatchCore at 640 px with a fixed 10 k bank on 3 seeds, and repeat E02b and the
+   calibration diagnostics on it~~ — done, §7.
+2. The `pcb1` calibration failure is now the main open problem, and resolution does not fix it.
+   Candidates, each testable on stored predictions: calibrating on the object region only;
+   a background-debris-aware score (the region plus a minimum-area rule for background peaks);
+   and reporting a conformal bound together with the tail test, so a deployment sees the
+   exchangeability failure instead of a silently wrong rate.
+3. A longer CAE schedule, scored with a top-k rule chosen on validation normals only, to establish
    whether the reconstruction rung is budget-limited.
-3. Freeze the confirmation recipe (PatchCore 640 px, fixed bank; object region as a pre-declared
-   variant with its applicability check) in an ADR, then run the nine confirmation categories once.
+4. Freeze the confirmation recipe (PatchCore 640 px, fixed 10 k bank) in an ADR, then run the nine
+   confirmation categories once.
