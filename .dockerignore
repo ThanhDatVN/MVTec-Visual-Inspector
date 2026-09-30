@@ -1,0 +1,12 @@
+.git
+.venv
+data
+artifacts
+reports
+notebooks
+docs
+tests
+mlruns
+**/__pycache__
+**/*.npz
+**/*.npy

@@ -295,6 +295,47 @@ def cmd_study(args) -> int:
     return 0
 
 
+def cmd_export(args) -> int:
+    """Fit a model on one category and write a deployable artifact with its
+    threshold frozen on that category's validation normals."""
+    from .api.artifact import save_artifact
+    from .evaluate import SplitPredictions
+    from .models.patchcore import PatchCore
+    from .runner import eval_config_from_config, prepare
+
+    cfg = _resolve(args)
+    root = cfg["data"]["root"]
+    category = args.category or cfg["data"].get("category")
+    spec, model, idx = prepare(cfg, method=cfg["model"]["name"], category=category,
+                               seed=args.seed, data_root=root)
+    if not isinstance(model, PatchCore):
+        print("error: artifacts are implemented for PatchCore only", file=sys.stderr)
+        return 2
+    model.fit(idx["train"])
+    val = SplitPredictions.from_model(model, idx["validation"])
+    target = eval_config_from_config(cfg).target_fpr
+    out = save_artifact(model, val.scores, args.out, target_fpr=target, category=category,
+                        extra={"run_spec_id": spec.run_id})
+    print(f"artifact -> {out} (threshold from {val.scores.size} validation normals)")
+    return 0
+
+
+def cmd_serve(args) -> int:
+    import uvicorn
+
+    from .api.service import create_app
+
+    uvicorn.run(create_app(args.artifact), host=args.host, port=args.port)
+    return 0
+
+
+def cmd_demo(args) -> int:
+    from .app.demo import build_demo
+
+    build_demo(args.artifact).launch(server_name=args.host, server_port=args.port)
+    return 0
+
+
 def cmd_fetch(args) -> int:
     """Download a dataset that does not require an account."""
     from .fetch import REGISTRY, fetch, verify
@@ -424,6 +465,23 @@ def build_parser() -> argparse.ArgumentParser:
     p_study.add_argument("--region-size", action="store_true",
                          help="localization by defect size (E04); needs --data-root")
     p_study.set_defaults(func=cmd_study)
+
+    p_exp = sub.add_parser("export", help="fit one category and write a deployable artifact")
+    _add_config_args(p_exp)
+    p_exp.add_argument("--category", default=None)
+    p_exp.add_argument("--seed", type=int, default=0)
+    p_exp.add_argument("--out", required=True)
+    p_exp.set_defaults(func=cmd_export)
+
+    for name, func, port, help_text in (
+        ("serve", cmd_serve, 8000, "HTTP inspection service over an artifact (FastAPI)"),
+        ("demo", cmd_demo, 7860, "interactive demo over an artifact (Gradio)"),
+    ):
+        p = sub.add_parser(name, help=help_text)
+        p.add_argument("--artifact", required=True)
+        p.add_argument("--host", default="127.0.0.1")
+        p.add_argument("--port", type=int, default=port)
+        p.set_defaults(func=func)
 
     for name, help_text in (
         ("bench", "measure latency and memory (P9)"),

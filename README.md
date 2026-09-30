@@ -60,6 +60,28 @@ No dataset needed to run the tests — fixtures are generated procedurally:
 pytest            # no GPU, no data needed
 ```
 
+## Serving
+
+A fitted detector is exported as an **artifact** — the memory bank plus a `meta.json` with the
+hyperparameters, the input transform, the operating threshold frozen on that category's
+validation normals, and provenance (no pickle). The service and the demo load an artifact and
+never re-derive the threshold.
+
+```bash
+inspector export -c configs/data/visa_pcb1.yaml -c configs/recipes/confirmation-v1-patchcore-640.yaml \
+                 --data-root data/raw/VisA_20220922 --category pcb1 --out artifacts/pcb1
+inspector serve  --artifact artifacts/pcb1            # FastAPI: GET /health, POST /predict[?heatmap=true]
+inspector demo   --artifact artifacts/pcb1            # Gradio (needs the [serve] extra)
+
+docker build -t mvi-inspector .
+docker run --rm -p 8000:8000 -v "$PWD/artifacts/pcb1:/artifact:ro" mvi-inspector
+```
+
+`/predict` returns the score, the decision (`score > threshold`), the effective false-alarm bound
+the threshold was calibrated to, the location of the map's peak, latency, and optionally a PNG
+overlay on a colour scale fixed by the threshold — so a normal image looks calm instead of being
+stretched to its own maximum.
+
 ## Notebooks
 
 | Notebook | Venue | Covers |
