@@ -78,7 +78,8 @@ docker build -t mvi-inspector .
 docker run --rm -p 8000:8000 -v "$PWD/artifacts/pcb1:/artifact:ro" mvi-inspector
 ```
 
-`/predict` returns the score, the decision (`normal`, `anomalous`, or `refused` when the input
+`/predict?explain=true` also names the nearest normal training patch to the peak — for a memory-bank
+model, the most direct explanation of why a region scored high. `/predict` returns the score, the decision (`normal`, `anomalous`, or `refused` when the input
 guards find the exposure or focus outside the training range), the rule `score > threshold`, the effective false-alarm bound
 the threshold was calibrated to, the location of the map's peak, latency, and optionally a PNG
 overlay on a colour scale fixed by the threshold — so a normal image looks calm instead of being

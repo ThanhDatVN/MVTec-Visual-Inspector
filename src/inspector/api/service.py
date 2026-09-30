@@ -6,7 +6,8 @@ Endpoints:
     GET  /health   model, category, threshold and its provenance
     POST /predict  multipart image -> score, decision (normal / anomalous / refused), input checks,
                    peak location, latency;
-                   `?heatmap=true` adds a PNG overlay (base64) on a threshold-fixed scale
+                   `?heatmap=true` adds a PNG overlay (base64) on a threshold-fixed scale;
+                   `?explain=true` adds the nearest normal training patch to the peak
 
 The decision is the artifact's frozen rule (`score > threshold`), never
 re-derived per request. The response states the requested and effective
@@ -73,6 +74,7 @@ def create_app(artifact: str | Path | Inspector) -> FastAPI:
     async def predict(
         file: UploadFile = File(...),  # noqa: B008 — FastAPI's declared-parameter idiom
         heatmap: bool = False,
+        explain: bool = False,
     ) -> dict[str, Any]:
         data = await file.read()
         try:
@@ -93,6 +95,8 @@ def create_app(artifact: str | Path | Inspector) -> FastAPI:
             "peak_yx": list(pred.peak_yx),
             "latency_ms": round(pred.latency_ms, 1),
         }
+        if explain:
+            body["explanation"] = inspector.explain(image)
         if heatmap:
             body["heatmap_png_base64"] = _png(overlay(image, pred.anomaly_map, pred.threshold))
         return body

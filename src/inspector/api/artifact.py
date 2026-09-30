@@ -58,8 +58,11 @@ def save_artifact(
     category: str = "",
     smoothing_sigma: float = 4.0,
     guards: InputGuards | None = None,
+    train_ids: list[str] | None = None,
     extra: dict[str, Any] | None = None,
 ) -> Path:
+    """`train_ids` (the training split in fit order) makes nearest-normal explanations
+    name the training image each bank entry came from."""
     """Write a fitted PatchCore and its frozen operating threshold."""
     from ..runner import implementation_id
     from ..utils.env import git_info
@@ -104,16 +107,25 @@ def save_artifact(
     (directory / "meta.json").write_text(json.dumps(meta, indent=2, default=str), encoding="utf-8")
     if guards is not None:
         (directory / "guards.json").write_text(json.dumps(guards.as_dict(), indent=2), encoding="utf-8")
+    if train_ids is not None:
+        (directory / "train_ids.json").write_text(json.dumps(train_ids), encoding="utf-8")
     return directory
 
 
 class Inspector:
     """Loaded artifact: image in, score + decision + native-resolution map out."""
 
-    def __init__(self, model: PatchCore, meta: dict[str, Any], guards: InputGuards | None = None) -> None:
+    def __init__(
+        self,
+        model: PatchCore,
+        meta: dict[str, Any],
+        guards: InputGuards | None = None,
+        train_ids: list[str] | None = None,
+    ) -> None:
         self.model = model
         self.meta = meta
         self.guards = guards
+        self.train_ids = train_ids
         self.threshold = float(meta["threshold"]["value"])
         self.sigma = float(meta.get("smoothing_sigma", 4.0))
 
@@ -134,6 +146,37 @@ class Inspector:
             input_ok=bool(check["ok"]),
             input_issues=tuple(check["reasons"]),  # type: ignore[arg-type]
         )
+
+
+    def explain(self, image: np.ndarray) -> dict[str, Any]:
+        """The nearest *normal* training patch to the image's most anomalous patch.
+
+        For a memory-bank model this is the most direct explanation available: the
+        peak is anomalous because its closest match among the stored normal patches
+        is this far away, and here is where that match came from. Costs one extra
+        forward pass; positions are relative (0-1) to each image.
+        """
+        import torch
+
+        from ..models.patchcore import knn_search
+
+        prepared = self.model.transform.normalize_image(self.model.transform.resize_image(image))
+        desc, grid = self.model.extractor.embed_batch(prepared[None, ...])
+        queries = desc[0].float()
+        with torch.no_grad():
+            dists, idx = knn_search(queries, self.model._bank(queries.device), 1)
+        peak = int(torch.argmax(dists[:, 0]).item())
+        entry = int(idx[peak, 0].item())
+        src_img, src_row, src_col = (int(v) for v in self.model.bank_sources[entry])  # type: ignore[index]
+        bank_h, bank_w = self.model.grid
+        return {
+            "peak_rel_yx": [(peak // grid[1] + 0.5) / grid[0], (peak % grid[1] + 0.5) / grid[1]],
+            "distance": float(dists[peak, 0].item()),
+            "nearest_normal": {
+                "train_image": self.train_ids[src_img] if self.train_ids else src_img,
+                "rel_yx": [(src_row + 0.5) / bank_h, (src_col + 0.5) / bank_w],
+            },
+        }
 
 
 def load_artifact(directory: str | Path, *, device: str = "auto") -> Inspector:
@@ -161,7 +204,9 @@ def load_artifact(directory: str | Path, *, device: str = "auto") -> Inspector:
     })
     guards_file = directory / "guards.json"
     guards = InputGuards(**json.loads(guards_file.read_text(encoding="utf-8"))) if guards_file.is_file() else None
-    return Inspector(model, meta, guards)
+    ids_file = directory / "train_ids.json"
+    train_ids = json.loads(ids_file.read_text(encoding="utf-8")) if ids_file.is_file() else None
+    return Inspector(model, meta, guards, train_ids)
 
 
 def overlay(image: np.ndarray, anomaly_map: np.ndarray, threshold: float) -> np.ndarray:

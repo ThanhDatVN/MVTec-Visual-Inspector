@@ -319,7 +319,8 @@ def cmd_export(args) -> int:
 
     guards = InputGuards.fit(load_image(s.image_path) for s in idx["train"])
     out = save_artifact(model, val.scores, args.out, target_fpr=target, category=category,
-                        guards=guards, extra={"run_spec_id": spec.run_id})
+                        guards=guards, train_ids=[s.rel_id(idx["train"].root) for s in idx["train"]],
+                        extra={"run_spec_id": spec.run_id})
     print(f"artifact -> {out} (threshold from {val.scores.size} validation normals)")
     return 0
 
