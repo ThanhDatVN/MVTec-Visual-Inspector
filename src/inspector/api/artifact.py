@@ -25,6 +25,7 @@ from ..data.transforms import ImageTransform
 from ..models.base import postprocess_map
 from ..models.patchcore import PatchCore
 from ..postproc.thresholds import from_validation_fpr
+from .guards import InputGuards
 
 ARTIFACT_VERSION = 1
 
@@ -37,6 +38,15 @@ class Prediction:
     anomaly_map: np.ndarray  # native resolution, float32
     peak_yx: tuple[int, int]
     latency_ms: float
+    input_ok: bool = True
+    input_issues: tuple[str, ...] = ()
+
+    @property
+    def decision(self) -> str:
+        """`refused` when the image is outside the conditions the threshold was set in (E08)."""
+        if not self.input_ok:
+            return "refused"
+        return "anomalous" if self.is_anomalous else "normal"
 
 
 def save_artifact(
@@ -47,6 +57,7 @@ def save_artifact(
     target_fpr: float = 0.01,
     category: str = "",
     smoothing_sigma: float = 4.0,
+    guards: InputGuards | None = None,
     extra: dict[str, Any] | None = None,
 ) -> Path:
     """Write a fitted PatchCore and its frozen operating threshold."""
@@ -91,20 +102,24 @@ def save_artifact(
         },
     }
     (directory / "meta.json").write_text(json.dumps(meta, indent=2, default=str), encoding="utf-8")
+    if guards is not None:
+        (directory / "guards.json").write_text(json.dumps(guards.as_dict(), indent=2), encoding="utf-8")
     return directory
 
 
 class Inspector:
     """Loaded artifact: image in, score + decision + native-resolution map out."""
 
-    def __init__(self, model: PatchCore, meta: dict[str, Any]) -> None:
+    def __init__(self, model: PatchCore, meta: dict[str, Any], guards: InputGuards | None = None) -> None:
         self.model = model
         self.meta = meta
+        self.guards = guards
         self.threshold = float(meta["threshold"]["value"])
         self.sigma = float(meta.get("smoothing_sigma", 4.0))
 
     def predict(self, image: np.ndarray) -> Prediction:
         t0 = time.perf_counter()
+        check = self.guards.check(image) if self.guards is not None else {"ok": True, "reasons": []}
         raw = self.model.predict_raw(image)
         native = postprocess_map(raw.raw_map, input_size=raw.input_size,
                                  native_size=raw.native_size, sigma=self.sigma).astype(np.float32)
@@ -116,6 +131,8 @@ class Inspector:
             anomaly_map=native,
             peak_yx=(int(peak[0]), int(peak[1])),
             latency_ms=1000.0 * (time.perf_counter() - t0),
+            input_ok=bool(check["ok"]),
+            input_issues=tuple(check["reasons"]),  # type: ignore[arg-type]
         )
 
 
@@ -142,7 +159,9 @@ def load_artifact(directory: str | Path, *, device: str = "auto") -> Inspector:
         "hparams": hp,
         "stats": meta.get("stats", {}),
     })
-    return Inspector(model, meta)
+    guards_file = directory / "guards.json"
+    guards = InputGuards(**json.loads(guards_file.read_text(encoding="utf-8"))) if guards_file.is_file() else None
+    return Inspector(model, meta, guards)
 
 
 def overlay(image: np.ndarray, anomaly_map: np.ndarray, threshold: float) -> np.ndarray:

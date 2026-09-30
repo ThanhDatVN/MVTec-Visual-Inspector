@@ -4,7 +4,8 @@
 
 Endpoints:
     GET  /health   model, category, threshold and its provenance
-    POST /predict  multipart image -> score, decision, peak location, latency;
+    POST /predict  multipart image -> score, decision (normal / anomalous / refused), input checks,
+                   peak location, latency;
                    `?heatmap=true` adds a PNG overlay (base64) on a threshold-fixed scale
 
 The decision is the artifact's frozen rule (`score > threshold`), never
@@ -64,6 +65,7 @@ def create_app(artifact: str | Path | Inspector) -> FastAPI:
             "requested_fpr": params.get("requested_fpr"),
             "effective_fpr": params.get("effective_fpr"),
             "calibration_normals": meta["calibration"]["n"],
+            "input_guards": inspector.guards.as_dict() if inspector.guards else None,
             "provenance": meta.get("provenance", {}),
         }
 
@@ -81,7 +83,10 @@ def create_app(artifact: str | Path | Inspector) -> FastAPI:
         body: dict[str, Any] = {
             "filename": file.filename,
             "score": pred.score,
+            "decision": pred.decision,
             "is_anomalous": pred.is_anomalous,
+            "input_ok": pred.input_ok,
+            "input_issues": list(pred.input_issues),
             "threshold": pred.threshold,
             "decision_rule": "score > threshold",
             "effective_fpr": params.get("effective_fpr"),

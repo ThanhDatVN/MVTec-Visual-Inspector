@@ -26,7 +26,9 @@ def build_demo(artifact: str | Path) -> Any:
 
     def run(image: np.ndarray) -> tuple[np.ndarray, str]:
         pred = inspector.predict(image)
-        verdict = "ANOMALOUS" if pred.is_anomalous else "normal"
+        verdict = pred.decision.upper()
+        if pred.input_issues:
+            verdict += f" ({', '.join(pred.input_issues)})"
         text = (f"**{verdict}** — score {pred.score:.3f} vs threshold {pred.threshold:.3f} "
                 f"(effective false-alarm bound {eff:.2%}); {pred.latency_ms:.0f} ms")
         return overlay(image, pred.anomaly_map, pred.threshold), text

@@ -314,8 +314,12 @@ def cmd_export(args) -> int:
     model.fit(idx["train"])
     val = SplitPredictions.from_model(model, idx["validation"])
     target = eval_config_from_config(cfg).target_fpr
+    from .api.guards import InputGuards
+    from .data.transforms import load_image
+
+    guards = InputGuards.fit(load_image(s.image_path) for s in idx["train"])
     out = save_artifact(model, val.scores, args.out, target_fpr=target, category=category,
-                        extra={"run_spec_id": spec.run_id})
+                        guards=guards, extra={"run_spec_id": spec.run_id})
     print(f"artifact -> {out} (threshold from {val.scores.size} validation normals)")
     return 0
 

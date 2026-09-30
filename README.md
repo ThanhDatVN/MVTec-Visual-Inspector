@@ -78,7 +78,8 @@ docker build -t mvi-inspector .
 docker run --rm -p 8000:8000 -v "$PWD/artifacts/pcb1:/artifact:ro" mvi-inspector
 ```
 
-`/predict` returns the score, the decision (`score > threshold`), the effective false-alarm bound
+`/predict` returns the score, the decision (`normal`, `anomalous`, or `refused` when the input
+guards find the exposure or focus outside the training range), the rule `score > threshold`, the effective false-alarm bound
 the threshold was calibrated to, the location of the map's peak, latency, and optionally a PNG
 overlay on a colour scale fixed by the threshold — so a normal image looks calm instead of being
 stretched to its own maximum.
@@ -151,7 +152,9 @@ before the runs; each category fitted and calibrated on its own normals; nothing
 than the operating point. Sensor noise with JPEG down to quality 40, a 0.35× resize round-trip
 and a 50% illumination falloff leave the false-alarm rate at its clean level; a quarter to two
 thirds of a stop of over-exposure, or a blur of ~2–4 native pixels, sends it to 45–100% while
-image AUROC drops by only 0.04. Deployment needs exposure and focus guards on the input.
+image AUROC drops by only 0.04. Two input guards (exposure and focus ranges from the training
+normals) refuse every breaking corruption at or before its breaking severity, at a cost of 1 in
+260 clean normals; the service returns `decision: refused` for them.
 [Report](reports/E08-robustness.md).
 
 **Development findings that shaped the recipe** (three categories, details in the

@@ -95,6 +95,50 @@ focus check (e.g. a Laplacian-variance floor), each with its own tolerance, and 
 trigger when either drifts. Photometric normalization of the input against training statistics
 is the obvious model-side experiment; it is not run here.
 
+## E08b — input guards
+
+The consequence above, implemented and measured (`src/inspector/api/guards.py`,
+`scripts/guard_study.py`, output [studies/e08/guards.csv](studies/e08/guards.csv)). Two image
+statistics of the downscaled grey image — **mean level** (exposure) and **Laplacian variance**
+(focus) — each accept the [min, max] range seen on the category's training normals. For a clean
+image exchangeable with them, falling outside that range has probability ≤ 2/(n+1) per guard
+(0.26% for n = 768), the same rank argument as the operating threshold. An image outside the
+range gets the decision **refused** instead of normal/anomalous: the threshold was not calibrated
+for it. The guards never look at the model's score.
+
+**Cost on clean test images:** 1 of 260 normals refused (0.4%; bound ≈ 0.5% for two guards). 10%
+of `pcb1` and 11% of `capsules` *defective* images are refused too — their global brightness or
+texture is outside the normal range (the same global shortcut the colour histogram exploits,
+case book §6). A refused defect goes to manual review; it is not a miss.
+
+Share of all test images refused, severities 1 → 5 (normals and defects together):
+
+| corruption | breaks the operating point at | `pcb1` | `macaroni2` | `capsules` |
+|---|---|---|---|---|
+| Gaussian blur | 1 / 3 / 1 | 100% from 1 | 0% · 100% from 2 | 100% from 1 |
+| defocus blur | 2 / never / 1 | 100% from 1 | 1% · 46% · 100% from 3 | 100% from 1 |
+| exposure up | 1 / 2 / 2 | 100% from 1 | 100% from 1 | 99% · 100% |
+| exposure down | 2 / 4 / 4 | 100% from 1 | 100% from 1 | 73% · 100% |
+| spatial light | never | 4–6% | 0–1% | 7–9% |
+| resize round-trip | never | 7% · 8% · 18% · 100% · 100% | 0% · 2% · 2% · 44% · 100% | 4% · 16% · 54% · 96% · 100% |
+| noise + JPEG | never | 5–6% | 0–1% | 8% · 9% · 13% · 22% · 32% |
+
+(Clean refusal: 5.0% / 0.5% / 6.9% of all test images, i.e. the defects noted above.)
+
+- **Every corruption that breaks the operating point is refused at or before the severity at
+  which it breaks,** on every category. There is no cell where the realized false-alarm rate
+  exploded while the guards let the images through.
+- **The guards are conservative:** they also refuse strong resize round-trips (0.5× and below
+  lose enough detail to lower the Laplacian variance) and, on `capsules`, strong sensor noise
+  (which raises it), although the operating point survives both. Refusing costs a manual review,
+  not a wrong decision; tolerances wider than [min, max] would trade that cost against risk and
+  need their own calibration.
+- **Smooth illumination falloff passes, correctly** — it neither breaks the operating point nor
+  moves the global statistics.
+
+The service and the demo apply the guards whenever an artifact carries `guards.json`
+(`inspector export` writes it), returning `decision: refused` with the reason.
+
 ## Limits
 
 - Synthetic corruptions on three development categories, one seed. VisA has no real
