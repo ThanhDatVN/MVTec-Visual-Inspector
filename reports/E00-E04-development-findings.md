@@ -422,6 +422,24 @@ seeds) and the rule change. Realized test FPR and recall: median [5th, 95th perc
 | | rank | 5% | 81 (all) | 4.88% | 6.7% | 0.35 |
 | | median + 3 MAD | – | 81 (all) | none | 8.3% | 0.38 |
 
+**E03b — does a larger calibration pool repair `pcb1`? No.** Cross-fitting the 640 px / fixed-bank
+recipe (5 folds over the training normals, seed 0; `scripts/crossfit_calibration.py`) adds ~770
+out-of-fold normal scores, so a 1% request can use k = 7–9 instead of the single maximum:
+
+| category | calibration pool | n | k | bound | false alarms | tail p | recall@OP |
+|---|---|---|---|---|---|---|---|
+| `pcb1` | validation | 136 | 1 | 0.73% | 5 / 100 | 0.013 | 0.85 |
+| | out-of-fold train | 768 | 7 | 0.91% | 3 / 100 | 0.074 | 0.72 |
+| | pooled | 904 | 9 | 0.99% | 5 / 100 | 0.006 | 0.81 |
+| `macaroni2` | pooled | 900 | 9 | 1.00% | 2 / 100 | 0.26 | 0.44 |
+| `capsules` | pooled | 542 | 5 | 0.92% | 0 / 60 | 1 | 0.42 |
+
+Seven times more calibration normals, drawn from the same capture sessions as the training set,
+leave the `pcb1` tail failure intact. The cause is not calibration sample size but the test
+split's session-specific debris (§4), which no amount of same-session normals can represent.
+The out-of-fold models see 80% of the training data, so their scores run slightly high — a
+conservative direction that still does not reach the bound.
+
 "relaxed": the request is below `1/(n+1)`, so the `relax` policy uses the sample maximum and
 flags `target_met = false` (ADR-9). With 60 or 100 test normals one false alarm is 1.7 or 1.0
 points of FPR; single-point differences in this table are within that granularity.
@@ -452,7 +470,7 @@ points of FPR; single-point differences in this table are within that granularit
 
 1. ~~Re-run PatchCore at 640 px with a fixed 10 k bank on 3 seeds, and repeat E02b and the
    calibration diagnostics on it~~ — done, §7.
-2. The `pcb1` calibration failure is now the main open problem, and resolution does not fix it.
+2. The `pcb1` calibration failure is now the main open problem; neither resolution nor a 7x larger calibration pool (E03b) fixes it.
    Candidates, each testable on stored predictions: calibrating on the object region only;
    a background-debris-aware score (the region plus a minimum-area rule for background peaks);
    and reporting a conformal bound together with the tail test, so a deployment sees the
