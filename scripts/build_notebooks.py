@@ -455,7 +455,7 @@ LAPTOP = [
     ),
     code(
         "# The whole registry, regenerated — never hand-edited.",
-        "table = write_results(REGISTRY.results(), REPO / 'reports' / 'results_registry.csv')",
+        "table = write_results(REGISTRY.results(), REPO / ('notebooks/kaggle_local/results_registry.csv' if SMOKE else 'reports/results_registry.csv'))",
         "print('registry table ->', table)",
     ),
     md(
