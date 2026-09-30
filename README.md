@@ -8,7 +8,8 @@ with an explainability case book, a robustness study, and a containerized demo s
 > PatchCore at 640 px with a fixed 10k memory bank — which was frozen and pre-registered
 > ([ADR-11](docs/07-risks-and-decisions.md)) and then run once on nine held-out categories (E12).
 > Results: [confirmation](reports/E12-confirmation-v1.md) ·
-> [development](reports/E00-E04-development-findings.md).
+> [development](reports/E00-E04-development-findings.md) · [robustness](reports/E08-robustness.md) ·
+> [case book](reports/case-book/README.md).
 
 ---
 
@@ -145,6 +146,13 @@ before the runs; each category fitted and calibrated on its own normals; nothing
   session sits in the test normals' upper tail and not in validation — the same fibre appears in
   two `pipe_fryum` images, the same stray object in three `pcb1` images. The rank rule itself is
   sound: calibrated on held-out test normals, it hits its bound.
+
+**Robustness (E08, frozen threshold, development categories):** the ranking survives far longer
+than the operating point. Sensor noise with JPEG down to quality 40, a 0.35× resize round-trip
+and a 50% illumination falloff leave the false-alarm rate at its clean level; a quarter to two
+thirds of a stop of over-exposure, or a blur of ~2–4 native pixels, sends it to 45–100% while
+image AUROC drops by only 0.04. Deployment needs exposure and focus guards on the input.
+[Report](reports/E08-robustness.md).
 
 **Development findings that shaped the recipe** (three categories, details in the
 [development report](reports/E00-E04-development-findings.md)): input resolution is the largest

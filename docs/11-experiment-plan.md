@@ -194,7 +194,7 @@ is computed and written down, including any category where it bought nothing.
 
 ### Stage G — Robustness (laptop for inference, ~6 h wall-clock)
 
-*Status: G1 running on the laptop with the ADR-11 recipe (640 px, fixed 10 k bank) on the three
+*Status: G1 done — [report](../reports/E08-robustness.md). Previously: G1 running on the laptop with the ADR-11 recipe (640 px, fixed 10 k bank) on the three
 development categories — `scripts/robustness_study.py`, output `reports/studies/e08/`. The
 confirmation categories are spent, so this stage is development evidence.*
 
