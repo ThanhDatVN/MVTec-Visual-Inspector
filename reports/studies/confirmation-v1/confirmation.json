@@ -1,0 +1,523 @@
+{
+  "missing": [],
+  "tests": [
+    {
+      "hypothesis": "H1",
+      "category": "candle",
+      "estimate": 0.017199999999999993,
+      "ci_low": -0.0016999999999999238,
+      "ci_high": 0.0383,
+      "p": 0.07879212078792121,
+      "p_holm": 0.31516848315168483,
+      "significant": false
+    },
+    {
+      "hypothesis": "H2",
+      "category": "candle",
+      "estimate": 0.17503333333333337,
+      "ci_low": 0.11092916666666677,
+      "ci_high": 0.2411333333333333,
+      "p": 0.00019998000199980003,
+      "p_holm": 0.0035996400359964006,
+      "significant": true
+    },
+    {
+      "hypothesis": "H1",
+      "category": "cashew",
+      "estimate": 0.011199999999999988,
+      "ci_low": -0.010600000000000054,
+      "ci_high": 0.035599999999999965,
+      "p": 0.33096690330966905,
+      "p_holm": 0.9929007099290071,
+      "significant": false
+    },
+    {
+      "hypothesis": "H2",
+      "category": "cashew",
+      "estimate": 0.11559999999999993,
+      "ci_low": 0.05166666666666664,
+      "ci_high": 0.18713333333333337,
+      "p": 0.00019998000199980003,
+      "p_holm": 0.0035996400359964006,
+      "significant": true
+    },
+    {
+      "hypothesis": "H1",
+      "category": "chewinggum",
+      "estimate": -0.00040000000000006697,
+      "ci_low": -0.02180000000000004,
+      "ci_high": 0.019604999999999987,
+      "p": 0.9989001099890011,
+      "p_holm": 1.0,
+      "significant": false
+    },
+    {
+      "hypothesis": "H2",
+      "category": "chewinggum",
+      "estimate": 0.26173333333333326,
+      "ci_low": 0.1807333333333334,
+      "ci_high": 0.3478049999999999,
+      "p": 0.00019998000199980003,
+      "p_holm": 0.0035996400359964006,
+      "significant": true
+    },
+    {
+      "hypothesis": "H1",
+      "category": "fryum",
+      "estimate": 0.07300000000000006,
+      "ci_low": 0.03939999999999999,
+      "ci_high": 0.11260000000000003,
+      "p": 0.00019998000199980003,
+      "p_holm": 0.0035996400359964006,
+      "significant": true
+    },
+    {
+      "hypothesis": "H2",
+      "category": "fryum",
+      "estimate": 0.1362,
+      "ci_low": 0.06726500000000003,
+      "ci_high": 0.21200333333333324,
+      "p": 0.00039996000399960006,
+      "p_holm": 0.0035996400359964006,
+      "significant": true
+    },
+    {
+      "hypothesis": "H1",
+      "category": "macaroni1",
+      "estimate": 0.0794999999999999,
+      "ci_low": 0.04480000000000006,
+      "ci_high": 0.1188999999999999,
+      "p": 0.00019998000199980003,
+      "p_holm": 0.0035996400359964006,
+      "significant": true
+    },
+    {
+      "hypothesis": "H2",
+      "category": "macaroni1",
+      "estimate": 0.2696666666666666,
+      "ci_low": 0.19733166666666657,
+      "ci_high": 0.3440000000000001,
+      "p": 0.00019998000199980003,
+      "p_holm": 0.0035996400359964006,
+      "significant": true
+    },
+    {
+      "hypothesis": "H1",
+      "category": "pcb2",
+      "estimate": 0.03480000000000005,
+      "ci_low": 0.011797499999999928,
+      "ci_high": 0.06190250000000003,
+      "p": 0.0013998600139986002,
+      "p_holm": 0.008399160083991601,
+      "significant": true
+    },
+    {
+      "hypothesis": "H2",
+      "category": "pcb2",
+      "estimate": 0.0974666666666667,
+      "ci_low": 0.04613250000000003,
+      "ci_high": 0.15200249999999998,
+      "p": 0.00019998000199980003,
+      "p_holm": 0.0035996400359964006,
+      "significant": true
+    },
+    {
+      "hypothesis": "H1",
+      "category": "pcb3",
+      "estimate": 0.07445544554455441,
+      "ci_low": 0.036633663366336666,
+      "ci_high": 0.11663613861386134,
+      "p": 0.00019998000199980003,
+      "p_holm": 0.0035996400359964006,
+      "significant": true
+    },
+    {
+      "hypothesis": "H2",
+      "category": "pcb3",
+      "estimate": 0.2730693069306931,
+      "ci_low": 0.20122112211221121,
+      "ci_high": 0.3467013201320132,
+      "p": 0.00019998000199980003,
+      "p_holm": 0.0035996400359964006,
+      "significant": true
+    },
+    {
+      "hypothesis": "H1",
+      "category": "pcb4",
+      "estimate": 0.0032673267326732702,
+      "ci_low": -0.006336633663366342,
+      "ci_high": 0.014158415841584171,
+      "p": 0.5311468853114688,
+      "p_holm": 1.0,
+      "significant": false
+    },
+    {
+      "hypothesis": "H2",
+      "category": "pcb4",
+      "estimate": 0.05669966996699671,
+      "ci_low": 0.025576732673267388,
+      "ci_high": 0.09478630363036303,
+      "p": 0.00019998000199980003,
+      "p_holm": 0.0035996400359964006,
+      "significant": true
+    },
+    {
+      "hypothesis": "H1",
+      "category": "pipe_fryum",
+      "estimate": 0.008599999999999941,
+      "ci_low": 0.0,
+      "ci_high": 0.021399999999999975,
+      "p": 0.05799420057994201,
+      "p_holm": 0.28997100289971,
+      "significant": false
+    },
+    {
+      "hypothesis": "H2",
+      "category": "pipe_fryum",
+      "estimate": 0.1144666666666666,
+      "ci_low": 0.06220000000000003,
+      "ci_high": 0.17413666666666675,
+      "p": 0.00019998000199980003,
+      "p_holm": 0.0035996400359964006,
+      "significant": true
+    }
+  ],
+  "macro": {
+    "H1": {
+      "estimate": 0.0335136413641364,
+      "ci_low": 0.024754804730473076,
+      "ci_high": 0.04257253850385038
+    },
+    "H2": {
+      "estimate": 0.16665951595159514,
+      "ci_low": 0.14477111111111107,
+      "ci_high": 0.18865115511551153
+    }
+  },
+  "verdicts": {
+    "H1": "NOT CONFIRMED (4/9 significant positive, 0 negative)",
+    "H2": "CONFIRMED (9/9 significant positive, 0 negative)"
+  },
+  "calibration": [
+    {
+      "category": "candle",
+      "n_validation": 135,
+      "k": 1,
+      "bound": 0.007352941176470588,
+      "test_normals": 100,
+      "fp_seed0": 0,
+      "tail_p": 1.0,
+      "fp_all_seeds": [
+        0,
+        0,
+        0
+      ],
+      "flagged_seed0": [],
+      "tail_p_holm": 1.0,
+      "tail_significant": false
+    },
+    {
+      "category": "cashew",
+      "n_validation": 68,
+      "k": 1,
+      "bound": 0.014492753623188406,
+      "test_normals": 50,
+      "fp_seed0": 0,
+      "tail_p": 1.0,
+      "fp_all_seeds": [
+        0,
+        0,
+        0
+      ],
+      "flagged_seed0": [],
+      "tail_p_holm": 1.0,
+      "tail_significant": false
+    },
+    {
+      "category": "chewinggum",
+      "n_validation": 68,
+      "k": 1,
+      "bound": 0.014492753623188406,
+      "test_normals": 50,
+      "fp_seed0": 0,
+      "tail_p": 1.0,
+      "fp_all_seeds": [
+        0,
+        0,
+        0
+      ],
+      "flagged_seed0": [],
+      "tail_p_holm": 1.0,
+      "tail_significant": false
+    },
+    {
+      "category": "fryum",
+      "n_validation": 68,
+      "k": 1,
+      "bound": 0.014492753623188406,
+      "test_normals": 50,
+      "fp_seed0": 0,
+      "tail_p": 1.0,
+      "fp_all_seeds": [
+        0,
+        0,
+        0
+      ],
+      "flagged_seed0": [],
+      "tail_p_holm": 1.0,
+      "tail_significant": false
+    },
+    {
+      "category": "macaroni1",
+      "n_validation": 135,
+      "k": 1,
+      "bound": 0.007352941176470588,
+      "test_normals": 100,
+      "fp_seed0": 0,
+      "tail_p": 1.0,
+      "fp_all_seeds": [
+        0,
+        0,
+        0
+      ],
+      "flagged_seed0": [],
+      "tail_p_holm": 1.0,
+      "tail_significant": false
+    },
+    {
+      "category": "pcb2",
+      "n_validation": 135,
+      "k": 1,
+      "bound": 0.007352941176470588,
+      "test_normals": 100,
+      "fp_seed0": 0,
+      "tail_p": 1.0,
+      "fp_all_seeds": [
+        0,
+        1,
+        1
+      ],
+      "flagged_seed0": [],
+      "tail_p_holm": 1.0,
+      "tail_significant": false
+    },
+    {
+      "category": "pcb3",
+      "n_validation": 136,
+      "k": 1,
+      "bound": 0.0072992700729927005,
+      "test_normals": 101,
+      "fp_seed0": 0,
+      "tail_p": 1.0,
+      "fp_all_seeds": [
+        0,
+        0,
+        0
+      ],
+      "flagged_seed0": [],
+      "tail_p_holm": 1.0,
+      "tail_significant": false
+    },
+    {
+      "category": "pcb4",
+      "n_validation": 136,
+      "k": 1,
+      "bound": 0.0072992700729927005,
+      "test_normals": 101,
+      "fp_seed0": 1,
+      "tail_p": 0.4261603375527426,
+      "fp_all_seeds": [
+        1,
+        0,
+        0
+      ],
+      "flagged_seed0": [
+        "pcb4/Data/Images/Normal/0026.JPG"
+      ],
+      "tail_p_holm": 1.0,
+      "tail_significant": false
+    },
+    {
+      "category": "pipe_fryum",
+      "n_validation": 68,
+      "k": 1,
+      "bound": 0.014492753623188406,
+      "test_normals": 50,
+      "fp_seed0": 2,
+      "tail_p": 0.17745907576416048,
+      "fp_all_seeds": [
+        2,
+        1,
+        4
+      ],
+      "flagged_seed0": [
+        "pipe_fryum/Data/Images/Normal/104.JPG",
+        "pipe_fryum/Data/Images/Normal/352.JPG"
+      ],
+      "tail_p_holm": 1.0,
+      "tail_significant": false
+    }
+  ],
+  "pooled_fp": 10,
+  "pooled_expected_fp": 19.73665689697015,
+  "descriptive": [
+    {
+      "category": "candle",
+      "auroc_640": "0.971 \u00b1 0.003",
+      "aupro005_640": "0.907 \u00b1 0.004",
+      "aupro030_640": "0.967 \u00b1 0.002",
+      "recall_640": "0.310 \u00b1 0.060",
+      "fpr_640": "0.000 \u00b1 0.000",
+      "effective_fpr": 0.007352941176470588,
+      "auroc_320": 0.9569,
+      "aupro005_320": 0.8807560134653492,
+      "auroc_pixel_pca": 0.7955,
+      "auroc_histogram": 0.5132,
+      "auroc_random": 0.4957,
+      "fit_s_640": 131.53266146666647,
+      "peak_rss_fit_mb_640": 4611.44140625,
+      "peak_vram_mb_640": 1474.21923828125
+    },
+    {
+      "category": "cashew",
+      "auroc_640": "0.975 \u00b1 0.005",
+      "aupro005_640": "0.825 \u00b1 0.009",
+      "aupro030_640": "0.911 \u00b1 0.013",
+      "recall_640": "0.683 \u00b1 0.035",
+      "fpr_640": "0.000 \u00b1 0.000",
+      "effective_fpr": 0.014492753623188406,
+      "auroc_320": 0.968,
+      "aupro005_320": 0.7592991825669777,
+      "auroc_pixel_pca": 0.8596,
+      "auroc_histogram": 0.9624,
+      "auroc_random": 0.4984,
+      "fit_s_640": 72.69890426666643,
+      "peak_rss_fit_mb_640": 3127.26171875,
+      "peak_vram_mb_640": 2042.93896484375
+    },
+    {
+      "category": "chewinggum",
+      "auroc_640": "0.986 \u00b1 0.004",
+      "aupro005_640": "0.653 \u00b1 0.014",
+      "aupro030_640": "0.817 \u00b1 0.009",
+      "recall_640": "0.897 \u00b1 0.059",
+      "fpr_640": "0.000 \u00b1 0.000",
+      "effective_fpr": 0.014492753623188406,
+      "auroc_320": 0.9816,
+      "aupro005_320": 0.5320187491412643,
+      "auroc_pixel_pca": 0.7242,
+      "auroc_histogram": 0.643,
+      "auroc_random": 0.4236,
+      "fit_s_640": 56.97794849999991,
+      "peak_rss_fit_mb_640": 3046.72265625,
+      "peak_vram_mb_640": 1982.861328125
+    },
+    {
+      "category": "fryum",
+      "auroc_640": "0.976 \u00b1 0.000",
+      "aupro005_640": "0.642 \u00b1 0.002",
+      "aupro030_640": "0.890 \u00b1 0.003",
+      "recall_640": "0.657 \u00b1 0.093",
+      "fpr_640": "0.000 \u00b1 0.000",
+      "effective_fpr": 0.014492753623188406,
+      "auroc_320": 0.9026,
+      "aupro005_320": 0.39959719870385946,
+      "auroc_pixel_pca": 0.8394,
+      "auroc_histogram": 0.747,
+      "auroc_random": 0.4984,
+      "fit_s_640": 42.735098066666374,
+      "peak_rss_fit_mb_640": 2719.22265625,
+      "peak_vram_mb_640": 2703.82080078125
+    },
+    {
+      "category": "macaroni1",
+      "auroc_640": "0.977 \u00b1 0.003",
+      "aupro005_640": "0.909 \u00b1 0.002",
+      "aupro030_640": "0.973 \u00b1 0.002",
+      "recall_640": "0.453 \u00b1 0.047",
+      "fpr_640": "0.000 \u00b1 0.000",
+      "effective_fpr": 0.007352941176470588,
+      "auroc_320": 0.9008,
+      "aupro005_320": 0.7176728617618641,
+      "auroc_pixel_pca": 0.7077,
+      "auroc_histogram": 0.796,
+      "auroc_random": 0.4734,
+      "fit_s_640": 98.70883336666702,
+      "peak_rss_fit_mb_640": 3871.375,
+      "peak_vram_mb_640": 3257.90185546875
+    },
+    {
+      "category": "pcb2",
+      "auroc_640": "0.977 \u00b1 0.002",
+      "aupro005_640": "0.788 \u00b1 0.004",
+      "aupro030_640": "0.939 \u00b1 0.004",
+      "recall_640": "0.640 \u00b1 0.130",
+      "fpr_640": "0.007 \u00b1 0.006",
+      "effective_fpr": 0.007352941176470588,
+      "auroc_320": 0.9396,
+      "aupro005_320": 0.6616451490167938,
+      "auroc_pixel_pca": 0.8793,
+      "auroc_histogram": 0.8813,
+      "auroc_random": 0.5004,
+      "fit_s_640": 107.16742043333397,
+      "peak_rss_fit_mb_640": 4044.9453125,
+      "peak_vram_mb_640": 1913.44091796875
+    },
+    {
+      "category": "pcb3",
+      "auroc_640": "0.978 \u00b1 0.002",
+      "aupro005_640": "0.729 \u00b1 0.005",
+      "aupro030_640": "0.932 \u00b1 0.005",
+      "recall_640": "0.673 \u00b1 0.042",
+      "fpr_640": "0.000 \u00b1 0.000",
+      "effective_fpr": 0.0072992700729927005,
+      "auroc_320": 0.9052475247524753,
+      "aupro005_320": 0.4592690889108327,
+      "auroc_pixel_pca": 0.7047524752475247,
+      "auroc_histogram": 0.6369306930693069,
+      "auroc_random": 0.5446534653465347,
+      "fit_s_640": 91.33045866666664,
+      "peak_rss_fit_mb_640": 3682.2421875,
+      "peak_vram_mb_640": 2372.43359375
+    },
+    {
+      "category": "pcb4",
+      "auroc_640": "0.996 \u00b1 0.000",
+      "aupro005_640": "0.598 \u00b1 0.013",
+      "aupro030_640": "0.889 \u00b1 0.007",
+      "recall_640": "0.707 \u00b1 0.006",
+      "fpr_640": "0.003 \u00b1 0.006",
+      "effective_fpr": 0.0072992700729927005,
+      "auroc_320": 0.9923762376237624,
+      "aupro005_320": 0.6018025561238325,
+      "auroc_pixel_pca": 0.939009900990099,
+      "auroc_histogram": 0.42277227722772276,
+      "auroc_random": 0.5171287128712871,
+      "fit_s_640": 113.73715616666657,
+      "peak_rss_fit_mb_640": 4225.62109375,
+      "peak_vram_mb_640": 1952.1123046875
+    },
+    {
+      "category": "pipe_fryum",
+      "auroc_640": "0.996 \u00b1 0.002",
+      "aupro005_640": "0.847 \u00b1 0.005",
+      "aupro030_640": "0.964 \u00b1 0.002",
+      "recall_640": "0.980 \u00b1 0.000",
+      "fpr_640": "0.047 \u00b1 0.031",
+      "effective_fpr": 0.014492753623188406,
+      "auroc_320": 0.9896,
+      "aupro005_320": 0.7730263008991165,
+      "auroc_pixel_pca": 0.8818,
+      "auroc_histogram": 0.8514,
+      "auroc_random": 0.5346,
+      "fit_s_640": 63.7494604333339,
+      "peak_rss_fit_mb_640": 2432.26953125,
+      "peak_vram_mb_640": 2842.87451171875
+    }
+  ],
+  "implementation_ids": [
+    "a2d2dcd0c230"
+  ],
+  "family_size": 18,
+  "n_resamples": 10000
+}

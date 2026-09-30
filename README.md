@@ -4,12 +4,11 @@ Industrial surface-defect **detection and localization** trained on normal image
 (cold-start / one-class anomaly detection), benchmarked under a pre-registered protocol,
 with an explainability case book, a robustness study, and a containerized demo service.
 
-> **Status:** protocol v2 (after an external review, [docs/13](docs/13-project-review-and-research-roadmap.md)).
-> A PatchCore reference-agreement check (E00), the baseline ladder (E01), aggregation and
-> calibration studies (E02/E03) and a resolution/memory study (E04) have run on three VisA
-> development categories; nine further categories are frozen for confirmation
-> ([ADR-10](docs/07-risks-and-decisions.md)).
-> Results: [reports/E00-E04-development-findings.md](reports/E00-E04-development-findings.md).
+> **Status:** protocol v2. Development (E00–E04) on three VisA categories selected a recipe —
+> PatchCore at 640 px with a fixed 10k memory bank — which was frozen and pre-registered
+> ([ADR-11](docs/07-risks-and-decisions.md)) and then run once on nine held-out categories (E12).
+> Results: [confirmation](reports/E12-confirmation-v1.md) ·
+> [development](reports/E00-E04-development-findings.md).
 
 ---
 
@@ -102,35 +101,35 @@ bounds and every run now records per stage. The binding
 remote constraint is the weekly quota, not the session limit; the plan budgets ~41 GPU-hours of
 the ~360 available.
 
-## Headline results (VisA development categories, protocol v2)
+## Headline results
 
-PatchCore reference configuration, mean ± sd over 3 seeds; operating point from a conservative rank threshold at a 1%
-false-alarm request. Development evidence only — these categories shaped the hypotheses. Details,
-controls and caveats: [reports/E00-E04-development-findings.md](reports/E00-E04-development-findings.md).
+**Confirmation on nine held-out VisA categories** (recipe and analysis pre-registered and pushed
+before the runs; each category fitted and calibrated on its own normals; nothing retuned):
 
-| category | image AUROC, 320 px | image AUROC, 640 px (fixed 10 k bank) | AU-PRO@0.05, 320 → 640 px | realized FPR at 640 px (bound) |
-|----------|------|------|------|------|
-| `pcb1` | 0.944 ± 0.003 | **0.979 ± 0.001** | 0.734 → 0.857 | **4.7%** (0.73%) |
-| `macaroni2` | 0.708 ± 0.011 | **0.884 ± 0.005** | 0.645 → 0.874 | 1.7% (0.74%) |
-| `capsules` | 0.710 ± 0.044 | **0.919 ± 0.006** | 0.430 → 0.864 | 2.8% (1.22%) |
+| | image AUROC | AU-PRO@0.05 | realized false alarms at a 1% request |
+|---|---|---|---|
+| PatchCore recipe, 640 px, fixed 10k bank (3 seeds) | **0.981** macro mean, 0.971–0.996 per category | 0.766 | 10 observed vs 19.7 expected over 27 runs |
+| same recipe at 320 px | 0.949 | – | – |
+| pixel PCA (linear floor) | 0.815 | – | – |
 
-What the controls behind this table say:
-
-- **Input resolution is the largest effect, and it needs no larger memory bank.** From 320 to
-  640 px image AUROC rises by +0.03 / +0.19 / +0.25 (paired bootstrap intervals exclude zero),
-  and a bank fixed at 10,000 entries matches one that grows 4× with the pixel count while halving
-  fit and prediction time. Peak host memory at 640 px is ~4 GB, set by the candidate pool.
-- **At a common 320 px, PatchCore was not measurably better than linear PCA at detection** on
-  `macaroni2` and `capsules` — a statement about a resolution-matched comparison that E04 shows is
-  PatchCore's worst case. On `pcb1` a colour histogram alone reaches 0.83.
-- **The `pcb1` false-alarm bound fails at every resolution, and the reason is on the table.** The
-  highest-scoring normals in validation and test are debris on the background felt; three flagged
-  test normals show the same stray object. The upper tail of test normals is not exchangeable
-  with validation (exact permutation p 0.005–0.03) while the bulk is. The rank rule itself is
+- **H2 confirmed (9/9):** PatchCore at 640 px beats the linear floor on every held-out category,
+  macro +0.167 [+0.145, +0.189] image AUROC.
+- **H1 not confirmed (4/9, rule required 6):** 640 px never hurt and gained +0.034 [+0.025, +0.043]
+  on average, but most held-out categories were already at 0.96–0.99 at 320 px. Development had
+  overestimated the effect (+0.19/+0.25) because its categories were hard at low resolution.
+  *Exploratory:* the gain tracks the headroom left at 320 px (Spearman 0.93).
+- **The conservative threshold holds on 8/9 categories.** Where it fails (`pcb1` in development,
+  `pipe_fryum` in confirmation) the mechanism is the same: background debris from a capture
+  session sits in the test normals' upper tail and not in validation — the same fibre appears in
+  two `pipe_fryum` images, the same stray object in three `pcb1` images. The rank rule itself is
   sound: calibrated on held-out test normals, it hits its bound.
-- **Scoring only the object region** — estimated from training normals — lifts `pcb1` recall at
-  the operating point from 0.46 to 0.81 at 320 px, but costs `capsules` 2 points of AUROC: a
-  confirmation candidate, not a default.
+
+**Development findings that shaped the recipe** (three categories, details in the
+[development report](reports/E00-E04-development-findings.md)): input resolution is the largest
+effect and a fixed 10k bank costs nothing measurable; at 320 px PatchCore was not measurably
+better than linear PCA on two of three categories; scoring only the object region helps where
+background nuisance sets the threshold but is not a safe default; the from-scratch autoencoder
+was budget-limited and its image maximum is dominated by high-frequency normal texture.
 
 ## Findings from building the apparatus
 

@@ -231,6 +231,9 @@ exactly the scope creep R7 exists to prevent.
 |---|-----|---|---------|
 | H′1 | The frozen recipe on the nine confirmation categories (ADR-10), `role = confirmation`, 3 seeds where stochastic | 27 per method | Does the development conclusion hold on categories that shaped nothing? |
 
+*Status: done ([report](../reports/E12-confirmation-v1.md)).* Pre-registered in ADR-11 (`4ff5a6f`);
+63 runs. H2 confirmed 9/9; H1 not confirmed (4/9 against a rule of 6/9); calibration holds on 8/9.
+
 **Gate H′.** The recipe and `implementation_id` are recorded *before* the first confirmation
 run. Every category is reported, including failures and resource-limit outcomes, with the macro
 mean, the worst category, and development vs confirmation shown separately. Retuning after this

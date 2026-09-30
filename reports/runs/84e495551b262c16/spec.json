@@ -1,0 +1,50 @@
+{
+  "dataset": {
+    "layout": "visa",
+    "category": "pcb2",
+    "test_split": "test",
+    "val_carve_fraction": 0.15,
+    "val_carve_seed": 0,
+    "split_listing": {
+      "test": "eabbbad8546ae22b",
+      "train": "ff616797919630d2",
+      "validation": "69400d83562db43b"
+    }
+  },
+  "model": {
+    "name": "histogram",
+    "class": "HistogramScorer",
+    "hparams": {
+      "bins": 64
+    }
+  },
+  "transform": {
+    "mode": "aspect_preserving",
+    "long_side": 320,
+    "short_side": null,
+    "interpolation_down": "area",
+    "interpolation_up": "linear",
+    "normalize": "imagenet"
+  },
+  "evaluation": {
+    "smoothing_sigma": 4.0,
+    "smoothing_units": "input_px",
+    "target_fpr": 0.01,
+    "threshold_policy": "relax",
+    "sigma_n": 3.0,
+    "aupro_limits": [
+      0.05,
+      0.3
+    ],
+    "aupro_num_thresholds": 512,
+    "max_negative_samples": 2000000,
+    "sampling_seed": 0,
+    "pixel_auroc_bins": 65536,
+    "report_oracle": true,
+    "metrics_version": "2"
+  },
+  "seed": 0,
+  "role": "confirmation",
+  "protocol_version": "2",
+  "implementation_id": "a2d2dcd0c23061f01ac392042d8828ec6fa5afae5580c10b743f35dbade243a0"
+}
