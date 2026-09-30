@@ -27,8 +27,10 @@ jobs:
           python-version: "3.11"
       - name: Install minimal deps
         run: pip install pytest
+      # --noconftest: tests/conftest.py builds numpy fixtures for the other suites;
+      # this job deliberately installs nothing but pytest, so it must not load it.
       - name: No dataset bytes in tree or history
-        run: pytest tests/test_license_guard.py -v
+        run: pytest tests/test_license_guard.py -v --noconftest
 
   lint:
     runs-on: ubuntu-latest
