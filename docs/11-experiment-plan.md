@@ -194,6 +194,10 @@ is computed and written down, including any category where it bought nothing.
 
 ### Stage G — Robustness (laptop for inference, ~6 h wall-clock)
 
+*Status: G1 running on the laptop with the ADR-11 recipe (640 px, fixed 10 k bank) on the three
+development categories — `scripts/robustness_study.py`, output `reports/studies/e08/`. The
+confirmation categories are spent, so this stage is development evidence.*
+
 Models are fitted once on clean data and **never re-thresholded**. Re-thresholding under
 corruption answers a different and much easier question. Both normal and anomalous test images
 are corrupted — only normals can show a false alarm — each with its own corruption seed (a stable

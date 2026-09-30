@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+from fastapi import FastAPI, File, HTTPException, UploadFile
 
 from .. import __version__
 from .artifact import Inspector, load_artifact, overlay
@@ -32,17 +33,20 @@ def _decode(data: bytes) -> np.ndarray:
         return np.asarray(img.convert("RGB"), dtype=np.uint8)
 
 
-def _png(image: np.ndarray) -> str:
+def _png(image: np.ndarray, max_side: int = 1024) -> str:
+    """Base64 PNG, downscaled so a response stays a few hundred kB, not megabytes."""
     from PIL import Image
 
+    img = Image.fromarray(image)
+    img.thumbnail((max_side, max_side), Image.Resampling.BILINEAR)
     buf = io.BytesIO()
-    Image.fromarray(image).save(buf, format="PNG")
+    img.save(buf, format="PNG")
     return base64.b64encode(buf.getvalue()).decode("ascii")
 
 
-def create_app(artifact: str | Path | Inspector) -> Any:
-    from fastapi import FastAPI, File, HTTPException, UploadFile
-
+def create_app(artifact: str | Path | Inspector) -> FastAPI:
+    # FastAPI is imported at module level on purpose: with postponed annotations it
+    # resolves `UploadFile` from the module's globals, not from a function scope.
     inspector = artifact if isinstance(artifact, Inspector) else load_artifact(artifact)
     meta = inspector.meta
     params = meta["threshold"].get("params") or {}
