@@ -74,3 +74,6 @@ coverage.xml
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# local executions of the Kaggle notebook
+notebooks/kaggle_local/

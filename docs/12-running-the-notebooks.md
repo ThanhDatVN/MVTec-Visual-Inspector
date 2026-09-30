@@ -80,97 +80,89 @@ python -m venv .venv
 
 ## 2. Notebook 02 — Kaggle
 
-### Settings
+Runs what the laptop cannot: an ablation screen around the frozen recipe (including 960 and
+1280 px, which need more than 16 GB of host RAM) and the autoencoder at 640 px with a converging
+schedule. Development categories only.
 
-| Setting | Value | Why |
-|---------|-------|-----|
-| Accelerator | **GPU P100** (16 GB) | T4×2 also works; the code uses one device |
-| Internet | **On** | Required to fetch VisA and the package |
-| Persistence | Variables **and** files | Otherwise the checkpoint is lost between sessions |
+### Step by step
 
-Limits to plan around: ~30 GPU-h/week, 12 h interactive session, ~9 h on commit, 20 GB working
-directory.
+1. **Account.** Kaggle needs a phone-verified account for GPU and Internet.
+2. **Import.** *Create → New Notebook → File → Import Notebook* →
+   `notebooks/02_kaggle_experiments.ipynb` (upload the file, or give the GitHub URL).
+3. **Settings** (right-hand panel):
 
-### Getting the package there
+   | Setting | Value | Why |
+   |---------|-------|-----|
+   | Accelerator | **GPU P100** (16 GB) or T4 ×2 | the code uses one device |
+   | Internet | **On** | clones the repository and downloads VisA |
+   | Persistence | not needed | the registry is carried by the output, see step 6 |
 
-The notebook needs a checkout, not only the package, because run configurations live in
-`configs/`. Three routes, in the notebook's order of preference:
+4. **Data.** Nothing to prepare: the notebook downloads VisA (1.93 GB, SHA-256 verified) into
+   `/tmp` in a couple of minutes. If you prefer to attach a copy (*Add Input → Datasets*), any
+   dataset whose files contain `split_csv/1cls.csv` within three folder levels is found
+   automatically; otherwise it falls back to the download.
+5. **Choose what the session runs** in the first code cell:
 
-1. **Local checkout** — when the same notebook runs on the laptop.
-2. **Kaggle dataset** — zip the repo, upload via *Add Data → Upload* as
-   `mvtec-visual-inspector`; the notebook adds its `src/` to `sys.path`.
-3. **`REPO_URL`** — a shallow clone of the GitHub repository (Internet on). Set `REPO_REF` to a
-   commit or tag for a run you intend to report; the notebook `chdir`s into the clone so every
-   run records that commit.
+   | session | `RUN_SWEEP` | `RUN_AE` | `RUN_ROBUSTNESS` | est. P100 time |
+   |---|---|---|---|---|
+   | 1 | `True` | `False` | `False` | ~4–6 h |
+   | 2 | `False` | `True` | `False` | ~3–6 h |
 
-Only packages missing from Kaggle's image are installed (`opencv-python-headless`, `pyyaml`).
-The notebook never upgrades numpy or torch inside a running kernel.
+   The PatchCore reference (3 runs × 3 categories) always runs first, or is reused. Robustness
+   was already run on the laptop (`reports/E08-robustness.md`); enable it only to reproduce it.
+6. **Run unattended:** *Save Version → Save & Run All (Commit)*. The commit keeps running after
+   you close the browser, and saves `/kaggle/working` as the version's output.
+7. **Next session:** open the notebook again, *Add Input → Your Work →* this notebook (its
+   latest version), flip the flags, and commit again. The first cells unzip every attached
+   `runs_export.zip` into the registry; completed runs are recognised by their content hash and
+   skipped, so a killed session loses at most the run that was in progress.
+8. **Bring the results home:** from the version's *Output* tab download `runs_export.zip`
+   (and `robustness.csv` if you ran it), then merge them as in §3.
 
-### Getting the data there
+### What is where
 
-Either attach VisA as a Kaggle dataset at `/kaggle/input/visa-anomaly/VisA_20220922`, or let the
-notebook download it (1.93 GB, a few minutes on Kaggle's network). Attaching is better across
-multiple sessions: it costs nothing per session and survives restarts.
+| Path | Content | Saved as output? |
+|---|---|---|
+| `/tmp/mvi/repo` | shallow clone of the repository (`REPO_REF` pins a commit) | no |
+| `/tmp/mvi/data` | VisA, tar deleted after extraction | no |
+| `/kaggle/working/runs/` | the run registry: spec, result, predictions, raw maps | yes |
+| `/kaggle/working/runs_export.zip` | registry without map files over 20 MB (the CAE's full-resolution maps) | yes — **this is the file to download and to attach next time** |
+| `/kaggle/working/results_registry.csv`, `session_summary.md` | tables for a quick look | yes |
 
-### The run registry — the part that matters
+### Checking the notebook without a GPU session
 
-Every run goes through `inspector.runner`, the same code path as the CLI and the laptop notebook.
-A run's id is a hash of everything that can change its numbers (docs/11 §2), and each run writes
-`/kaggle/working/runs/<run_id>/`. A restarted session **reuses** completed runs and reloads their
-results, so the summary tables cover the whole registry and not only this session. A failed run
-(for example an out-of-memory at 448 px) leaves a `failed` record with its reason, and the sweep
-continues.
-
-**Without this, the 12-hour session limit turns a 20-hour sweep into a gamble.** With it, the
-sweep is simply run across as many sessions as it takes. To force a rerun, delete that run's
-directory.
-
-The robustness grid checkpoints per cell to `robustness.csv` and skips cells already present.
-
-**Download `runs_export.zip` (and `robustness.csv`) before the session ends.** Kaggle discards
-`/kaggle/working` unless the notebook is committed or the outputs are saved.
-
-### Stage sizing
-
-Each stage is sized to finish inside ~4 hours, comfortably under the 9-hour commit cap:
-
-| Cells | Stage | Est. |
-|-------|-------|------|
-| §3 | Reference = the ADR-11 recipe (640 px, fixed 10 k bank), 9 runs; also runnable on the laptop | ~1 GPU-h |
-| §4 | Ablation screen around it, ~51 runs, including 960 and 1280 px | ~12 GPU-h — **split across several sessions** |
-| §5 | Autoencoder at 640 px, 3 losses × 3 seeds × 3 categories, up to 150 epochs | ~6 GPU-h |
-| §6 | Robustness grid, one fit per category | ~4 GPU-h |
-
-All of it runs on the **development** categories. The nine confirmation categories are touched
-only by the pre-registered ADR-11 runs.
-
-Run §4 in chunks by commenting out axes in the `AXES` dict. The registry makes the chunking
-invisible in the results.
+`MVI_SMOKE=1` runs every section on one category with one variant per axis and a one-epoch
+autoencoder, into a separate registry (`smoke_runs`). It exists to test the notebook itself;
+its numbers mean nothing. Locally: `MVI_SMOKE=1 MVI_DATA_ROOT=<VisA root> jupyter nbconvert
+--to notebook --execute notebooks/02_kaggle_experiments.ipynb` (~15 min on the laptop).
 
 ### If it fails
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
-| `git clone` fails | Internet off | Turn Internet on, or attach the repo as a dataset |
-| Session killed mid-sweep | 12 h limit | Re-run the notebook; completed runs are reused |
-| Quota exhausted | 30 GPU-h/week | Cut E6/E6b before cutting seeds |
-| `FAILED ... out of memory` at 448 px | Host RAM for the patch matrix, not VRAM | Lower `candidate_fraction` for that row and say so; the failure record stays in the registry |
+| `git clone` fails | Internet off, or account not phone-verified | turn Internet on; or attach the repository as a dataset named `mvtec-visual-inspector` |
+| Download stalls | network | re-run the data cell; a completed extraction is reused |
+| Session killed mid-run | 12 h limit or a crash | commit again with the previous output attached (step 7) |
+| `FAILED ... out of memory` at 1280 px | host RAM for the candidate pool | recorded as a failed run; lower `candidate_fraction` for that row and say so |
+| Quota exhausted | ~30 GPU-h/week | the registry resumes next week; the AE section is the one to postpone |
 
 ---
 
 ## 3. Merging results back
 
 ```bash
-# after a Kaggle session: unzip into the repository registry, then regenerate the table
-unzip ~/Downloads/runs_export.zip -d reports/runs/
-inspector results --registry reports/runs --out reports/results_registry.csv --markdown
+# after a Kaggle session: unzip into the repository registry, then regenerate tables
+unzip -n ~/Downloads/runs_export.zip -d reports/runs/
+inspector results --registry reports/runs --out reports/results_registry.csv
+inspector study --registry reports/runs --data-root data/raw/VisA_20220922                 --implementation <id prefix of the Kaggle runs> --out reports/studies/kaggle
 ```
 
 Run directories are content-addressed, so merging registries from several sessions or machines
-cannot overwrite a different run. `reports/results_registry.csv` is **generated, never
-hand-edited** (docs/06 §4). A hand-edited table drifts from the runs that produced it, and by the
-time anyone notices, nobody remembers which version was right. The `*.maps.npz` files are
-git-ignored derived data; keep them locally for the E02/E03 studies.
+cannot overwrite a different run (`-n` never overwrites). `reports/results_registry.csv` is
+**generated, never hand-edited** (docs/06 §4). The Kaggle runs carry their own implementation id
+(a Linux checkout of the same commit hashes to the same id as any other checkout, since line
+endings are normalized), and `inspector study --implementation` keeps one study to one code
+version.
 
 ---
 

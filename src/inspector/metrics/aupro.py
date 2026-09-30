@@ -32,6 +32,8 @@ from dataclasses import dataclass
 import numpy as np
 from scipy import ndimage
 
+from .ranking import trapezoid
+
 # 8-connectivity: a diagonal chain of pixels is one scratch, not several.
 _CONNECTIVITY = np.ones((3, 3), dtype=int)
 
@@ -80,7 +82,7 @@ def _trapz_to_limit(fpr: np.ndarray, pro: np.ndarray, limit: float) -> float:
         x = np.concatenate((x, [limit]))
         y = np.concatenate((y, [y[-1]]))
 
-    return float(np.trapezoid(y, x) / limit)
+    return float(trapezoid(y, x) / limit)
 
 
 def _region_scores(

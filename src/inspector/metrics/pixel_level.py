@@ -18,6 +18,8 @@ from dataclasses import asdict, dataclass
 
 import numpy as np
 
+from .ranking import trapezoid
+
 
 @dataclass(frozen=True)
 class PixelMetrics:
@@ -82,7 +84,7 @@ class PixelHistogram:
         # gives tied scores within a bin half credit.
         tpr = np.concatenate(([0.0], np.cumsum(self.pos[::-1]) / n_pos))
         fpr = np.concatenate(([0.0], np.cumsum(self.neg[::-1]) / n_neg))
-        return float(np.trapezoid(tpr, fpr))
+        return float(trapezoid(tpr, fpr))
 
 
 def pixel_auroc(

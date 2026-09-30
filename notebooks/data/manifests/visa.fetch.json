@@ -1,0 +1,13 @@
+{
+  "dataset": "visa",
+  "url": "https://amazon-visual-anomaly.s3.us-west-2.amazonaws.com/VisA_20220922.tar",
+  "fetched_utc": "2026-09-30T09:57:46+00:00",
+  "action": "already present",
+  "files": {
+    "VisA_20220922.tar": "2eb8690c803ab37de0324772964100169ec8ba1fa3f7e94291c9ca673f40f362",
+    "visa_1cls.csv": "a48557e6033318cb90556f706196bc9d247a776a23ea51aecee5a80dd0332995"
+  },
+  "extracted_to": "D:\\GitHub\\MVTec Visual Inspector\\data\\raw\\VisA_20220922",
+  "license_note": "CC BY 4.0 per the AWS Open Data registry and the source paper. Some third-party documentation states CC BY-NC-SA 4.0; until that is settled this project behaves as if the stricter reading applied and redistributes no images.",
+  "citation": "Zou, Y., Jeong, J., Pemula, L., Zhang, D., Dabeer, O. 'SPot-the-Difference Self-Supervised Pre-training for Anomaly Detection and Segmentation.' ECCV 2022. arXiv:2207.14315. Accessed from https://registry.opendata.aws/visa"
+}

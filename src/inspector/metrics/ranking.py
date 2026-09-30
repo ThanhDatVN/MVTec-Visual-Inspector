@@ -121,3 +121,14 @@ def pca_reconstruct(
     """Project onto the principal subspace and back."""
     centred = np.asarray(vector, dtype=np.float64) - mean
     return mean + (centred @ components.T) @ components
+
+
+def trapezoid(y: np.ndarray, x: np.ndarray) -> float:
+    """Trapezoidal integral of y over x.
+
+    Written out rather than calling `np.trapezoid`, which exists only from NumPy
+    2.0; hosted notebook images (Kaggle) may still ship NumPy 1.26.
+    """
+    y = np.asarray(y, dtype=np.float64)
+    x = np.asarray(x, dtype=np.float64)
+    return float(np.sum((x[1:] - x[:-1]) * (y[1:] + y[:-1])) / 2.0)
