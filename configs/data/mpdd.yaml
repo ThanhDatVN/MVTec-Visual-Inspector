@@ -1,0 +1,14 @@
+# MPDD — Metal Parts Defect Detection (Jezek et al., ICUMT 2021). Transfer probe, ADR-12.
+# MVTec-AD folder format: <category>/{train/good, test/good, test/<defect>, ground_truth/<defect>}.
+# No validation split ships, so it is carved from train exactly as for VisA.
+# Download: a SharePoint folder linked from https://github.com/stepanje/MPDD (manual; licence
+# unspecified — used for evaluation only, never redistributed).
+
+_base_: ../base.yaml
+
+data:
+  layout: mvtec_ad
+  category: bracket_black
+  test_split: test
+  val_carve_fraction: 0.15
+  val_carve_seed: 0

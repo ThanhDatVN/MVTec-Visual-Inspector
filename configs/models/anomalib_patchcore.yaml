@@ -1,0 +1,19 @@
+# anomalib v2.3.0 PatchCore, vendored at a pinned commit (E00 step C2; owner = lib).
+# A FRAGMENT: compose after a data config, like the other model configs.
+# Settings follow anomalib's defaults except the coreset ratio, matched to our reference (1%).
+
+experiment:
+  tier: T3
+  owner: lib
+
+model:
+  name: anomalib_patchcore
+  backbone: wide_resnet50_2
+  weights: null                 # null = timm's default tag (what anomalib loads); tv_in1k = torchvision's
+  layers: [layer2, layer3]
+  coreset_sampling_ratio: 0.01  # anomalib's default is 0.1; 0.01 matches our reference bank
+  num_neighbors: 9
+  batch_size: 4
+
+preprocess:
+  long_side: 320                # all patches are kept before the coreset: 640 px needs ~23 GB

@@ -343,6 +343,35 @@ effects being tested, but the test does not include fitting variance.
 
 ---
 
+### ADR-12 — MPDD transfer probe: the frozen recipe on a second dataset
+**Status:** Accepted; committed before any MPDD image is opened.
+
+**Context.** Confirmation v1 (ADR-11) tested recipe transfer across VisA's object types — one
+dataset, one capture rig. MPDD (six painted metal parts, MVTec-AD format) is a different camera,
+factory and annotation team, which is the question a deployment poses. It cannot be fetched by
+script (the authors share a SharePoint folder) and its licence is unspecified, so it runs on
+Kaggle from an attached copy, for evaluation only.
+
+**Decision.**
+1. **Recipe:** unchanged — `configs/recipes/confirmation-v1-patchcore-640.yaml` composed after
+   `configs/data/mpdd.yaml` (validation carved 15%, seed 0), seeds 0–2, `role = confirmation`.
+   No parameter is changed for MPDD, including the 640 px input on its 1024 px images.
+2. **Categories:** all six — `bracket_black`, `bracket_brown`, `bracket_white`, `connector`,
+   `metal_plate`, `tubes`.
+3. **Comparators** (seed 0): pixel PCA and the colour histogram at 320 px, as global-shortcut
+   and linear floors.
+4. **Reported, not tested:** per-category and macro image AUROC, AU-PRO@0.05, realized FPR
+   against the effective bound, recall at the operating point; the share of categories where
+   the recipe beats pixel PCA. MPDD is thinly reported in the literature and has no agreed
+   protocol here, so no pass/fail rule is attached; the numbers are the result.
+5. **No retuning,** as in ADR-11 §7.
+
+**Consequences.** (+) The first evidence outside VisA's capture setup. (−) Six small categories
+(tens of test images each), so per-category intervals are wide. (−) The dataset has to be
+supplied by hand and its licence is not stated; no MPDD image or derived figure is published.
+
+---
+
 ### Open decisions (resolve before the stated gate)
 
 | # | Question | Resolve by |

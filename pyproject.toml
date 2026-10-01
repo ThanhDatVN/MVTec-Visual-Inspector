@@ -39,6 +39,7 @@ dependencies = [
 torch = [
     "torch>=2.2",
     "torchvision>=0.17",
+    "timm>=0.9",          # only the vendored anomalib comparator (models/reference) uses it
 ]
 track = [
     "mlflow>=2.12",
@@ -99,7 +100,7 @@ line-length = 100
 target-version = "py310"
 src = ["src", "tests"]
 # Third-party code excerpted verbatim as a test oracle; linting it would mean editing it.
-extend-exclude = ["tests/reference"]
+extend-exclude = ["tests/reference", "src/inspector/models/reference"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "RUF", "NPY"]
@@ -123,3 +124,8 @@ warn_unused_ignores = true
 warn_redundant_casts = true
 no_implicit_optional = true
 disallow_untyped_defs = false
+
+# Third-party code vendored verbatim (anomalib v2.3.0); its upstream typing is kept as is.
+[[tool.mypy.overrides]]
+module = "inspector.models.reference.*"
+ignore_errors = true

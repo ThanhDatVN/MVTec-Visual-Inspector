@@ -64,6 +64,11 @@ robustness evaluation; model-generated anomaly heatmaps are overlaid on some ima
 `tests/reference/LICENSE-APACHE-2.0.txt`). The modifications are listed at the top of that
 file. It is used only by the agreement tests and is not part of the `inspector` package.
 
+`src/inspector/models/reference/anomalib_v2_3_0.py` excerpts anomalib v2.3.0's PatchCore model,
+timm feature extractor, k-center coreset and sparse random projection from the same commit, under
+the same licence, so the reference pipeline can run as a comparator (`anomalib_patchcore`, owner
+`lib`) without installing anomalib. Its modifications are listed at the top of that file.
+
 
 ---
 
