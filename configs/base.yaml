@@ -19,6 +19,9 @@ data:
   # the dataset ships one (protocol §3.4).
   val_carve_fraction: 0.15
   val_carve_seed: 0
+  # E09 data efficiency: fit on n training images (nested seeded subsets); null = all.
+  train_limit: null
+  train_subset_seed: null   # null = the run's seed
 
 preprocess:
   # Aspect-preserving by default. A blind square resize on sheet_metal (4:1)

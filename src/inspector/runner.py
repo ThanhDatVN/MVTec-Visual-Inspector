@@ -188,6 +188,18 @@ def model_kwargs(cfg: dict[str, Any], method: str) -> dict[str, Any]:
     return block
 
 
+def limit_split(index: DatasetIndex, n: int, *, seed: int) -> DatasetIndex:
+    """The first `n` samples of a seeded permutation, kept in their original order."""
+    import numpy as np
+
+    samples = list(index)
+    if not 0 < n <= len(samples):
+        raise ValueError(f"train_limit {n} outside 1..{len(samples)}")
+    keep = np.sort(np.random.default_rng(seed).permutation(len(samples))[:n])
+    return DatasetIndex([samples[i] for i in keep], root=index.root, category=index.category,
+                        split_name=index.split_name, layout=index.layout)
+
+
 def prepare(
     cfg: dict[str, Any],
     *,
@@ -212,6 +224,15 @@ def prepare(
         val_fraction=float(data.get("val_carve_fraction", 0.15)),
         seed=int(data.get("val_carve_seed", 0)),
     )
+    dataset_extra: dict[str, Any] = {}
+    if data.get("train_limit") is not None:
+        # E09: fit on the first n images of a seeded permutation of the training split.
+        # Subsets are nested across n for one subset seed, so a curve over n changes the
+        # amount of data and nothing else. Validation and test are untouched.
+        n = int(data["train_limit"])
+        subset_seed = int(seed if data.get("train_subset_seed") is None else data["train_subset_seed"])
+        indices = {**indices, "train": limit_split(indices["train"], n, seed=subset_seed)}
+        dataset_extra = {"train_limit": n, "train_subset_seed": subset_seed}
 
     spec = RunSpec(
         dataset={
@@ -221,6 +242,7 @@ def prepare(
             "val_carve_fraction": float(data.get("val_carve_fraction", 0.15)),
             "val_carve_seed": int(data.get("val_carve_seed", 0)),
             "split_listing": split_listing(indices),
+            **dataset_extra,
         },
         model={"name": method, "class": type(model).__name__, "hparams": model.hparams()},
         transform=transform.as_dict(),

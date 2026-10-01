@@ -27,7 +27,7 @@ from inspector.api.artifact import save_artifact
 from inspector.config import deep_merge, load_config
 from inspector.eda import measure_regions, summarize_regions
 from inspector.evaluate import SplitPredictions, evaluate
-from inspector.robustness import MAIN_SUITE, SEVERITIES, apply_corruption
+from inspector.robustness import CORRUPTIONS, MAIN_SUITE, SEVERITIES, apply_corruption
 from inspector.runner import eval_config_from_config, prepare
 
 RECIPE = "configs/recipes/confirmation-v1-patchcore-640.yaml"
@@ -42,6 +42,9 @@ def main() -> int:
     ap.add_argument("--out", default="reports/studies/e08/robustness.csv")
     ap.add_argument("--artifacts", default="artifacts")
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--corruptions", nargs="+", default=list(MAIN_SUITE), choices=sorted(CORRUPTIONS),
+                    help="default: the main suite; `translate` is reported separately (docs/05)")
+    ap.add_argument("--no-artifacts", action="store_true", help="do not (re)write artifacts")
     args = ap.parse_args()
 
     cfg = deep_merge(load_config("configs/data/visa_pcb1.yaml"), load_config(RECIPE))
@@ -55,7 +58,7 @@ def main() -> int:
     new_file = not out.exists()
 
     for cat in args.categories:
-        cells = [(c, s) for c in MAIN_SUITE for s in SEVERITIES if (cat, c, s) not in done]
+        cells = [(c, s) for c in args.corruptions for s in SEVERITIES if (cat, c, s) not in done]
         need_clean = (cat, "clean", 0) not in done
         if not cells and not need_clean:
             continue
@@ -67,8 +70,9 @@ def main() -> int:
         model.fit(idx["train"])
         print(f"{cat}: fitted in {time.perf_counter() - t0:.0f} s; median defect diameter {d_med:.1f} px")
         val = SplitPredictions.from_model(model, idx["validation"])  # clean and frozen
-        save_artifact(model, val.scores, Path(args.artifacts) / cat, target_fpr=eval_cfg.target_fpr,
-                      category=cat, extra={"run_spec_id": spec.run_id})
+        if not args.no_artifacts:
+            save_artifact(model, val.scores, Path(args.artifacts) / cat, target_fpr=eval_cfg.target_fpr,
+                          category=cat, extra={"run_spec_id": spec.run_id})
 
         def corruptor(corruption: str, severity: int, root=test_idx.root, diameter=d_med):
             def image_fn(image, mask, sample):
