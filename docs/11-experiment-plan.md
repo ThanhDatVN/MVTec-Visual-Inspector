@@ -158,6 +158,17 @@ and §8 of the report above; generated tables in `reports/studies/`.
 done:* 0.979 ± 0.001 / 0.884 ± 0.005 / 0.919 ± 0.006 over 3 seeds at ~4 GB peak host RSS. Report §7.
 Native resolution is open; it needs a smaller candidate fraction or tiling to stay within 16 GB RAM.
 
+### Stage D‴ — Data efficiency (E09; laptop)
+
+| # | Run | n | Purpose |
+|---|-----|---|---------|
+| D‴1 | The frozen recipe fitted on nested subsets of 10 / 25 / 50 / 100 / 200 training normals × 3 subset seeds; calibration and test unchanged | 45 | How much normal data the recipe needs, with fit shots and calibration counts reported separately (docs/13 E09) |
+
+*Status: done — [report](../reports/E09-data-efficiency.md).* No plateau before the full training
+set on image AUROC (gap at 200 images 0.02 / 0.055 / 0.02); localization saturates earlier; ten
+images at 640 px match or exceed the full training set at 320 px on `macaroni2` and `capsules`.
+The patches-per-image contrast at a fixed bank was not run.
+
 ### Stage E — Ablation sweep (Kaggle, ~25 GPU-h)
 
 Staged, one axis at a time from D1, single seed. A full grid is ~10⁴ runs; this is ~50 and
@@ -194,7 +205,8 @@ is computed and written down, including any category where it bought nothing.
 
 ### Stage G — Robustness (laptop for inference, ~6 h wall-clock)
 
-*Status: G1 done — [report](../reports/E08-robustness.md). Previously: G1 running on the laptop with the ADR-11 recipe (640 px, fixed 10 k bank) on the three
+*Status: G1 and G4 done — [report](../reports/E08-robustness.md) (G4 in its own section). G2 waits
+for a converged autoencoder (Stage F). Run on the laptop with the ADR-11 recipe (640 px, fixed 10 k bank) on the three
 development categories — `scripts/robustness_study.py`, output `reports/studies/e08/`. The
 confirmation categories are spent, so this stage is development evidence.*
 

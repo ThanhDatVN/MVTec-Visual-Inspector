@@ -244,6 +244,29 @@ def test_study_pools_seeds_and_separates_configurations(synthetic_root, tmp_path
     assert "E02" in text and "E03" in text and "pixel_pca n_components=4" in text
 
 
+def test_study_pools_train_subset_seeds_but_not_subset_sizes(synthetic_root, tmp_path):
+    """E09: a subset drawn with the run's own seed is a replicate; a different size is not."""
+    import copy
+
+    from inspector.analysis import group_runs
+    from inspector.config import load_config
+    from inspector.runner import Registry, execute, prepare
+
+    base = load_config("configs/data/synth_strip.yaml")
+    registry = Registry(tmp_path / "runs")
+    for limit, seed in [(4, 0), (4, 1), (6, 0)]:
+        cfg = copy.deepcopy(base)
+        cfg["data"]["train_limit"] = limit
+        spec, model, idx = prepare(cfg, method="random", category="synth_strip", seed=seed,
+                                   data_root=synthetic_root)
+        execute(spec, model, idx, data_root=synthetic_root, registry=registry)
+
+    groups = group_runs(registry.root)
+    assert sorted((g.label, sorted(g.seeds)) for g in groups) == [
+        ("random train_limit=4", [0, 1]), ("random train_limit=6", [0]),
+    ]
+
+
 def test_method_comparison_is_paired_and_holm_adjusted(tmp_path):
     from inspector.analysis import RunGroup, method_comparisons
 

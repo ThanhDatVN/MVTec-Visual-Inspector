@@ -9,7 +9,7 @@ with an explainability case book, a robustness study, and a containerized demo s
 > ([ADR-11](docs/07-risks-and-decisions.md)) and then run once on nine held-out categories (E12).
 > Results: [confirmation](reports/E12-confirmation-v1.md) ·
 > [development](reports/E00-E04-development-findings.md) · [robustness](reports/E08-robustness.md) ·
-> [case book](reports/case-book/README.md).
+> [data efficiency](reports/E09-data-efficiency.md) · [case book](reports/case-book/README.md).
 
 ---
 
@@ -155,8 +155,10 @@ and a 50% illumination falloff leave the false-alarm rate at its clean level; a 
 thirds of a stop of over-exposure, or a blur of ~2–4 native pixels, sends it to 45–100% while
 image AUROC drops by only 0.04. Two input guards (exposure and focus ranges from the training
 normals) refuse every breaking corruption at or before its breaking severity, at a cost of 1 in
-260 clean normals; the service returns `decision: refused` for them.
-[Report](reports/E08-robustness.md).
+260 clean normals; the service returns `decision: refused` for them. A shift of 1–1.5% of the frame
+also breaks it, but through the replicated border strip the shift leaves rather than the shift
+itself, and the guards do not see it: content at the frame edge that no training image showed is
+the open failure mode. [Report](reports/E08-robustness.md).
 
 **Development findings that shaped the recipe** (three categories, details in the
 [development report](reports/E00-E04-development-findings.md)): input resolution is the largest
@@ -164,6 +166,11 @@ effect and a fixed 10k bank costs nothing measurable; at 320 px PatchCore was no
 better than linear PCA on two of three categories; scoring only the object region helps where
 background nuisance sets the threshold but is not a safe default; the from-scratch autoencoder
 was budget-limited and its image maximum is dominated by high-frequency normal texture.
+
+**Data efficiency (E09, development):** with the calibration normals held fixed, ten fitting
+images at 640 px match or beat the full training set at 320 px on `macaroni2` and `capsules`;
+image AUROC keeps improving up to the full training set, while localization is within 0.02
+AU-PRO by 200 images. [Report](reports/E09-data-efficiency.md).
 
 ## Findings from building the apparatus
 

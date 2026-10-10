@@ -139,6 +139,57 @@ Share of all test images refused, severities 1 → 5 (normals and defects togeth
 The service and the demo apply the guards whenever an artifact carries `guards.json`
 (`inspector export` writes it), returning `decision: refused` with the reason.
 
+## G4 — translation, reported separately
+
+A rigid shift of 0.2 / 0.65 / 1.1 / 1.55 / 2.0% of the frame along both axes (3 / 10 / 16 / 23 /
+30 native px on a 1,500 px wide image; 1.3 to 12.8 px at the 640 px model input, i.e. up to 1.6
+feature cells of 8 px), with the uncovered top and left strips filled by edge replication. Kept out
+of the main suite: on a fixed rig a geometric shift is out of distribution by design (docs/05).
+Same frozen model and threshold, 15 further cells in
+[studies/e08/robustness.csv](studies/e08/robustness.csv).
+
+| category | | clean | 1 | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|---|---|
+| `pcb1` | image AUROC | 0.979 | 0.978 | 0.934 | 0.833 | 0.624 | 0.605 |
+| | FPR@OP1 | 5% | 5% | 19% | 100% | 100% | 100% |
+| `macaroni2` | image AUROC | 0.887 | 0.884 | 0.889 | 0.825 | 0.668 | 0.650 |
+| | FPR@OP1 | 2% | 2% | 2% | 9% | 85% | 92% |
+| `capsules` | image AUROC | 0.916 | 0.918 | 0.919 | 0.841 | 0.730 | 0.670 |
+| | FPR@OP1 | 1.7% | 1.7% | 1.7% | 10% | 97% | 100% |
+
+The input guards are blind to it: the refused share stays within one image of its clean level at
+every severity (`pcb1` 5% throughout, `macaroni2` 0.5–1%, `capsules` 5.6–6.3% against 6.9% clean;
+[studies/e08/guards.csv](studies/e08/guards.csv)) — a shift changes neither global exposure nor
+focus.
+
+**Diagnostic: the shift or the strip?** `scripts/translate_border_study.py` re-scores the test
+normals with the feature cells that touch the replicated strip (plus two cells of receptive-field
+margin) excluded, and recalibrates that masked score's threshold on *clean* validation normals
+with the same mask, so the comparison is like for like
+([studies/e08/translate_border.csv](studies/e08/translate_border.csv)).
+
+| category | | 1 | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|---|
+| `pcb1` | image maximum inside the strip | 6% | 92% | 99% | 100% | 100% |
+| | FPR, strip excluded (clean: 5%) | 4% | 5% | 3% | 4% | 3% |
+| `macaroni2` | image maximum inside the strip | 7% | 36% | 85% | 100% | 100% |
+| | FPR, strip excluded (clean: 2%) | 2% | 2% | 2% | 2% | 2% |
+| `capsules` | image maximum inside the strip | 0% | 40% | 100% | 100% | 100% |
+| | FPR, strip excluded (clean: 1.7%) | 1.7% | 1.7% | 1.7% | 3.3% | 3.3% |
+
+- **The breakdown is the replicated border, not the shift.** Once the strip approaches one
+  feature cell, the image maximum moves into it on 85–100% of normals; scored without it, shifted
+  normals false-alarm at their clean rate on every category and severity (within one image of 60
+  on `capsules`). That is what a memory bank with no positional term should do — each patch is
+  compared with every stored patch wherever either came from, so moving the part does not by
+  itself make a patch novel. The AUROC drop most likely has the same cause (defective images get
+  a strip too), but it was not separated here.
+- **The deployment lesson is about the frame edge, not about registration.** Any border content
+  that no training image showed — padding from a software crop or alignment step, a fixture edge
+  newly in view — sets the image score, and the exposure and focus guards do not see it. Ignoring
+  a fixed margin, or the padded region an alignment step reports, would address it; neither was
+  evaluated. Shifts that bring *real* unseen content into view are not tested by this corruption.
+
 ## Limits
 
 - Synthetic corruptions on three development categories, one seed. VisA has no real

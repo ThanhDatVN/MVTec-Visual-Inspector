@@ -527,13 +527,20 @@ def group_runs(
         model_hp = {k: v for k, v in spec["model"].get("hparams", {}).items() if k != "seed"}
         unseeded = {k: v for k, v in spec.items() if k != "seed"}
         unseeded["model"] = {**spec["model"], "hparams": model_hp}
+        # E09: a training subset drawn with the run's own seed is a seed replicate, not a
+        # setting — and so is the train listing hash that the subset changes.
+        if spec["dataset"].get("train_subset_seed") == spec["seed"]:
+            listing = {k: v for k, v in spec["dataset"].get("split_listing", {}).items() if k != "train"}
+            unseeded["dataset"] = {**{k: v for k, v in spec["dataset"].items()
+                                      if k != "train_subset_seed"}, "split_listing": listing}
         key = hash_object(unseeded)[:12]
         category = spec["dataset"]["category"]
         method = spec["model"]["name"]
         if key not in groups:
             groups[key] = RunGroup(key, category, method, method, spec["dataset"]["test_split"],
                                    dataset=spec["dataset"], long_side=spec["transform"].get("long_side"))
-            hparams[key] = {**model_hp, "long_side": spec["transform"].get("long_side")}
+            hparams[key] = {**model_hp, "long_side": spec["transform"].get("long_side"),
+                            "train_limit": spec["dataset"].get("train_limit")}
         groups[key].run_ids.append(record["run_id"])
         groups[key].seeds.append(int(spec["seed"]))
 

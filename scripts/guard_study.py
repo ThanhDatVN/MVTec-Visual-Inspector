@@ -7,6 +7,7 @@ corruption seeds as E08. The corrupted images are never scored by a model; the g
 image statistics.
 
     python scripts/guard_study.py --data-root <VisA>
+    python scripts/guard_study.py --data-root <VisA> --corruptions translate   # merged into --out
 """
 
 from __future__ import annotations
@@ -24,7 +25,7 @@ from inspector.config import deep_merge, load_config
 from inspector.data import ensure_validation, load_category
 from inspector.data.transforms import load_image
 from inspector.eda import measure_regions, summarize_regions
-from inspector.robustness import MAIN_SUITE, SEVERITIES, apply_corruption
+from inspector.robustness import CORRUPTIONS, MAIN_SUITE, SEVERITIES, apply_corruption
 
 RECIPE = "configs/recipes/confirmation-v1-patchcore-640.yaml"
 
@@ -35,6 +36,8 @@ def main() -> int:
     ap.add_argument("--categories", nargs="+", default=["pcb1", "macaroni2", "capsules"])
     ap.add_argument("--artifacts", default="artifacts")
     ap.add_argument("--out", default="reports/studies/e08/guards.csv")
+    ap.add_argument("--corruptions", nargs="+", default=list(MAIN_SUITE), choices=sorted(CORRUPTIONS),
+                    help="rows already in --out for other corruptions are kept")
     args = ap.parse_args()
     cfg = deep_merge(load_config("configs/data/visa_pcb1.yaml"), load_config(RECIPE))
     data = cfg["data"]
@@ -56,7 +59,7 @@ def main() -> int:
         images = [(s, load_image(s.image_path)) for s in test]
         clean = np.mean([not guards.check(im)["ok"] for _, im in images])
         rows.append({"category": cat, "corruption": "clean", "severity": 0, "refused": clean})
-        for corruption in MAIN_SUITE:
+        for corruption in args.corruptions:
             for severity in SEVERITIES:
                 refused = []
                 for s, im in images:
@@ -68,8 +71,15 @@ def main() -> int:
                              "refused": float(np.mean(refused))})
             print(f"  {cat} {corruption}: " + " ".join(f"{r['refused']:.0%}" for r in rows[-5:]))
 
-    Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-    with open(args.out, "w", newline="", encoding="utf-8") as fh:
+    out = Path(args.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    merged: dict[tuple[str, str, str], dict] = {}
+    if out.exists():
+        with open(out, newline="", encoding="utf-8") as fh:
+            merged = {(r["category"], r["corruption"], r["severity"]): r for r in csv.DictReader(fh)}
+    merged.update({(r["category"], r["corruption"], str(r["severity"])): r for r in rows})
+    rows = list(merged.values())
+    with open(out, "w", newline="", encoding="utf-8") as fh:
         writer = csv.DictWriter(fh, fieldnames=["category", "corruption", "severity", "refused"])
         writer.writeheader()
         writer.writerows(rows)
