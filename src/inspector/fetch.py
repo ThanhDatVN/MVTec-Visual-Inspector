@@ -5,9 +5,11 @@ AD 2 require registration and are therefore a manual step, documented in
 [docs/10-datasets.md](../../docs/10-datasets.md) rather than automated behind a
 command that would only fail.
 
-Every fetch records a SHA-256 manifest of what it downloaded. A silently updated
-or partially written archive is otherwise indistinguishable from a good one
-until a model trained on it behaves strangely weeks later.
+Every fetch checks the files against pinned SHA-256 digests and records a
+manifest of what it downloaded. A silently updated or partially written archive
+is otherwise indistinguishable from a good one until a model trained on it
+behaves strangely weeks later — and the split CSV comes from a repository's
+default branch, so an upstream edit would silently change the protocol.
 """
 
 from __future__ import annotations
@@ -28,9 +30,17 @@ class RemoteDataset:
     key: str
     url: str
     filename: str
-    extra_files: tuple[tuple[str, str], ...] = ()
-    #: Directory the archive expands into, relative to the download dir.
+    #: SHA-256 of the archive the committed results were produced from ("" = not pinned).
+    sha256: str = ""
+    #: (url, local name, sha256) for files fetched alongside the archive.
+    extra_files: tuple[tuple[str, str, str], ...] = ()
+    #: Directory the dataset lives in, relative to the download dir. Archives that
+    #: already carry this top-level folder are extracted as they are; archives whose
+    #: members sit at the top level (VisA's do) are extracted into it.
     extract_dirname: str = ""
+    #: Local name of the extra file that is the official split; it is copied to
+    #: `<root>/split_csv/1cls.csv`, where the loader looks for it.
+    split_file: str = ""
     license_note: str = ""
     citation: str = ""
 
@@ -39,13 +49,16 @@ VISA = RemoteDataset(
     key="visa",
     url="https://amazon-visual-anomaly.s3.us-west-2.amazonaws.com/VisA_20220922.tar",
     filename="VisA_20220922.tar",
+    sha256="2eb8690c803ab37de0324772964100169ec8ba1fa3f7e94291c9ca673f40f362",
     extra_files=(
         (
             "https://raw.githubusercontent.com/amazon-science/spot-diff/main/split_csv/1cls.csv",
             "visa_1cls.csv",
+            "a48557e6033318cb90556f706196bc9d247a776a23ea51aecee5a80dd0332995",
         ),
     ),
     extract_dirname="VisA_20220922",
+    split_file="visa_1cls.csv",
     license_note=(
         "CC BY 4.0 per the AWS Open Data registry and the source paper. Some third-party "
         "documentation states CC BY-NC-SA 4.0; until that is settled this project behaves as if "
@@ -73,6 +86,21 @@ class FetchResult:
 
 
 REGISTRY: dict[str, RemoteDataset] = {VISA.key: VISA}
+
+#: Written into the dataset directory once extraction has finished; holds the
+#: archive's digest. Without it a half-extracted directory looks complete.
+EXTRACTED_MARKER = ".extracted"
+
+
+def _check_digest(path: Path, expected: str) -> str:
+    digest = hash_file(path)
+    if expected and digest != expected:
+        raise ValueError(
+            f"{path.name}: SHA-256 {digest} does not match the pinned {expected}. The file is "
+            "corrupt, or upstream changed it; the committed results were produced from the "
+            "pinned version. Delete the file to re-download, and do not mix the two."
+        )
+    return digest
 
 
 def _download(url: str, dest: Path, *, chunk: int = 1 << 20, progress=None) -> Path:
@@ -110,8 +138,14 @@ def fetch(
     extract: bool = True,
     force: bool = False,
     progress=None,
+    manifest_dir: str | Path = "data/manifests",
 ) -> FetchResult:
-    """Download (and optionally extract) a dataset, recording its manifest."""
+    """Download (and optionally extract) a dataset, verify it, and record its manifest.
+
+    `manifest_dir` is relative to the working directory. Point it outside a git
+    checkout that must stay clean (a Kaggle clone): an untracked manifest there
+    would mark every later run as dirty.
+    """
     try:
         spec = REGISTRY[key]
     except KeyError:
@@ -126,22 +160,22 @@ def fetch(
         _download(spec.url, archive, progress=progress)
         action = "downloaded"
 
-    files = {spec.filename: hash_file(archive)}
-    for url, name in spec.extra_files:
+    files = {spec.filename: _check_digest(archive, spec.sha256)}
+    for url, name, digest in spec.extra_files:
         path = out_dir / name
         if not path.is_file() or force:
             _download(url, path)
-        files[name] = hash_file(path)
+        files[name] = _check_digest(path, digest)
 
     extracted: Path | None = None
     if extract:
-        extracted = _extract(archive, out_dir, spec)
-        # The split CSV lives in the repo, not the tar, so place it where the
-        # loader expects to find it.
-        split_target = extracted / "split_csv" / "1cls.csv"
-        if not split_target.is_file() and (out_dir / "visa_1cls.csv").is_file():
+        extracted = _extract(archive, out_dir, spec, digest=files[spec.filename])
+        # The split CSV ships separately from the archive; place the verified copy
+        # where the loader looks for it, every time, so a stale split is never read.
+        if spec.split_file:
+            split_target = extracted / "split_csv" / "1cls.csv"
             split_target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(out_dir / "visa_1cls.csv", split_target)
+            shutil.copyfile(out_dir / spec.split_file, split_target)
 
     manifest = FetchResult(
         dataset=spec.key,
@@ -154,21 +188,42 @@ def fetch(
         citation=spec.citation,
     )
 
-    manifest_dir = Path("data/manifests")
+    manifest_dir = Path(manifest_dir)
     manifest_dir.mkdir(parents=True, exist_ok=True)
-    (manifest_dir / f"{spec.key}.fetch.json").write_text(
-        json.dumps(asdict(manifest), indent=2), encoding="utf-8"
-    )
+    path = manifest_dir / f"{spec.key}.fetch.json"
+    # Rewritten only when what was fetched changed: a timestamp-only rewrite of a
+    # committed manifest would leave the tree dirty and tag every later run dirty.
+    try:
+        previous = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        previous = None
+    stable = ("dataset", "url", "files", "extracted_to")
+    if previous is None or any(previous.get(k) != getattr(manifest, k) for k in stable):
+        path.write_text(json.dumps(asdict(manifest), indent=2), encoding="utf-8")
     return manifest
 
 
-def _extract(archive: Path, out_dir: Path, spec: RemoteDataset) -> Path:
+def _extract(archive: Path, out_dir: Path, spec: RemoteDataset, *, digest: str) -> Path:
+    """Extract into `out_dir / spec.extract_dirname`, once.
+
+    Whether the archive carries that folder itself is read from its members, not
+    assumed: VisA's tar holds `pcb1/...` at the top level, and extracting it into
+    `out_dir` put the images beside the dataset root instead of inside it.
+    """
     target = out_dir / spec.extract_dirname if spec.extract_dirname else out_dir
-    if target.is_dir() and any(target.iterdir()):
+    marker = target / EXTRACTED_MARKER
+    if marker.is_file() and marker.read_text(encoding="utf-8").strip() == digest:
         return target
 
     with tarfile.open(archive) as tar:
-        _safe_extract(tar, out_dir)
+        prefix = spec.extract_dirname.strip("/")
+        names = tar.getnames()
+        wrapped = bool(prefix) and all(n == prefix or n.startswith(prefix + "/") for n in names)
+        dest = out_dir if (wrapped or not prefix) else target
+        dest.mkdir(parents=True, exist_ok=True)
+        _safe_extract(tar, dest)
+    target.mkdir(parents=True, exist_ok=True)
+    marker.write_text(digest + "\n", encoding="utf-8")
     return target
 
 
@@ -186,16 +241,21 @@ def _safe_extract(tar: tarfile.TarFile, dest: Path) -> None:
             raise ValueError(f"refusing unsafe tar member escaping the target: {member.name!r}")
         if member.issym() or member.islnk():
             raise ValueError(f"refusing link member in archive: {member.name!r}")
-    tar.extractall(dest)
+    if hasattr(tarfile, "data_filter"):  # Python >= 3.12, and security backports
+        tar.extractall(dest, filter="data")
+    else:  # pragma: no cover - older interpreters
+        tar.extractall(dest)
 
 
-def verify(key: str, out_dir: str | Path = "data/raw") -> dict[str, bool]:
+def verify(
+    key: str, out_dir: str | Path = "data/raw", manifest_dir: str | Path = "data/manifests"
+) -> dict[str, bool]:
     """Re-hash the downloaded files against the recorded manifest.
 
     Run after any sync to Drive or Kaggle: sync corruption is silent, and
     discovering it a week later costs a week.
     """
-    manifest_path = Path("data/manifests") / f"{key}.fetch.json"
+    manifest_path = Path(manifest_dir) / f"{key}.fetch.json"
     if not manifest_path.is_file():
         raise FileNotFoundError(f"no fetch manifest at {manifest_path}; run `inspector fetch` first")
 
