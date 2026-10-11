@@ -23,7 +23,7 @@ fetched today without an account or an application, which is what makes the shor
 | **BTAD** | beanTech, 2021 | 2,830, 3 products | **1.23 GB** | 200 | not stated on the download page — ask the authors before any redistribution | yes |
 | **KolektorSDD2** | ViCoS Ljubljana, 2021 | ~3,335 | **0.85 GB** | 200 | CC BY-NC-SA 4.0 | yes |
 | **KolektorSDD** | ViCoS Ljubljana, 2019 | 399 | **0.10 GB** | 200 | CC BY-NC-SA 4.0 | yes |
-| **MPDD** | 2021 | 1,346, 6 painted metal parts | small (GitHub zip) | 200 | check the repository | yes |
+| **MPDD** | 2021 | 1,346, 6 painted metal parts | **1.82 GB** (1,628 PNGs incl. 282 masks; SharePoint folder, `scripts/fetch_mpdd.py`) | 200 | CC BY-NC-SA 4.0 (repository `LICENSE`) | yes |
 
 ### Gated — an account, a form, or a login
 

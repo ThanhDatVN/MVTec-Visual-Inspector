@@ -56,6 +56,22 @@ robustness evaluation; model-generated anomaly heatmaps are overlaid on some ima
 
 ---
 
+## MPDD (Metal Parts Defect Detection)
+
+Used for evaluation only (the transfer probe of ADR-12), under the **Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0)** stated in the
+authors' repository: https://github.com/stepanje/MPDD
+
+> Stepan Jezek, Martin Jonak, Radim Burget, Pavel Dvorak, Milos Skotak.
+> "Deep learning-based defect detection of metal parts: evaluating current methods in complex
+> conditions." 13th International Congress on Ultra Modern Telecommunications and Control
+> Systems and Workshops (ICUMT), 2021, pp. 66–71. DOI: 10.1109/ICUMT54235.2021.9631567
+
+**Changes made:** images were resized for inference. **No MPDD images or derived figures are
+published by this repository.**
+
+---
+
 ## Third-party code used as a test oracle
 
 `tests/reference/anomalib_patchcore.py` excerpts PatchCore scoring and k-center selection from

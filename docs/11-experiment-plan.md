@@ -25,7 +25,7 @@ three become the paper.
 | Venue | Hardware | Constraint | Reserved for |
 |-------|----------|------------|--------------|
 | Laptop | RTX 3050, **4 GB VRAM** | Hard OOM ceiling around 1 MP single-pass | Data work, EDA, Tier 0, development-scale PatchCore, all evaluation, the demo |
-| Kaggle | P100 16 GB or T4×2 | **~30 GPU-h/week**, 12 h interactive session, ~9 h on commit, 20 GB working dir | Reference configurations, the ablation sweep, autoencoder training, robustness grid |
+| Kaggle | T4×2 (one used; P100 if offered), 16 GB | **~30 GPU-h/week**, 12 h interactive session, ~9 h on commit, 20 GB working dir | Reference configurations, the ablation sweep, autoencoder training, robustness grid |
 
 **The binding constraint is the weekly Kaggle quota, not the session limit.** 30 hours a week
 across a 12-week plan is ~360 GPU-hours total, and §3 budgets ~78 of them. The headroom is

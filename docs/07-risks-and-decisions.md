@@ -370,6 +370,12 @@ Kaggle from an attached copy, for evaluation only.
 (tens of test images each), so per-category intervals are wide. (−) The dataset has to be
 supplied by hand and its licence is not stated; no MPDD image or derived figure is published.
 
+**Erratum (2026-10-11).** Two statements above were wrong, and neither touches the protocol. The
+licence *is* stated: the authors' repository ships a CC BY-NC-SA 4.0 `LICENSE`, the same terms
+as MVTec AD (attribution in [ATTRIBUTION.md](../ATTRIBUTION.md)). And the shared folder can be
+fetched by script through SharePoint's guest API (`scripts/fetch_mpdd.py`, with a SHA-256
+manifest). The no-publication rule for MPDD images and derived figures stays as decided.
+
 ---
 
 ### Open decisions (resolve before the stated gate)
