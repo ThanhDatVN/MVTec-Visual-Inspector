@@ -51,7 +51,7 @@ def _get(url: str, start: int):
     return urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=120)
 
 
-def download(url: str, dest: Path, attempts: int = 8) -> tuple[int, str]:
+def download(url: str, dest: Path, attempts: int = 30) -> tuple[int, str]:
     """Download to `<dest>.part`, resuming with HTTP ranges after a dropped connection."""
     tmp = dest.with_name(dest.name + ".part")
     total = 0
@@ -72,6 +72,8 @@ def download(url: str, dest: Path, attempts: int = 8) -> tuple[int, str]:
                         written += len(block)
                         if total and written % (1 << 30) < (1 << 22):
                             print(f"    {written / 1e9:.1f} / {total / 1e9:.1f} GB", flush=True)
+            if total and written < total:  # the server closed the stream early, without an error
+                raise ConnectionError(f"stream ended at {written} of {total} bytes")
             break
         except (OSError, TimeoutError) as exc:  # URLError, resets and timeouts are OSErrors
             print(f"    attempt {attempt} failed at {tmp.stat().st_size if tmp.is_file() else 0} bytes: {exc}",
