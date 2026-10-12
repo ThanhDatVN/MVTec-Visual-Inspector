@@ -17,11 +17,11 @@ with an explainability case book, a robustness study, and a containerized demo s
 
 ## The one-paragraph version
 
-Given only defect-free images of three industrial parts, learn a model of "normal", then at
-inference time produce (a) an image-level anomaly score and (b) a pixel-level anomaly map.
-We build the ladder from a hand-written autoencoder up to PatchCore and current (2025–2026)
-feature-based methods, measure everything under one frozen protocol, stress the winner with
-optical and geometric corruptions, and ship it behind an API in a container.
+Given only defect-free training images, the detector learns what normal looks like and returns
+an image-level anomaly score and a pixel-level map at inference time. The repository compares
+simple baselines, a custom autoencoder, and PatchCore under one protocol; it then tests the frozen
+recipe on held-out VisA categories and optical/geometric corruptions. The fitted detector can be
+exported to the API or demo.
 
 ## Data
 
@@ -90,14 +90,15 @@ stretched to its own maximum.
 Measured on a laptop (RTX 3050 4 GB, Ryzen 5 6600H; batch 1, 200 timed requests through the
 service path): the frozen recipe answers in **99 / 102 ms** (p50 / p95) on the GPU with 0.6 GB of
 GPU memory, and in 890 / 957 ms on the CPU; the 960 px candidate takes 196 / 198 ms and 0.75 GB.
-`scripts/bench_inference.py`, [E8 §3](reports/E8-gate-e-followup.md).
+`scripts/bench_inference.py`, [E8 §3](reports/E8-gate-e-followup.md). Intended use, operating points and
+limitations: [MODEL_CARD.md](MODEL_CARD.md).
 
 ## Notebooks
 
 | Notebook | Venue | Covers |
 |----------|-------|--------|
 | [`01_laptop_data_and_eda.ipynb`](notebooks/01_laptop_data_and_eda.ipynb) | Laptop, 4 GB | Acquisition, integrity audit, EDA and the resolution decision, Tier 0 floors, development PatchCore |
-| [`02_kaggle_experiments.ipynb`](notebooks/02_kaggle_experiments.ipynb) | Kaggle P100 | Reference config, ablation sweep, autoencoder, robustness grid — resumable across sessions |
+| [`02_kaggle_experiments.ipynb`](notebooks/02_kaggle_experiments.ipynb) | Kaggle T4 | Reference config, ablation sweep, Gate E follow-up, autoencoder, C2, MPDD — resumable across sessions |
 
 Both are **generated** by `scripts/build_notebooks.py`, never hand-edited. Operational detail:
 [docs/12-running-the-notebooks.md](docs/12-running-the-notebooks.md).
@@ -108,24 +109,24 @@ Both are **generated** by `scripts/build_notebooks.py`, never hand-edited. Opera
 |---|----------|---------------|
 | 01 | [Charter & frozen protocol](docs/01-charter-and-protocol.md) | Objectives, splits, leakage rules L1–L7, what "done" means |
 | 02 | [Metrics & baselines](docs/02-metrics-and-baselines.md) | Metric definitions, external baseline matrix, decision rules |
-| 03 | [Method ladder](docs/03-method-ladder-and-matrix.md) | Every model, tier 0 → tier 5 |
-| 04 | [Roadmap & gates](docs/04-roadmap.md) | 12 phases, gates, compute allocation |
+| 03 | [Method ladder](docs/03-method-ladder-and-matrix.md) | Implemented and proposed method tiers |
+| 04 | [Roadmap & gates](docs/04-roadmap.md) | Original phase plan and gates |
 | 05 | [Robustness protocol](docs/05-robustness-protocol.md) | Corruption suite, severities, reporting |
-| 06 | [Engineering & test strategy](docs/06-engineering-mlops-and-testing.md) | Repo layout, MLflow, pytest tiers, VRAM budget |
+| 06 | [Engineering & testing](docs/06-engineering-mlops-and-testing.md) | Current layout, run registry, CI, memory, serving |
 | 07 | [Risks & decision log](docs/07-risks-and-decisions.md) | Risk register, ADR-1 … ADR-11 |
 | 08 | [Licensing & attribution](docs/08-licensing-and-attribution.md) | **Read before publishing anything** |
 | 09 | [References](docs/09-references.md) | Bibliography, each tagged ✅/◐/⚠ by verification status |
 | 10 | [Dataset survey](docs/10-datasets.md) | What is downloadable today, and why VisA |
 | 11 | [**Experiment plan & run register**](docs/11-experiment-plan.md) | Every planned run: purpose, venue, cost, decision rule |
 | 12 | [Running the notebooks](docs/12-running-the-notebooks.md) | Laptop and Kaggle operation |
-| 13 | [External review & research roadmap](docs/13-project-review-and-research-roadmap.md) | Review findings F01–F12 and the E00–E12 programme |
+| 13 | [External review & research roadmap](docs/13-project-review-and-research-roadmap.md) | Historical review findings and research programme |
 
 ## Compute
 
 | Where | Hardware | Used for |
 |-------|----------|----------|
 | Laptop | RTX 3050, 4 GB VRAM, 16 GB RAM | Data work, EDA, Tier 0, the CAE, PatchCore up to 640 px, every study on stored predictions |
-| Kaggle | P100 16 GB, **~30 GPU-h/week** | Reference configs, ablation sweep, autoencoder training |
+| Kaggle | T4 16 GB (free tier), **~30 GPU-h/week** | Reference configs, ablation sweep, autoencoder training |
 
 Measured, not assumed: a WideResNet50-2 forward pass at VisA's native 1.5 MP costs under 1 GB of
 VRAM; the binding constraint is host RAM for the patch matrix, which per-image candidate sampling

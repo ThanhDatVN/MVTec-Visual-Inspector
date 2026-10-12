@@ -1,16 +1,14 @@
 """Command line interface.
 
-One principle (docs/06 §1): the laptop and Colab execute the *same* code path
-with the same configs. A Colab notebook is a thin driver that installs this
-package and calls these commands — never a place where model code lives.
+The CLI and generated notebooks use the same runner and resolved configs.
 
     inspector fixtures --out data/synthetic
     inspector audit    --config configs/data/synth_strip.yaml
     inspector eda      --config configs/data/synth_strip.yaml
     inspector info
 
-`fit`, `predict`, `evaluate` and `bench` are registered but not yet implemented;
-they arrive with their phases (P3, P5, P9).
+Use `run` for fit and evaluation, `results` for the registry table, and
+`export` followed by `serve` or `demo` for inference.
 """
 
 from __future__ import annotations
@@ -380,15 +378,6 @@ def cmd_fetch(args) -> int:
     return 0
 
 
-def cmd_not_implemented(args) -> int:
-    print(
-        f"`inspector {args.command}` is not implemented yet; it lands with its "
-        "phase (see docs/04-roadmap.md).",
-        file=sys.stderr,
-    )
-    return 3
-
-
 # --- parser -----------------------------------------------------------------
 
 
@@ -487,13 +476,6 @@ def build_parser() -> argparse.ArgumentParser:
         p.add_argument("--host", default="127.0.0.1")
         p.add_argument("--port", type=int, default=port)
         p.set_defaults(func=func)
-
-    for name, help_text in (
-        ("bench", "measure latency and memory (P9)"),
-    ):
-        p = sub.add_parser(name, help=help_text)
-        _add_config_args(p)
-        p.set_defaults(func=cmd_not_implemented)
 
     return parser
 

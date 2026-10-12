@@ -1,5 +1,9 @@
 # Archived results
 
+`results_synthetic_v1.csv` contains the early Tier 0 synthetic-fixture runs. Its older schema and
+dirty-tree rows are kept as historical evidence; current results are regenerated from the v2 run
+registry into `reports/results_registry.csv`.
+
 `results_visa_exploratory_v1.csv` holds the first VisA runs (2026-09-22/23). They are kept as
 **exploratory historical evidence** and must not be promoted to a headline table:
 

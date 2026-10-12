@@ -1,5 +1,10 @@
 # 04 — Roadmap, Schedule, and Gates
 
+This is the original phase plan. For the implemented layout and CI, see
+[engineering](06-engineering-mlops-and-testing.md); for completed experiments, see the
+[development](../reports/E00-E04-development-findings.md) and
+[confirmation](../reports/E12-confirmation-v1.md) reports.
+
 **Planning assumption:** ~12–15 focused hours per week over 12 weeks (~160 hours total).
 A compressed 8-week lane is given in §4. Adjust the calendar, keep the gate order.
 

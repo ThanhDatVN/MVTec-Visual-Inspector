@@ -163,21 +163,10 @@ optional leaderboard submission produces a directly comparable number.
 
 ## 4. Canonical results table schema
 
-Every experiment writes one row to `reports/results.csv` with exactly these columns. MLflow is the
-source of truth; the CSV is generated from it, never hand-edited.
-
-```
-run_id, git_sha, dirty, config_hash, dataset, category, split, method, tier,
-backbone, resolution, tiling, precision, coreset_ratio, seed, n_seeds,
-image_auroc, image_aupr, f1max_oracle, fpr_at_op1, recall_at_op1,
-pixel_auroc, aupro_005, aupro_030, aupimo_mean, aupimo_median, aupimo_p10,
-segf1_3sigma, iou_3sigma,
-latency_p50_ms, latency_p95_ms, latency_p99_ms, device, batch_size,
-peak_vram_mb, peak_rss_mb, artifact_mb, fit_seconds,
-threshold_source, oracle_flag, notes
-```
-
-`threshold_source` and `oracle_flag` are mandatory, not optional. They are what make the table
-auditable.
-
-See [templates/results-table.md](templates/results-table.md) for the presentation format.
+The source of truth is the [run registry](../reports/runs/), with one resolved `spec.json`,
+`result.json`, and stored predictions per run. `inspector results` regenerates
+[results_registry.csv](../reports/results_registry.csv) from it. The exact column order is defined
+in [`results.py`](../src/inspector/results.py); in particular, `threshold_source`,
+`threshold_comparator`, `requested_fpr`, `effective_fpr`, and `oracle_flag` make operating-point
+claims auditable. The earlier synthetic and pre-v2 VisA tables are labelled in
+[the archive](../reports/archive/README.md).

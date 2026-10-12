@@ -1,5 +1,9 @@
 # MVTec Visual Inspector: Project Review and Research Development Plan
 
+**Historical review:** this describes the September 2026 snapshot identified below. The F01–F11
+repairs and later confirmation are documented in the [decision log](07-risks-and-decisions.md)
+and [E12 report](../reports/E12-confirmation-v1.md).
+
 **Review dates:** 23–24 September 2026  
 **Audience:** Junior ML Engineer, AI Engineer, and Data Scientist candidates  
 **Scope:** Experimental design, model development, technical improvements, evaluation, and reproducible research. Backend, frontend, API deployment, and product development are deferred, as requested.  
@@ -62,7 +66,7 @@ The review ran small synthetic diagnostics, not a new real-data training campaig
 
 ### Recorded results worth investigating
 
-The following means were recalculated from [results_visa.csv](../reports/results_visa.csv). They summarize the existing three seeds; they are not new benchmark runs.
+The following means were recalculated from the [archived exploratory VisA table](../reports/archive/results_visa_exploratory_v1.csv). They summarize the existing three seeds; they are not new benchmark runs.
 
 | Category | Image AUROC | AU-PRO@0.05 | SegF1 at 3-sigma | Realized image FPR | Image recall at stored operating point |
 |---|---:|---:|---:|---:|---:|
@@ -677,7 +681,7 @@ python -m inspector.cli run -c configs/data/visa_pcb1.yaml --methods patchcore -
 
 Outcomes: Python 3.11.9; 243 tests passed; ruff passed; mypy was blocked by Windows Application Control; the PatchCore CLI command failed at method validation before fitting. Small inline Python diagnostics additionally checked threshold ranks/ties, `k` invariance, AE output shape, CSV provenance, and the recorded category means. No real-data models were retrained, no new ablation results were produced, and no reference library was installed or benchmarked in this review.
 
-Key repository evidence: [current findings](../reports/P3-visa-findings.md), [VisA results](../reports/results_visa.csv), [experiment register](11-experiment-plan.md), [method ladder](03-method-ladder-and-matrix.md), [protocol](01-charter-and-protocol.md), [model code](../src/inspector/models/patchcore.py), [pipeline](../src/inspector/pipeline.py), and [notebook builder](../scripts/build_notebooks.py).
+Key repository evidence for the reviewed snapshot: [P3 findings](../reports/P3-visa-findings.md), [archived VisA results](../reports/archive/results_visa_exploratory_v1.csv), [experiment register](11-experiment-plan.md), [method ladder](03-method-ladder-and-matrix.md), [protocol](01-charter-and-protocol.md), [model code](../src/inspector/models/patchcore.py), [pipeline](../src/inspector/pipeline.py), and [notebook builder](../scripts/build_notebooks.py).
 
 ## Appendix B. Reading order and source use
 

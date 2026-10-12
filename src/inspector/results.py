@@ -1,8 +1,8 @@
 """Results table generation.
 
-`reports/results.csv` is generated, never hand-edited (docs/06 §4). A
-hand-edited results table drifts from the runs that produced it, and by the time
-anyone notices, nobody remembers which version was right.
+`reports/results_registry.csv` is generated from the run registry, never
+hand-edited (docs/06 §2). Manual edits can make it drift from the runs that
+produced it.
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ from pathlib import Path
 
 from .pipeline import ExperimentResult
 
-#: Column order for reports/results.csv. `threshold_source` and `oracle_flag`
+#: Column order for reports/results_registry.csv. `threshold_source` and `oracle_flag`
 #: are mandatory, not optional: they are what make the table auditable.
 COLUMNS = [
     "run_id", "run_name", "status", "method", "tier", "owner", "category", "dataset",

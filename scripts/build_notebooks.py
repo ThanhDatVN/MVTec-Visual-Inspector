@@ -95,6 +95,7 @@ LAPTOP = [
         "REPO = pathlib.Path.cwd()",
         "if not (REPO / 'src' / 'inspector').exists():",
         "    REPO = REPO.parent  # running from notebooks/",
+        "os.chdir(REPO)  # keep fetch manifests and relative reports in the repository root",
         "sys.path.insert(0, str(REPO / 'src'))",
         "",
         "from inspector.utils.env import capture",

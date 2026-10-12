@@ -1,5 +1,9 @@
 # 03 — Method Ladder and Experiment Matrix
 
+This is the method plan, including proposed tiers. The implemented models are listed in
+[`src/inspector/models/`](../src/inspector/models/) and the completed comparisons in
+[development findings](../reports/E00-E04-development-findings.md).
+
 The ladder runs from "a statistic you could compute in Excel" to techniques published in 2025–2026.
 Each tier exists to answer a question the tier below it cannot, and each tier's cost is justified
 by the answer it buys.

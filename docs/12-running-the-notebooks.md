@@ -182,7 +182,8 @@ notebooks are drivers; the project is the package.
 
 ## 5. Reproducing a single number
 
-Every row in `results.csv` carries `run_name`, `config_hash`, `git_sha` and `notes` (the run ID).
+Every row in `reports/results_registry.csv` carries `run_id`, `run_name`, `config_hash`,
+`implementation_id`, and `git_sha`.
 To reproduce one:
 
 ```bash

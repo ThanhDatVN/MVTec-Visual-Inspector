@@ -70,7 +70,7 @@ report full of unchecked numbers.
 |------|--------|--------|------|
 | **anomalib** (v2.2+) | [github.com/open-edge-platform/anomalib](https://github.com/open-edge-platform/anomalib) | ◐ | Tier 4 comparators; includes an `MVTecAD2` datamodule with a `test_type` parameter for the three test splits, and reference metric implementations for the G2 validation |
 | **Grad-CAM** | Selvaraju et al., ICCV 2017 | ✅ | Tier 6 explainability |
-| **Model cards** | Mitchell et al., FAT* 2019 | ✅ | Structure of `MODEL_CARD.md` |
+| **Model cards** | Mitchell et al., FAT* 2019 | ✅ | Structure of the [model-card template](templates/model-card.md) |
 | **Segment Anything** | Kirillov et al., 2023 | ⚠ | Optional Tier 5 mask refinement (stretch only) |
 
 ---

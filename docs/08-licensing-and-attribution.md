@@ -15,7 +15,7 @@ Three obligations:
 
 | Clause | Obligation | What it means here |
 |--------|-----------|--------------------|
-| **BY** — Attribution | Credit the creators, link the license, indicate changes | The attribution block in §4 appears in the README, the model card, the Gradio footer, and the API `/metadata` response |
+| **BY** — Attribution | Credit the creators, link the license, indicate changes | The attribution block is maintained in `ATTRIBUTION.md`; carry it into any published model card, demo, or output containing dataset imagery |
 | **NC** — NonCommercial | No use primarily aimed at commercial advantage or monetary compensation | No commercial deployment, no paid demo, no use in a product, no consulting deliverable. A portfolio project or coursework is fine. |
 | **SA** — ShareAlike | Adaptations must be distributed under the same license | See §3 — this is the clause that requires thought |
 
@@ -67,8 +67,10 @@ corrupted, or overlaid with model output. Figure captions should say so.
 
 ## 4. Attribution block
 
-Reproduce verbatim in `ATTRIBUTION.md`, the README, `MODEL_CARD.md`, the Gradio footer, and the
-API `/metadata` payload.
+The canonical copy is in [ATTRIBUTION.md](../ATTRIBUTION.md). Reproduce it in any published model
+card or interface that displays MVTec dataset imagery. The model-card template is
+[here](templates/model-card.md); the completed card for the served recipe is
+[MODEL_CARD.md](../MODEL_CARD.md).
 
 ```
 This project uses the MVTec Anomaly Detection datasets, provided by MVTec Software GmbH

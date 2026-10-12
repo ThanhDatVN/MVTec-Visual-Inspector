@@ -217,17 +217,16 @@ a sales pitch.
 | L3 | **Anomaly maps are never min-max normalized using test-set statistics** | `test_normalization_stats_from_val_only` — normalizer is fitted once on validation and frozen; asserts identical fitted min/max for two different test subsets |
 | L4 | Thresholds derive from validation normals only (except the labelled oracle) | `test_threshold_provenance` — threshold objects carry `source_split`, asserted `== "validation"` unless `oracle=True` |
 | L5 | No augmentation statistic, normalization statistic, or PCA basis is fitted on test data | `test_transform_fit_provenance` |
-| L6 | Near-duplicate check between train and test | `test_no_near_duplicates` — perceptual hash Hamming distance above a calibrated threshold; collisions are reported as a dataset finding, not silently dropped |
+| L6 | Near-duplicate check between train and test | The [A4 audit](../reports/A4-near-duplicates.md) calibrates thumbnail RMSE on within-train neighbors, then checks validation and test; the pHash check remains a diagnostic |
 | L7 | Private splits carry no ground truth and no code path reads labels from them | `test_private_split_has_no_gt` |
 
 > **On L3.** Min-max normalizing an anomaly map over the test set is endemic in public
 > repositories. It leaks the test distribution into every score and can move pixel AUROC by
 > several points. We fit the normalizer once on validation and freeze it.
 
-> **On L6.** MVTec categories are captured on a fixed rig, so images are genuinely similar by
-> design and pHash will flag many pairs. The test exists to catch *exact or near-exact duplicate
-> captures across splits*, so calibrate its threshold on within-train pairs first and record the
-> calibration alongside the test.
+> **On L6.** Fixed capture rigs make distinct images look similar. The VisA A4 audit found many
+> pHash collisions among distinct captures, so its calibrated thumbnail-distance check is the
+> recorded cross-split evidence. It found no train/test pixel-identical image.
 
 ---
 
