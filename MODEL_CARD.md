@@ -68,6 +68,7 @@ validation mean + 3σ of the map (`OP-3SIGMA`).
 |---|---|---|---|---|
 | 9 VisA confirmation categories, pre-registered (ADR-11) | **0.981** macro (0.971–0.996) | 0.766 | 10 observed / 19.7 expected over 27 runs; bound fails on `pipe_fryum` | [E12](reports/E12-confirmation-v1.md) |
 | MPDD, 6 categories, other camera and factory, pre-registered (ADR-12) | **0.943** macro (≥ 0.88 each) | 0.861 | 31 / 28.4 at relaxed bounds (2.3–11.1%) | [H1](reports/H1-mpdd-transfer.md) |
+| MVTec AD 2 `test_public`, 8 categories, pre-registered (ADR-13) | **0.685** macro (0.48–0.90) | 0.357 | 160 / 29.2 at relaxed bounds (2.0–5.0%) | [E13](reports/E13-confirmation-v2-mvtec-ad2.md) |
 
 ### Performance across conditions
 
@@ -84,8 +85,10 @@ away:
 | resize round-trip 0.49× | 0.976 / 5% / 100% | 0.878 / 2% / 44% | 0.889 / 3% / 96% |
 | shift of 1.1% of the frame | 0.833 / 100% / 5% | 0.825 / 9% / 1% | 0.841 / 10% / 6% |
 
-Unseen *real* lighting (MVTec AD 2's `test_private_mixed`) is not measured: that dataset is not
-available to this project.
+Real capture shift is measured on MVTec AD 2 (E13): its `test_public` normals fall outside the
+training normals' exposure and focus range in 20–83% of cases in six categories, and the operating
+point fails there (pooled false alarms 160 against 29 expected). The private mixed-lighting split
+needs MVTec's server and is not measured.
 
 **By defect type:** VisA's one-class split labels every defect "anomaly", so no per-type breakdown
 exists. By defect *size*, misses concentrate on small defects whose peaks fall below a threshold
@@ -128,6 +131,8 @@ on its own validation normals and say so.
 
 ## Limitations
 
+- **It does not transfer to harder scenes.** On MVTec AD 2 the same recipe falls to 0.685 macro
+  image AUROC (chance on `can`, `wallplugs`) and its operating point fails (E13).
 - **One model per category and rig.** No cross-category use; a moved fixture, a new camera mode or
   a lighting change breaks the operating point long before it breaks the ranking (E08): a quarter
   to two thirds of a stop of over-exposure or a blur of 2–4 native pixels sends false alarms to

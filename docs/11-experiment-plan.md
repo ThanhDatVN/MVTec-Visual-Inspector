@@ -323,7 +323,7 @@ point starts a new development cycle.
 | H″2 | Pixel PCA and the colour histogram, 320 px, seed 0 | 16 | Floors |
 | H″3 | Optional: the selected recipe's `test_private` / `test_private_mixed` maps for benchmark.mvtec.com | — | Official numbers, and real lighting shift (G5) |
 
-*Status: pre-registered in ADR-13 before any AD 2 download.*
+*Status: done — [report](../reports/E13-confirmation-v2-mvtec-ad2.md).* 64 runs. **Not confirmed:** H3 1/8 positive, 1/8 negative (macro +0.004); H3b 6/8 (rule 7). v1 stays. H″3 (server submission) not yet made.
 
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 

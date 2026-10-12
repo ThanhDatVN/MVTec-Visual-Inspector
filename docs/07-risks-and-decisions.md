@@ -439,13 +439,19 @@ nothing. (−) ~30 GB, fetched one category at a time. (−) Small validation se
 point loose (2.0–5.0% bounds). (−) CC BY-NC-SA 4.0: non-commercial, and no AD 2 image or derived
 figure is published here.
 
+**Outcome (2026-10-12, [E13](../reports/E13-confirmation-v2-mvtec-ad2.md)):** 64 runs, none
+failed. H3 does not hold (1 category significantly positive, 1 negative; macro +0.004) and H3b
+does not hold (v2 higher AU-PRO on 6 of 8). **v2 is not confirmed; v1 stays.** Both recipes'
+operating points fail on AD 2 (160 and 195 false alarms against 29.2 expected), and `test_public`
+is from now on development data.
+
 ---
 
 ### Open decisions (resolve before the stated gate)
 
 | # | Question | Resolve by |
 |---|----------|------------|
-| OD-1 | Does `test_public` contain lighting variation, or is that confined to `test_private_mixed`? Determines whether the native-lighting control needs a leaderboard submission. | G1 |
+| OD-1 | Does `test_public` contain lighting variation, or is that confined to `test_private_mixed`? Determines whether the native-lighting control needs a leaderboard submission. | **Resolved (E13):** the guards fitted on training normals refuse 20–83% of `test_public` normals in six of eight categories (0–8% of validation normals); `test_public` contains capture shifts. |
 | OD-2 | Which classic-AD categories and which published PatchCore numbers form the G5 reproduction target, and at what tolerance? | G2 |
 | OD-3 | Which AU-PRO FPR-normalization convention does the reference implementation use (normal images only, vs all normal pixels)? Pin it in a docstring. | G2 |
 | OD-4 | Resolve the AD 2 "below 60% AU-PRO" vs ~31% AU-PRO@0.05 discrepancy — different integration limit, or different split? | G2 |

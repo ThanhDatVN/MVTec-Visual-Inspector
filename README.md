@@ -11,7 +11,7 @@ with an explainability case book, a robustness study, and a containerized demo s
 > [development](reports/E00-E04-development-findings.md) · [robustness](reports/E08-robustness.md) ·
 > [data efficiency](reports/E09-data-efficiency.md) · [MPDD transfer](reports/H1-mpdd-transfer.md) ·
 > [Kaggle studies](reports/K1-kaggle-development.md) · [Gate E follow-up](reports/E8-gate-e-followup.md) ·
-> [case book](reports/case-book/README.md).
+> [MVTec AD 2 confirmation](reports/E13-confirmation-v2-mvtec-ad2.md) · [case book](reports/case-book/README.md).
 
 ---
 
@@ -30,7 +30,7 @@ Two tracks, for a reason recorded in [ADR-8](docs/07-risks-and-decisions.md):
 | | Dataset | Why | Status |
 |---|---------|-----|--------|
 | **Working** | **VisA** — 12 categories, 10,821 images, 1.93 GB | Downloadable today, no account, CC BY 4.0, official one-class split | In use |
-| **Headline** | **MVTec AD 2** — 8 categories, ~30 GB | Not saturated (best published AU-PRO@5% ≈ 31%), and the only dataset with a *real* lighting-shifted test split | Blocked on registration |
+| **Headline** | **MVTec AD 2** — 8 categories, 30.4 GB | Not saturated (best published AU-PRO@5% ≈ 31%), and the only dataset with a *real* lighting-shifted test split | In use since 2026-10-12 (confirmation v2, E13); now downloadable without registration |
 
 The survey behind that choice — five datasets verified downloadable by HTTP probe, nine behind
 accounts or application forms — is [docs/10-datasets.md](docs/10-datasets.md).
@@ -163,6 +163,15 @@ and AU-PRO@0.05 0.861, at least 0.88 on every category, against 0.729 for pixel 
 beats PCA on 4 of 6 categories. MPDD's 8–43 calibration normals cannot support a 1% operating
 point: bounds relax to 2.3–11.1%, and pooled false alarms (31 vs 28.4 expected) stay consistent
 with them. [Report](reports/H1-mpdd-transfer.md).
+
+**MVTec AD 2: the candidate recipe is not confirmed, and the recipe does not transfer** (E13,
+pre-registered in ADR-13 before the download; 64 runs, `test_public`, not comparable with
+published private-split numbers). Candidate v2 (`layer2`, 960 px) against v1: image AUROC +0.004
+macro (one category up, one down), AU-PRO@0.05 0.357 → 0.409 but higher on only 6 of 8 categories
+against a rule of 7 — v1 stays. Both are far below their VisA level (macro image AUROC 0.685, at
+chance on `can` and `wallplugs`), and both operating points fail (160 and 195 false alarms against
+29 expected): the guards show that 20–83% of the test normals lie outside the training normals'
+exposure and focus range in six categories. [Report](reports/E13-confirmation-v2-mvtec-ad2.md).
 
 **Robustness (E08, frozen threshold, development categories):** the ranking survives far longer
 than the operating point. Sensor noise with JPEG down to quality 40, a 0.35× resize round-trip

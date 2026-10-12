@@ -1,4 +1,7 @@
-# CANDIDATE recipe v2 — not confirmed. Selected on the development categories by the Gate E
+# CANDIDATE recipe v2 — NOT CONFIRMED on MVTec AD 2 (E13, ADR-13): no detection gain over v1
+# (macro image AUROC +0.004), AU-PRO higher on 6 of 8 categories against a rule of 7. Kept as a
+# record of what was tested; v1 remains the recipe.
+# Selected on the development categories by the Gate E
 # follow-up (E8, reports/E8-gate-e-followup.md): `layer2` features at a 960 px long side, the
 # variant with the largest AU-PRO gain that passed DR-1. Everything else is the v1 recipe.
 #
