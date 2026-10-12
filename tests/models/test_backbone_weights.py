@@ -55,18 +55,21 @@ def test_a_mismatched_state_dict_fails_loudly(monkeypatch):
         extractor.model  # noqa: B018
 
 
-def test_a_dropped_extractor_is_freed_without_the_cycle_collector():
+def test_a_dropped_extractor_is_freed_without_the_cycle_collector(monkeypatch):
     """Forward hooks closing over the extractor made a reference cycle: every finished run kept
     its backbone (and on a GPU ~300 MB) until Python's cycle collector happened to run."""
     import gc
     import weakref
 
     import numpy as np
-    import torchvision  # noqa: F401  (imported once, as in any session after its first run)
+    import torchvision  # (imported once, as in any session after its first run)
 
+    # random weights through the timm path: no download, same build and hooks
+    random_weights = torchvision.models.resnet18(weights=None).state_dict()
+    monkeypatch.setattr(features, "timm_state_dict", lambda backbone, tag: random_weights)
     gc.disable()
     try:
-        extractor = FeatureExtractor(FeatureSpec(backbone="resnet18", device="cpu"))
+        extractor = FeatureExtractor(FeatureSpec(backbone="resnet18", weights="timm:none", device="cpu"))
         extractor.embed_batch(np.zeros((1, 3, 64, 64), np.float32))
         ref = weakref.ref(extractor)
         del extractor
