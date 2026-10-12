@@ -1,4 +1,4 @@
-# E14–E15 — Development on MVTec AD 2 after E13: what fails, and why
+# E14–E16 — Development on MVTec AD 2 after E13: what fails, and why
 
 E13 left recipe v1 with near-chance image AUROC on four AD 2 categories and 5–7× its false-alarm
 bound. This report takes the two failures apart on `test_public`, which is development data from
@@ -30,12 +30,17 @@ MVTec's server). Dataset: MVTec AD 2 © MVTec Software GmbH, CC BY-NC-SA 4.0 —
    untouched by all five remedies: a highlight that moves across a metal cylinder is neither a
    gain nor a smooth light field. Changed lighting is not removable by the preprocessing or the
    synthetic relighting tested here.
-5. **The image score is a separate problem.** It fails under the training lighting too (v1 on
+5. **Normal images under the new lighting do what synthesis did not (E16).** Adding every
+   capture of 2–6 good parts per category to the bank halves the false alarms among `shift`
+   normals (41 → 19 of 187; one part, 41 → 28), no category worse — the pre-registered reading is
+   met, narrowly, and almost entirely on `can` (35 → 13 of 36). The price at the unchanged
+   operating point is recall (macro 0.24 → 0.19).
+6. **The image score is a separate problem.** It fails under the training lighting too (v1 on
    `regular` captures: `can` 0.57, `rice` 0.53, `sheet_metal` 0.53, `wallplugs` 0.46). No
    aggregation rule, object region or location normalization fixes it in general (E14a, R2); an
    image-level branch helps under the training lighting (`rice` 0.53 → 0.78) and fails under
    changed lighting (R4).
-6. **Two defects found and fixed:** the 3σ pixel threshold (SegF1 0 on `fruit_jelly` v2 → 0.22
+7. **Two defects found and fixed:** the 3σ pixel threshold (SegF1 0 on `fruit_jelly` v2 → 0.22
    at the validation quantile), and a regression that made the frozen E13 analysis match no run.
 
 ## 1. What `test_public` contains
@@ -123,6 +128,29 @@ does not produce or remove a moved highlight. The remedies left are data (normal
 lighting to be tolerated, added to the bank and the calibration set), features that are
 invariant to it (R8), or refusing such images, which §2's guards show needs a better detector
 than global exposure or the lighting field.
+
+### E16: a few normal images under the new lighting (pre-registered, `scripts/e16_adaptation.py`)
+
+Per category the `test_public` objects are split into two folds (seeded, separately for normal
+and anomalous objects). For each fold, v1 is fitted on `train/good` plus every capture of n good
+objects of the *other* fold, and evaluated on its own fold's images; the operating point stays
+calibrated on `validation/good`. Against E15-ref on the same images (the script with n = 0
+reproduces its scores exactly), 32 fits from a clean worktree, object bootstrap and Holm over 8:
+
+| adaptation | images added per fit | `shift` false alarms (of 187) | all false alarms (of 379) | significant gains / losses | macro AUROC all | `shift` | macro recall at OP | works? |
+|---|---|---|---|---|---|---|---|---|
+| none (E15-ref) | 0 | 41 | 47 | – | 0.676 | 0.678 | 0.239 | – |
+| 1 object | 4–7 | 28 | 34 | 0 / 0 | 0.679 | 0.679 | 0.221 | no |
+| one fold's objects (2–6) | 8–36 | **19** | 28 | 0 / 0 | 0.688 | 0.695 | 0.195 | **yes** |
+
+The reduction is `can`'s: 35 → 26 → 13 of its 36 `shift` normals, with its image AUROC on `shift`
+captures 0.484 → 0.631; elsewhere the `shift` false alarms were few and stay so (6 → 6). Real
+captures under the new lighting give the bank the moved highlights that no synthetic variant
+produced. The cost is at the operating point: the threshold still comes from training-lighting
+validation normals while the adapted bank lowers anomaly scores too, so recall falls (`walnuts`
+0.33 → 0.17, `can` 0.54 → 0.37) although no category's AUROC drops significantly. A line that
+adapts its bank should recalibrate as well — with normals under the new lighting that the bank
+did not see — which E16 did not do.
 
 ### Guards by condition (exploratory)
 
@@ -235,9 +263,9 @@ similar arrangements, not copies.
 ## 7. What follows
 
 - **Lighting** (B1). Synthetic photometric invariance is exhausted for now (five remedies, none
-  carried). The next measurement is the practical one: how many normal images under a new
-  lighting, added to the bank and to the calibration set, restore the operating point — a
-  few-shot adaptation run with disjoint objects for adaptation and evaluation (E16, docs/11).
+  carried). Real normals under the new lighting work (E16): a handful of good parts per lighting,
+  added to the bank, halve the changed-lighting false alarms. The open half is recalibration —
+  adaptation normals split between the bank and the threshold, so recall is not paid for it.
 - **Image score** (A1, A3). Under the training lighting the failures persist; R1 tiling for
   `sheet_metal`/`fabric`/`rice`, and R8 stronger features, are the untested levers. R4 needs a
   lighting-robust descriptor first.

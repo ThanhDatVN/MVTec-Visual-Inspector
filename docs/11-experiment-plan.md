@@ -420,6 +420,12 @@ its scores exactly). Reading: adaptation with n objects *works* if the pooled fa
 (object bootstrap, Holm over 8). A measurement for deployment guidance (docs/14 R11), not a
 recipe change; 32 fits.
 
+*Outcome (2026-10-13).* 32 fits, clean worktree (`7685063`). One object: `shift` false alarms
+41 → 28 of 187, does not work. One fold's objects (2–6): 41 → 19, no category significantly worse —
+**works**, narrowly, and almost entirely on `can` (35 → 13). Macro AUROC 0.676 → 0.688; macro
+recall at the unchanged operating point 0.239 → 0.195. Report:
+[E14–E16](../reports/E14-E15-ad2-development.md).
+
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 
 | # | Deliverable | Spec |

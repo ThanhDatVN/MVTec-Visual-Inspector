@@ -1,0 +1,42 @@
+[
+ {
+  "level": 1,
+  "categories": 8,
+  "shift_false_alarms_ref": 41,
+  "shift_false_alarms_adapted": 28,
+  "shift_normals": 187,
+  "all_false_alarms_ref": 47,
+  "all_false_alarms_adapted": 34,
+  "significant_gains": 0,
+  "significant_losses": 0,
+  "macro_auroc_all_ref": 0.676326616505188,
+  "macro_auroc_all_adapted": 0.6789740445841637,
+  "macro_auroc_regular_ref": 0.6738167388167389,
+  "macro_auroc_regular_adapted": 0.6707088744588745,
+  "macro_auroc_shift_ref": 0.6776233064774733,
+  "macro_auroc_shift_adapted": 0.6788406385281385,
+  "macro_recall_ref": 0.23918650793650795,
+  "macro_recall_adapted": 0.22073412698412698,
+  "works": false
+ },
+ {
+  "level": "all",
+  "categories": 8,
+  "shift_false_alarms_ref": 41,
+  "shift_false_alarms_adapted": 19,
+  "shift_normals": 187,
+  "all_false_alarms_ref": 47,
+  "all_false_alarms_adapted": 28,
+  "significant_gains": 0,
+  "significant_losses": 0,
+  "macro_auroc_all_ref": 0.676326616505188,
+  "macro_auroc_all_adapted": 0.6878219339082434,
+  "macro_auroc_regular_ref": 0.6738167388167389,
+  "macro_auroc_regular_adapted": 0.6799963924963925,
+  "macro_auroc_shift_ref": 0.6776233064774733,
+  "macro_auroc_shift_adapted": 0.694936568061568,
+  "macro_recall_ref": 0.23918650793650795,
+  "macro_recall_adapted": 0.19484126984126982,
+  "works": true
+ }
+]

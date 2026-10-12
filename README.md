@@ -12,7 +12,7 @@ with an explainability case book, a robustness study, and a containerized demo s
 > [data efficiency](reports/E09-data-efficiency.md) · [MPDD transfer](reports/H1-mpdd-transfer.md) ·
 > [Kaggle studies](reports/K1-kaggle-development.md) · [Gate E follow-up](reports/E8-gate-e-followup.md) ·
 > [MVTec AD 2 confirmation](reports/E13-confirmation-v2-mvtec-ad2.md) ·
-> [AD 2 development: lighting and scoring](reports/E14-E15-ad2-development.md) · [case book](reports/case-book/README.md).
+> [AD 2 development: lighting, adaptation, scoring](reports/E14-E15-ad2-development.md) · [case book](reports/case-book/README.md).
 
 ---
 
@@ -181,6 +181,8 @@ alarms are the changed light *direction and colour* (22.8% of those normals for 
 (5–6%, at the bound). Five photometric remedies — per-image gain and standardization, an
 exposure-augmented bank, flat-field normalization, a relit bank — were screened against
 pre-registered rules and none carried; a moved specular highlight is not a gain or a smooth field.
+Real normals do what synthesis did not (E16): every capture of 2–6 good parts added to the bank
+halves the changed-lighting false alarms (41 → 19 of 187), at a recall cost at the old threshold.
 The image-score failure is separate: it persists under the training lighting. The captures of one
 object are one sample, so AD 2 intervals are computed over objects from here on.
 [Report](reports/E14-E15-ad2-development.md).
