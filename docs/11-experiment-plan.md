@@ -110,9 +110,11 @@ oracle (`tests/reference/`), agree with ours on identical tensors: patch scores 
 `rtol 1e-4, atol 1e-3` (the float32 error of anomalib's distance expansion), image scores within
 `1e-4`, for support sizes 1, 3 and 9 (`tests/models/test_reference_agreement.py`). The coreset
 matches its greedy order except that anomalib does not return its random start point — recorded
-in the difference ledger. **C2 open:** it needs the full anomalib pipeline on real images, and its
-descriptor (1536-d, no channel reduction) and coreset (all patches, sparse projection) differ from
-ours by design, so C2 will measure the effect of those choices rather than agreement.
+in the difference ledger. **C2 done ([report](../reports/K1-kaggle-development.md) §4):** anomalib
+v2.3.0's own pipeline, vendored, at 320 px, 3 seeds. As shipped it is not distinguishable from ours
+on any category after Holm correction (+0.001 / +0.020 / +0.065 image AUROC); its pipeline and its
+backbone weights each move AUROC by up to ±0.06 in category-dependent directions, at about five
+times our host memory and fit time.
 
 ### Stage D — Baseline ladder (E01; laptop)
 
@@ -191,6 +193,12 @@ together (~12 runs). One interaction, chosen by evidence rather than guessed in 
 **Gate E.** Every axis has a written one-paragraph conclusion. Winners re-run at 3 seeds before
 any adoption decision.
 
+*Status: E1–E6b and the resolution axis (960, 1280 px) done — [report](../reports/K1-kaggle-development.md)
+§2, 51 runs, Holm over 51.* Resolution keeps paying past 640 px on `macaroni2`/`capsules` (+0.06 to
++0.08) and `layer2` alone beats `layer2+layer3` at no cost; bank size, k-NN averaging, re-weighting
+and projection are flat; `layer4` and `layer3`-only are catastrophic. Open: 3-seed reruns of 960 px
+and `layer2`, and E7 as their joint re-vary; adoption needs fresh held-out data (ADR-11, ADR-12).
+
 ### Stage F — Tier 1 autoencoder (Kaggle, ~12 GPU-h)
 
 | # | Run | n | Purpose |
@@ -203,10 +211,14 @@ any adoption decision.
 **Gate F.** The headline comparison — what the pretrained prior bought, in points, per category —
 is computed and written down, including any category where it bought nothing.
 
+*Status: F1 done at one seed per loss — [report](../reports/K1-kaggle-development.md) §3. At 640 px
+and 150 epochs (no run triggered early stopping) the CAE reaches image AUROC 0.31–0.75; PatchCore is
+ahead by +0.17 to +0.67 on every run. Rung closed as a negative result; F2/F3 not run.*
+
 ### Stage G — Robustness (laptop for inference, ~6 h wall-clock)
 
-*Status: G1 and G4 done — [report](../reports/E08-robustness.md) (G4 in its own section). G2 waits
-for a converged autoencoder (Stage F). Run on the laptop with the ADR-11 recipe (640 px, fixed 10 k bank) on the three
+*Status: G1 and G4 done — [report](../reports/E08-robustness.md) (G4 in its own section). G2 dropped:
+the autoencoder rung closed without a model worth stress-testing (Stage F). Run on the laptop with the ADR-11 recipe (640 px, fixed 10 k bank) on the three
 development categories — `scripts/robustness_study.py`, output `reports/studies/e08/`. The
 confirmation categories are spent, so this stage is development evidence.*
 
@@ -240,6 +252,11 @@ and its absence is a real limitation of a VisA-only study.
 
 **Gate H.** One paragraph. Tuning on MPDD would turn three study categories into nine and is
 exactly the scope creep R7 exists to prevent.
+
+*Status: done as pre-registered in ADR-12 — [report](../reports/H1-mpdd-transfer.md).* Unchanged
+recipe, 6 categories × 3 seeds: macro image AUROC 0.943, AU-PRO@0.05 0.861 (pixel PCA 0.729); the
+recipe beats pixel PCA on 4/6. The 1% operating point is unreachable with 8–43 calibration normals;
+pooled false alarms 31 against 28.4 expected at the relaxed bounds, no exceedance significant.
 
 ### Stage H′ — Confirmation (E12; laptop + Kaggle)
 

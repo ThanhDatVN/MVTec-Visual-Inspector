@@ -1,0 +1,24 @@
+{
+ "implementation": "e53218f1371e",
+ "runs": 126,
+ "reference_hparams": {
+  "backbone": "wide_resnet50_2",
+  "bank_ratio": null,
+  "bank_size": 10000,
+  "candidate_fraction": 0.1,
+  "coreset_projection_dim": 128,
+  "dtype": "float16",
+  "layers": [
+   "layer2",
+   "layer3"
+  ],
+  "patch_neighbors": 1,
+  "patch_pool": 3,
+  "patch_reduction": "nearest",
+  "projection_dim": 1024,
+  "reweight": true,
+  "reweight_neighbors": 9
+ },
+ "sweep_comparisons": 51,
+ "c2_comparisons": 9
+}

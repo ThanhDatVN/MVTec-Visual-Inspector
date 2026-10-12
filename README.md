@@ -9,7 +9,8 @@ with an explainability case book, a robustness study, and a containerized demo s
 > ([ADR-11](docs/07-risks-and-decisions.md)) and then run once on nine held-out categories (E12).
 > Results: [confirmation](reports/E12-confirmation-v1.md) ·
 > [development](reports/E00-E04-development-findings.md) · [robustness](reports/E08-robustness.md) ·
-> [data efficiency](reports/E09-data-efficiency.md) · [case book](reports/case-book/README.md).
+> [data efficiency](reports/E09-data-efficiency.md) · [MPDD transfer](reports/H1-mpdd-transfer.md) ·
+> [Kaggle studies](reports/K1-kaggle-development.md) · [case book](reports/case-book/README.md).
 
 ---
 
@@ -149,6 +150,13 @@ before the runs; each category fitted and calibrated on its own normals; nothing
   two `pipe_fryum` images, the same stray object in three `pcb1` images. The rank rule itself is
   sound: calibrated on held-out test normals, it hits its bound.
 
+**Transfer to a second dataset** (MPDD: six painted metal parts, another camera, factory and
+annotation team; pre-registered in ADR-12, recipe unchanged, 3 seeds): macro image AUROC **0.943**
+and AU-PRO@0.05 0.861, at least 0.88 on every category, against 0.729 for pixel PCA; the recipe
+beats PCA on 4 of 6 categories. MPDD's 8–43 calibration normals cannot support a 1% operating
+point: bounds relax to 2.3–11.1%, and pooled false alarms (31 vs 28.4 expected) stay consistent
+with them. [Report](reports/H1-mpdd-transfer.md).
+
 **Robustness (E08, frozen threshold, development categories):** the ranking survives far longer
 than the operating point. Sensor noise with JPEG down to quality 40, a 0.35× resize round-trip
 and a 50% illumination falloff leave the false-alarm rate at its clean level; a quarter to two
@@ -171,6 +179,14 @@ was budget-limited and its image maximum is dominated by high-frequency normal t
 images at 640 px match or beat the full training set at 320 px on `macaroni2` and `capsules`;
 image AUROC keeps improving up to the full training set, while localization is within 0.02
 AU-PRO by 200 images. [Report](reports/E09-data-efficiency.md).
+
+**Kaggle development studies** (126 runs, bit-identical across three sessions;
+[report](reports/K1-kaggle-development.md)): resolution keeps paying past 640 px (+0.06 to +0.08
+image AUROC on `macaroni2`/`capsules` at 960 px, for twice the cost) and `layer2` alone beats
+`layer2+layer3` at no cost — screening results awaiting 3-seed reruns and fresh data. Bank size,
+k-NN averaging and re-weighting are flat. The from-scratch autoencoder at 640 px and 150 epochs
+stays 0.17–0.67 behind PatchCore, closing that rung. Against anomalib v2.3.0's own pipeline (C2),
+our PatchCore is not distinguishable after correction, at a fifth of the memory.
 
 ## Findings from building the apparatus
 
