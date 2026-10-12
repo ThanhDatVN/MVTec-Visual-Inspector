@@ -49,6 +49,9 @@ notebook = [
     "pandas>=2.0",
     "ipykernel>=6.29",
 ]
+benchmark = [
+    "tifffile>=2023.7",   # float16 TIFF anomaly maps for the MVTec AD 2 evaluation server
+]
 serve = [
     "fastapi>=0.110",
     "uvicorn[standard]>=0.29",

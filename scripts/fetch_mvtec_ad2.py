@@ -20,6 +20,7 @@ import re
 import shutil
 import sys
 import tarfile
+import time
 import urllib.request
 from pathlib import Path
 
@@ -31,31 +32,62 @@ MARKER = ".fetched"
 
 def archive_links() -> dict[str, str]:
     """Category -> archive URL, read from the official download page."""
-    with urllib.request.urlopen(urllib.request.Request(PAGE, headers=UA), timeout=60) as r:
-        html = r.read().decode("utf-8", "replace")
+    for attempt in range(1, 6):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(PAGE, headers=UA), timeout=60) as r:
+                html = r.read().decode("utf-8", "replace")
+            break
+        except OSError:
+            if attempt == 5:
+                raise
+            time.sleep(5 * attempt)
     # per-category archives only: the whole-dataset and code-utils archives have digits or capitals
     return {m.group(2): m.group(1)
             for m in re.finditer(r'(https://www\.mydrive\.ch/shares/[^"\s]+?/([a-z_]+)\.tar\.gz)', html)}
 
 
-def download(url: str, dest: Path) -> tuple[int, str]:
+def _get(url: str, start: int):
+    headers = dict(UA, **({"Range": f"bytes={start}-"} if start else {}))
+    return urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=120)
+
+
+def download(url: str, dest: Path, attempts: int = 8) -> tuple[int, str]:
+    """Download to `<dest>.part`, resuming with HTTP ranges after a dropped connection."""
     tmp = dest.with_name(dest.name + ".part")
+    total = 0
+    for attempt in range(1, attempts + 1):
+        start = tmp.stat().st_size if tmp.is_file() else 0
+        try:
+            with _get(url, start) as r:
+                if start and r.status != 206:  # the server ignored the range: start over
+                    start = 0
+                if r.status == 206:
+                    total = int(r.headers["Content-Range"].rsplit("/", 1)[1])
+                else:
+                    total = int(r.headers.get("Content-Length") or 0)
+                with open(tmp, "ab" if start else "wb") as fh:
+                    written = start
+                    while block := r.read(1 << 22):
+                        fh.write(block)
+                        written += len(block)
+                        if total and written % (1 << 30) < (1 << 22):
+                            print(f"    {written / 1e9:.1f} / {total / 1e9:.1f} GB", flush=True)
+            break
+        except (OSError, TimeoutError) as exc:  # URLError, resets and timeouts are OSErrors
+            print(f"    attempt {attempt} failed at {tmp.stat().st_size if tmp.is_file() else 0} bytes: {exc}",
+                  flush=True)
+            if attempt == attempts:
+                raise
+            time.sleep(min(60, 5 * attempt))
+    size = tmp.stat().st_size
+    if total and size != total:
+        raise OSError(f"truncated download: {size} of {total} bytes from {url}")
     h = hashlib.sha256()
-    written = 0
-    with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=120) as r:
-        total = int(r.headers.get("Content-Length") or 0)
-        with open(tmp, "wb") as fh:
-            while block := r.read(1 << 22):
-                fh.write(block)
-                h.update(block)
-                written += len(block)
-                if total and written % (1 << 30) < (1 << 22):
-                    print(f"    {written / 1e9:.1f} / {total / 1e9:.1f} GB", flush=True)
-    if total and written != total:
-        tmp.unlink(missing_ok=True)
-        raise OSError(f"truncated download: {written} of {total} bytes from {url}")
+    with open(tmp, "rb") as fh:
+        while block := fh.read(1 << 22):
+            h.update(block)
     tmp.replace(dest)
-    return written, h.hexdigest()
+    return size, h.hexdigest()
 
 
 def safe_extract(archive: Path, dest: Path) -> list[str]:
