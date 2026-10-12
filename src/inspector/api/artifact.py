@@ -187,7 +187,8 @@ def load_artifact(directory: str | Path, *, device: str = "auto") -> Inspector:
     hp = meta["hparams"]
     model = PatchCore(
         ImageTransform(**meta["transform"]),
-        backbone=hp["backbone"], layers=tuple(hp["layers"]), patch_pool=hp["patch_pool"],
+        backbone=hp["backbone"], weights=hp.get("weights", "IMAGENET1K_V1"),
+        layers=tuple(hp["layers"]), patch_pool=hp["patch_pool"],
         projection_dim=hp["projection_dim"], feature_dtype=hp["dtype"],
         candidate_fraction=hp["candidate_fraction"], bank_ratio=hp["bank_ratio"],
         bank_size=hp["bank_size"], coreset_projection_dim=hp["coreset_projection_dim"],

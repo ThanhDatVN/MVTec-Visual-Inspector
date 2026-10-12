@@ -41,15 +41,28 @@ class FeatureSpec:
     projection_dim: int = 1024
     device: str = "auto"
     dtype: str = "float16"
+    #: Pretrained weights: a torchvision weights name, or ``"timm:<tag>"`` for a timm
+    #: pretrained tag of the same architecture (e.g. ``"timm:racm_in1k"``, timm's default
+    #: for WRN50-2). timm's ResNets keep torchvision's parameter names, so its weights load
+    #: into the torchvision model unchanged and everything downstream stays identical.
+    weights: str = "IMAGENET1K_V1"
 
     def as_dict(self) -> dict:
         return {
             "backbone": self.backbone,
+            "weights": self.weights,
             "layers": list(self.layers),
             "patch_pool": self.patch_pool,
             "projection_dim": self.projection_dim,
             "dtype": self.dtype,
         }
+
+
+def timm_state_dict(backbone: str, tag: str) -> dict:
+    """The parameters of timm's pretrained `<backbone>.<tag>` (downloaded on first use)."""
+    import timm
+
+    return timm.create_model(f"{backbone}.{tag}", pretrained=True).state_dict()
 
 
 def resolve_device(requested: str = "auto") -> str:
@@ -84,7 +97,12 @@ class FeatureExtractor:
                 raise ValueError(f"unknown layer {layer!r}; known: {RESNET_LAYERS}")
 
         factory = getattr(torchvision.models, self.spec.backbone)
-        model = factory(weights="IMAGENET1K_V1")
+        if self.spec.weights.startswith("timm:"):
+            model = factory(weights=None)
+            # strict: a missing or renamed parameter must fail here, not leave a layer random
+            model.load_state_dict(timm_state_dict(self.spec.backbone, self.spec.weights[5:]), strict=True)
+        else:
+            model = factory(weights=self.spec.weights)
         model.eval().to(self.device)
         for param in model.parameters():
             param.requires_grad_(False)

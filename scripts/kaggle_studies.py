@@ -1,9 +1,13 @@
-"""Analysis of the Kaggle sessions (sweep, CAE, C2, MPDD) at one implementation id.
+"""Analysis of the Kaggle sessions (sweep, Gate E follow-up, CAE, C2, MPDD) at one implementation id.
 
 Reads the registry only (`reports/runs`), never the images. Image-AUROC differences are paired
 on the same test images with a class-stratified bootstrap; for the sweep (single seed) the
 bootstrap p-values are Holm-adjusted over every variant x category comparison. AU-PRO
 differences are point estimates, read against the reference's seed spread.
+
+Variants run at three seeds on every category form the Gate E follow-up family (docs/11, Stage E,
+E8): seed-averaged paired comparisons with the reference, Holm over that family, and the DR-1
+decision exactly as it was written down before the runs.
 
     python scripts/kaggle_studies.py --implementation e53218f1371e --out reports/studies/kaggle
 """
@@ -19,15 +23,21 @@ from pathlib import Path
 
 import numpy as np
 
+from inspector.config import deep_merge, load_config
 from inspector.evaluate import SplitPredictions
 from inspector.metrics.ranking import roc_auc
+from inspector.models import build_model
+from inspector.runner import model_kwargs, transform_from_config
 from inspector.stats import holm_bonferroni
 
 CATS = ("pcb1", "macaroni2", "capsules")
 MPDD = ("bracket_black", "bracket_brown", "bracket_white", "connector", "metal_plate", "tubes")
+RECIPE = ("configs/data/visa_pcb1.yaml", "configs/recipes/confirmation-v1-patchcore-640.yaml")
 # Enough resamples that a Holm-adjusted bootstrap p-value can fall below 0.05 for a family
 # of 51 (the smallest attainable p is 2 / (N_BOOT + 1)).
 N_BOOT = 10000
+#: DR-1 (4): peak VRAM at inference, at the deployment resolution, in MB.
+VRAM_BUDGET_MB = 3500
 
 
 def load(registry: Path, impl: str) -> list[dict]:
@@ -39,11 +49,29 @@ def load(registry: Path, impl: str) -> list[dict]:
             continue
         r = rec["result"]
         hp = {k: v for k, v in spec["model"]["hparams"].items() if k != "seed"}
-        runs.append({"id": rec["run_id"], "dir": f.parent, "method": spec["model"]["name"],
+        if spec["model"]["name"] == "patchcore":
+            hp.setdefault("weights", "IMAGENET1K_V1")  # recorded only since the weights axis
+        # The spec's fields win over the result's (`seed`, `method` and `split` appear in both).
+        runs.append({**r, "id": rec["run_id"], "dir": f.parent, "method": spec["model"]["name"],
                      "role": spec.get("role", "development"), "cat": spec["dataset"]["category"],
                      "seed": spec["seed"], "res": spec["transform"]["long_side"], "hp": hp,
-                     "split": spec["dataset"]["test_split"], **r})
+                     "split": spec["dataset"]["test_split"]})
     return runs
+
+
+def recipe_hparams() -> dict:
+    """The frozen recipe's effective PatchCore hyperparameters, defaults included."""
+    cfg = deep_merge(load_config(RECIPE[0]), load_config(RECIPE[1]))
+    model = build_model("patchcore", transform_from_config(cfg), seed=0, **model_kwargs(cfg, "patchcore"))
+    return json.loads(json.dumps({k: v for k, v in model.hparams().items() if k != "seed"}))
+
+
+def variant_of(run: dict, ref_hp: dict) -> str:
+    """How a PatchCore run differs from the recipe; "" for the recipe itself."""
+    diff = {k: v for k, v in run["hp"].items() if v != ref_hp.get(k)}
+    if run["res"] != 640:
+        diff["long_side"] = run["res"]
+    return ",".join(f"{k}={v}" for k, v in diff.items())
 
 
 def scores(run: dict) -> SplitPredictions:
@@ -70,6 +98,25 @@ def paired(a_runs: list[dict], b_runs: list[dict], seed: int = 0) -> dict:
     tail = min(int(np.sum(d <= 0)), int(np.sum(d >= 0)))
     return {"d_auroc": est, "ci_low": float(np.quantile(d, 0.025)), "ci_high": float(np.quantile(d, 0.975)),
             "p_boot": float(min(1.0, 2 * (tail + 1) / (N_BOOT + 1)))}
+
+
+def dr1(rows: list[dict]) -> str:
+    """DR-1 as written in docs/11 (Stage E, E8) before the follow-up ran.
+
+    (1) mean AU-PRO@0.05 improves on >= 2 of 3 categories and drops by <= 0.01 on the third;
+    (2) the seed-averaged image-AUROC difference is significantly positive after Holm on
+    >= 2 categories and significantly negative on none; (4) peak inference VRAM < 3.5 GB.
+    (1)-(2) without (4) is an accuracy-only variant. No latency budget is set for this phase.
+    """
+    d_pro = [r["d_aupro"] for r in rows]
+    accuracy = (sum(d > 0 for d in d_pro) >= 2 and min(d_pro) >= -0.01
+                and sum(bool(r["significant_holm"]) and r["d_auroc"] > 0 for r in rows) >= 2
+                and not any(bool(r["significant_holm"]) and r["d_auroc"] < 0 for r in rows))
+    if not accuracy:
+        return "not adopted"
+    if max(r["vram_predict_mb"] for r in rows) >= VRAM_BUDGET_MB:
+        return "accuracy-only variant"
+    return "adopted (development)"
 
 
 def mean(rows, key):
@@ -100,13 +147,13 @@ def main() -> int:
     runs = load(Path(args.registry), args.implementation)
     dev = [r for r in runs if r["role"] == "development"]
 
-    # --- the reference: the 640 px recipe group that has three seeds per category ---------
+    # --- the reference: the frozen recipe at 640 px, three seeds per category ---------------
+    ref_hp = recipe_hparams()
     pc640 = [r for r in dev if r["method"] == "patchcore" and r["res"] == 640]
-    by_hp = defaultdict(list)
-    for r in pc640:
-        by_hp[json.dumps(r["hp"], sort_keys=True)].append(r)
-    ref_hp = json.loads(max(by_hp, key=lambda k: len({x["seed"] for x in by_hp[k]})))
     ref = {c: [r for r in pc640 if r["hp"] == ref_hp and r["cat"] == c] for c in CATS}
+    if not all(len({r["seed"] for r in ref[c]}) >= 3 for c in CATS):
+        counts = {c: len(ref[c]) for c in CATS}
+        raise SystemExit(f"no 3-seed reference at this implementation: {counts}")
     ref0 = {c: next(r for r in ref[c] if r["seed"] == 0) for c in CATS}
     ref_rows = [{"category": c, "seeds": len(ref[c]),
                  **{f"{k}_mean": mean(ref[c], k) for k in ("image_auroc", "aupro_005", "fpr_at_op1", "recall_at_op1")},
@@ -115,33 +162,68 @@ def main() -> int:
                  "e2e_ms": mean(ref[c], "e2e_ms_per_image")} for c in CATS]
     write(out / "reference.csv", ref_rows)
 
+    # --- recipe variants: three seeds on every category = follow-up, otherwise sweep --------
+    variants: dict[str, list[dict]] = defaultdict(list)
+    for r in dev:
+        if r["method"] == "patchcore" and r["res"] != 320:
+            v = variant_of(r, ref_hp)
+            if v:
+                variants[v].append(r)
+    followup_vs = sorted(v for v, rs in variants.items()
+                         if all(len({x["seed"] for x in rs if x["cat"] == c}) >= 3 for c in CATS))
+
     # --- sweep and resolution: single seed against the seed-0 reference ---------------------
     sweep = []
-    for r in dev:
-        if r["method"] != "patchcore" or r["seed"] != 0 or r["res"] == 320:
+    for v, rs in variants.items():
+        if v in followup_vs:
             continue
-        diff = {k: v for k, v in r["hp"].items() if v != ref_hp.get(k)}
-        if r["res"] != 640:
-            diff["long_side"] = r["res"]
-        if not diff:
-            continue
-        b = ref0[r["cat"]]
-        sweep.append({"variant": ",".join(f"{k}={v}" for k, v in diff.items()), "category": r["cat"],
-                      "image_auroc": r["image_auroc"], "d_aupro": r["aupro_005"] - b["aupro_005"],
-                      "d_fpr": r["fpr_at_op1"] - b["fpr_at_op1"], "d_recall": r["recall_at_op1"] - b["recall_at_op1"],
-                      "fit_ratio": r["fit_seconds"] / b["fit_seconds"],
-                      "rss_fit_mb": r["peak_rss_fit_mb"], "e2e_ratio": r["e2e_ms_per_image"] / b["e2e_ms_per_image"],
-                      "bank_effective": r["fit_extra"].get("bank_effective"),
-                      "bank_capped": r["fit_extra"].get("bank_capped"),
-                      **paired([r], [b])})
+        for r in (x for x in rs if x["seed"] == 0):
+            b = ref0[r["cat"]]
+            sweep.append({"variant": v, "category": r["cat"],
+                          "image_auroc": r["image_auroc"], "d_aupro": r["aupro_005"] - b["aupro_005"],
+                          "d_fpr": r["fpr_at_op1"] - b["fpr_at_op1"],
+                          "d_recall": r["recall_at_op1"] - b["recall_at_op1"],
+                          "fit_ratio": r["fit_seconds"] / b["fit_seconds"],
+                          "rss_fit_mb": r["peak_rss_fit_mb"],
+                          "e2e_ratio": r["e2e_ms_per_image"] / b["e2e_ms_per_image"],
+                          "bank_effective": r["fit_extra"].get("bank_effective"),
+                          "bank_capped": r["fit_extra"].get("bank_capped"),
+                          **paired([r], [b])})
     for row, (adj, sig) in zip(sweep, holm_bonferroni([s["p_boot"] for s in sweep])):
         row.update({"p_holm": adj, "significant_holm": sig})
     sweep.sort(key=lambda s: (s["variant"], CATS.index(s["category"])))
-    write(out / "sweep.csv", sweep)
+    if sweep:
+        write(out / "sweep.csv", sweep)
+
+    # --- Gate E follow-up: seed-averaged, Holm over the family, DR-1 ----------------------
+    follow = []
+    for v in followup_vs:
+        for c in CATS:
+            rs = [r for r in variants[v] if r["cat"] == c]
+            follow.append({"variant": v, "category": c, "seeds": len(rs),
+                           "image_auroc": mean(rs, "image_auroc"), "image_auroc_sd": sd(rs, "image_auroc"),
+                           "aupro_005": mean(rs, "aupro_005"), "aupro_005_sd": sd(rs, "aupro_005"),
+                           "d_aupro": mean(rs, "aupro_005") - mean(ref[c], "aupro_005"),
+                           "d_fpr": mean(rs, "fpr_at_op1") - mean(ref[c], "fpr_at_op1"),
+                           "d_recall": mean(rs, "recall_at_op1") - mean(ref[c], "recall_at_op1"),
+                           "e2e_ms": mean(rs, "e2e_ms_per_image"),
+                           "e2e_ratio": mean(rs, "e2e_ms_per_image") / mean(ref[c], "e2e_ms_per_image"),
+                           "vram_predict_mb": max(r["peak_vram_predict_mb"] for r in rs),
+                           "rss_fit_mb": max(r["peak_rss_fit_mb"] for r in rs),
+                           **paired(rs, ref[c])})
+    for row, (adj, sig) in zip(follow, holm_bonferroni([f["p_boot"] for f in follow])):
+        row.update({"p_holm": adj, "significant_holm": sig})
+    decisions = [{"variant": v, "decision": dr1([f for f in follow if f["variant"] == v]),
+                  "vram_predict_mb_max": max(f["vram_predict_mb"] for f in follow if f["variant"] == v)}
+                 for v in followup_vs]
+    if follow:
+        write(out / "followup.csv", follow)
+        write(out / "followup_decisions.csv", decisions)
 
     # --- CAE ------------------------------------------------------------------------------
     cae = []
-    for r in sorted((r for r in dev if r["method"].startswith("cae")), key=lambda r: (r["hp"]["loss"], CATS.index(r["cat"]))):
+    for r in sorted((r for r in dev if r["method"].startswith("cae")),
+                    key=lambda r: (r["hp"]["loss"], CATS.index(r["cat"]))):
         cae.append({"loss": r["hp"]["loss"], "category": r["cat"], "epochs_run": r["fit_extra"].get("epochs_run"),
                     "epochs_max": r["hp"]["epochs"], "best_val_loss": r["fit_extra"].get("best_val_loss"),
                     "image_auroc": r["image_auroc"], "aupro_005": r["aupro_005"], "pixel_auroc": r["pixel_auroc"],
@@ -180,6 +262,7 @@ def main() -> int:
         row.update({"p_holm": adj, "significant_holm": sig})
     if c2:
         write(out / "c2.csv", c2)
+    if c2_pairs:
         write(out / "c2_pairs.csv", c2_pairs)
 
     # --- MPDD (ADR-12): reported, not tested -----------------------------------------------
@@ -209,7 +292,9 @@ def main() -> int:
         write(out / "mpdd.csv", mp)
 
     summary = {"implementation": args.implementation, "runs": len(runs), "reference_hparams": ref_hp,
-               "sweep_comparisons": len(sweep), "c2_comparisons": len(c2_pairs)}
+               "sweep_comparisons": len(sweep), "followup_comparisons": len(follow),
+               "followup_decisions": {d["variant"]: d["decision"] for d in decisions},
+               "c2_comparisons": len(c2_pairs)}
     (out / "summary.json").write_text(json.dumps(summary, indent=1), encoding="utf-8")
     print(json.dumps(summary, indent=1))
     return 0

@@ -238,6 +238,7 @@ class PatchCore(AnomalyModel):
         transform: ImageTransform | None = None,
         *,
         backbone: str = "wide_resnet50_2",
+        weights: str = "IMAGENET1K_V1",
         layers: tuple[str, ...] = ("layer2", "layer3"),
         patch_pool: int = 3,
         projection_dim: int = 1024,
@@ -266,6 +267,7 @@ class PatchCore(AnomalyModel):
 
         self.spec = FeatureSpec(
             backbone=backbone,
+            weights=weights,
             layers=tuple(layers),
             patch_pool=patch_pool,
             projection_dim=projection_dim,

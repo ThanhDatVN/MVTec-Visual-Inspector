@@ -199,6 +199,32 @@ any adoption decision.
 and projection are flat; `layer4` and `layer3`-only are catastrophic. Open: 3-seed reruns of 960 px
 and `layer2`, and E7 as their joint re-vary; adoption needs fresh held-out data (ADR-11, ADR-12).
 
+**E8 — Gate E follow-up, pre-registered 2026-10-12 before any of its runs.** Four variants of
+the frozen recipe, each at seeds 0–2 on the three development categories, in one Kaggle session
+with its own 3-seed reference at the same implementation (notebook 02 §4b, `RUN_FOLLOWUP`):
+
+| variant | why |
+|---|---|
+| `layer2` only | screening: +0.064 / +0.035 on `macaroni2` / `capsules` at no cost |
+| 960 px | screening: +0.058 / +0.062, twice the cost |
+| `layer2` at 960 px | E7, the joint re-vary of the two largest screening effects |
+| timm `racm_in1k` weights | C2: weights moved image AUROC by up to ±0.06 at 320 px |
+
+*Family:* 4 × 3 = 12 comparisons of seed-averaged image AUROC against the reference, paired,
+class-stratified bootstrap with 10,000 resamples, Holm over the 12. *DR-1, made operational:*
+(1) mean AU-PRO@0.05 improves on ≥ 2 categories and drops by ≤ 0.01 on the third; (2) the
+image-AUROC difference is significantly positive after Holm on ≥ 2 categories and significantly
+negative on none; (3) no latency budget is set for this phase (docs/04), so latency is reported,
+not gated; (4) peak inference VRAM < 3.5 GB. (1), (2) and (4) → adopted as a development result;
+(1) and (2) without (4) → accuracy-only variant; otherwise not adopted. Computed by
+`scripts/kaggle_studies.py` (`followup.csv`, `followup_decisions.csv`). Expected from the screen:
+960 px peaks at 4.1–4.4 GB of inference VRAM on a T4 and can at best be an accuracy-only variant.
+A development adoption does not change the recipe frozen in ADR-11: the confirmation categories
+and MPDD are spent, so a claim on held-out data needs data that shaped nothing (MVTec AD 2).
+*Disclosure:* the notebook's smoke test (laptop, `capsules`, seed 0, a separate registry) ran the
+`layer2` and timm-weights variants after this rule was written and before it was committed. It
+changed nothing above, and its runs are not part of the analysis.
+
 ### Stage F — Tier 1 autoencoder (Kaggle, ~12 GPU-h)
 
 | # | Run | n | Purpose |
