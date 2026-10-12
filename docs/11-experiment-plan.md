@@ -406,6 +406,20 @@ split, so it is the direct held-out test of any lighting remedy.
 flat-field raised the `shift` false alarms 41 → 60 of 187; the relit bank left them at 39, with no
 category significantly changed. The conditional follow-ups (combination, v2 screen) do not run.
 
+**E16 — few-shot adaptation to changed lighting (R11).** Written down before any E16 fit
+(2026-10-13), after E15's outcome. What a line does when its lighting changes is photograph a
+few good parts under it and add them to the bank. Protocol (`scripts/e16_adaptation.py`): per
+category, the `test_public` objects are split into two folds by a seeded permutation (seed 0),
+separately for normal and anomalous objects. For fold f, recipe v1 (seed 0) is fitted on
+`train/good` plus every capture of n normal objects of the other fold — n = 1, and n = all of
+that fold (2–6 objects) — and evaluated on fold f's images, so no evaluated object was seen in
+fitting and the two folds partition the test set. The operating point stays calibrated on
+`validation/good` alone. Reference: E15-ref on the same images (the script with n = 0 reproduces
+its scores exactly). Reading: adaptation with n objects *works* if the pooled false alarms among
+`shift` normals fall by at least half and no category is significantly worse in image AUROC
+(object bootstrap, Holm over 8). A measurement for deployment guidance (docs/14 R11), not a
+recipe change; 32 fits.
+
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 
 | # | Deliverable | Spec |
