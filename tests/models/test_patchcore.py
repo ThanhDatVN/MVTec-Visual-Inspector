@@ -256,3 +256,18 @@ def test_exactly_one_bank_budget_is_required():
         PatchCore(bank_ratio=0.01, bank_size=100)
     with pytest.raises(ValueError, match="exactly one"):
         PatchCore(bank_ratio=None, bank_size=None)
+
+
+@pytest.mark.needs_torch
+@pytest.mark.slow
+def test_exposure_variants_enter_the_bank_but_keep_the_source_index(fitted):
+    """E14: each training image is embedded at every listed exposure shift; bank provenance
+    still names the original training image."""
+    from inspector.data.transforms import ImageTransform
+    from inspector.models.patchcore import PatchCore
+
+    base, indices, kwargs = fitted
+    model = PatchCore(ImageTransform(long_side=64), **{**kwargs, "bank_exposures": (-0.5, 0.5)}).fit(indices["train"])
+    assert model.hparams()["bank_exposures"] == [-0.5, 0.5]
+    assert model.fit_extra()["patches_total"] == 3 * base.fit_extra()["patches_total"]
+    assert model.bank_sources[:, 0].max() < len(indices["train"])

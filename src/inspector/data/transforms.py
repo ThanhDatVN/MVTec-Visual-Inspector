@@ -89,7 +89,12 @@ class ImageTransform:
     short_side: int | None = None
     interpolation_down: Interpolation = "area"
     interpolation_up: Interpolation = "linear"
-    normalize: Literal["imagenet", "unit", "none"] = "imagenet"
+    #: `imagenet` (the default) standardizes with the ImageNet statistics. Two photometric
+    #: options remove capture-to-capture exposure differences per image before that:
+    #: `gain` scales each image so its mean luminance is ImageNet's mean (contrast ratios kept);
+    #: `standardize` gives each image's channels zero mean and unit variance (exposure and
+    #: contrast removed). Both apply identically at fit and at test time.
+    normalize: Literal["imagenet", "gain", "standardize", "unit", "none"] = "imagenet"
 
     # -- provenance --------------------------------------------------------
     def as_dict(self) -> dict:
@@ -139,6 +144,14 @@ class ImageTransform:
         array = image.astype(np.float32) / 255.0
         if self.normalize == "imagenet":
             array = (array - IMAGENET_MEAN) / IMAGENET_STD
+        elif self.normalize == "gain":
+            luminance = float(array.mean())
+            array = array * (float(IMAGENET_MEAN.mean()) / max(luminance, 1e-3))  # no clipping
+            array = (array - IMAGENET_MEAN) / IMAGENET_STD
+        elif self.normalize == "standardize":
+            mean = array.mean(axis=(0, 1))
+            std = array.std(axis=(0, 1))
+            array = (array - mean) / np.maximum(std, 1e-3)
         elif self.normalize not in ("unit", "none"):
             raise ValueError(f"unknown normalization: {self.normalize!r}")
         return np.ascontiguousarray(array.transpose(2, 0, 1))
@@ -147,6 +160,19 @@ class ImageTransform:
         out_image = self.normalize_image(self.resize_image(image))
         out_mask = self.resize_mask(mask) if mask is not None else None
         return out_image, out_mask
+
+
+def exposure_shift(image: np.ndarray, stops: float) -> np.ndarray:
+    """A global exposure change of `stops`, with the matching gamma, on a uint8 image.
+
+    The same model of over- and under-exposure as the E08 corruption suite
+    (`robustness.corruptions.exposure`), so a memory bank augmented with it covers
+    exactly the shifts that suite applies.
+    """
+    gain = 2.0**stops
+    gamma = 1.0 / (1.0 + 0.15 * stops)
+    scaled = np.power(np.clip(image.astype(np.float32) / 255.0 * gain, 0.0, 1.0), gamma)
+    return np.clip(np.rint(scaled * 255.0), 0, 255).astype(np.uint8)
 
 
 def load_image(path, *, rgb: bool = True) -> np.ndarray:

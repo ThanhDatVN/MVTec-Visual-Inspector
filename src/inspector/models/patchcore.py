@@ -250,6 +250,7 @@ class PatchCore(AnomalyModel):
         patch_reduction: PatchReduction = "nearest",
         reweight: bool = True,
         reweight_neighbors: int = 9,
+        bank_exposures: tuple[float, ...] = (),
         query_chunk: int = 4096,
         batch_size: int = 4,
         feature_dtype: str = "float16",
@@ -282,6 +283,10 @@ class PatchCore(AnomalyModel):
         self.patch_reduction: PatchReduction = patch_reduction
         self.reweight = reweight
         self.reweight_neighbors = reweight_neighbors
+        #: Lighting-aware coverage: each training image is also embedded at these exposure
+        #: shifts (in stops), so normal patches seen under other lighting are in the candidate
+        #: pool. Calibration and test images are never shifted.
+        self.bank_exposures = tuple(float(s) for s in bank_exposures)
         self.query_chunk = query_chunk
         self.batch_size = batch_size
         self.seed = seed
@@ -294,6 +299,19 @@ class PatchCore(AnomalyModel):
         self.grid: tuple[int, int] = (0, 0)
         self._bank_tensor: Any = None
         self._stats: dict[str, Any] = {}
+
+    # -- fitting -----------------------------------------------------------
+    def _iter_preprocessed(self, index) -> Iterator[np.ndarray]:
+        if not self.bank_exposures:
+            yield from super()._iter_preprocessed(index)
+            return
+        from ..data.transforms import exposure_shift, load_image
+
+        for sample in index:
+            image = load_image(sample.image_path)
+            for stops in (0.0, *self.bank_exposures):
+                shifted = image if stops == 0.0 else exposure_shift(image, stops)
+                yield self.transform.normalize_image(self.transform.resize_image(shifted))
 
     # -- fitting -----------------------------------------------------------
     def _fit(self, images: Iterator[np.ndarray]) -> None:
@@ -320,7 +338,9 @@ class PatchCore(AnomalyModel):
                 pick = np.sort(rng.choice(n_patches, size=n_pick, replace=False))
             kept.append(np.asarray(desc[pick]))
             rows, cols = np.divmod(pick, grid[1])
-            sources.append(np.stack([np.full_like(pick, image_idx), rows, cols], axis=1))
+            # with exposure variants, several embedded images come from one training image
+            source = image_idx // (1 + len(self.bank_exposures))
+            sources.append(np.stack([np.full_like(pick, source), rows, cols], axis=1))
 
         if not kept:
             raise ValueError("no training images")
@@ -373,6 +393,7 @@ class PatchCore(AnomalyModel):
             "patch_reduction": self.patch_reduction,
             "reweight": self.reweight,
             "reweight_neighbors": self.reweight_neighbors,
+            "bank_exposures": list(self.bank_exposures),
             "seed": self.seed,
         }
 

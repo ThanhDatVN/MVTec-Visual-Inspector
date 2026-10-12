@@ -325,6 +325,33 @@ point starts a new development cycle.
 
 *Status: done — [report](../reports/E13-confirmation-v2-mvtec-ad2.md).* 64 runs. **Not confirmed:** H3 1/8 positive, 1/8 negative (macro +0.004); H3b 6/8 (rule 7). v1 stays. H″3 (server submission) not yet made.
 
+### Stage H‴ — Development on MVTec AD 2 after E13 (E14; laptop)
+
+E13 exposed two separate failures on AD 2 `test_public`, which is development data from now on:
+
+- **(A) the image score.** The maps localize (pixel AUROC 0.76–0.96 for v1) while the image score
+  — the re-weighted map maximum — is near chance on `can`, `wallplugs`, `rice` and `sheet_metal`.
+- **(B) the operating point.** The test normals are a shifted population: the guards refuse 20–83%
+  of them in six categories (0–8% of validation normals), and on `can` test normals out-score
+  validation normals with AUROC 0.79–0.83. Both recipes' false alarms are 5–7× the bound.
+
+Written down before any E14 run (2026-10-12):
+
+| # | Run | n | Addresses |
+|---|-----|---|-----------|
+| E14a | Aggregation rules and object-region scoring on the stored E13 maps (`inspector.analysis`, no refit) | 0 | A |
+| E14-ref | Recipe v1, seed 0, rerun at the E14 implementation | 8 | must reproduce E13's seed-0 predictions |
+| E14b | v1 + per-image gain normalization (`preprocess.normalize: gain`) | 8 | B: global exposure |
+| E14c | v1 + per-image standardization (`preprocess.normalize: standardize`) | 8 | B: exposure and contrast |
+| E14d | v1 + exposure-augmented bank (`model.bank_exposures: [-0.5, 0.5]`, the E08 exposure model) | 8 | B: lighting coverage |
+
+*Screen → 3 seeds.* Against E14-ref, all eight categories, seed 0: a variant goes to seeds 1–2 if
+pooled false alarms fall by at least half with no category significantly worse in image AUROC
+(paired bootstrap, Holm over 8), **or** image AUROC is significantly better on ≥ 3 categories and
+worse on none. A carried variant must also cost no more than 0.01 image AUROC on the VisA
+development categories (seed 0). Everything here is development evidence: the held-out arbiter is
+MVTec's server on the private splits, with v1 and the best variant submitted once each.
+
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 
 | # | Deliverable | Spec |

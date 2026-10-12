@@ -1,0 +1,57 @@
+"""Photometric options: per-image exposure normalization and exposure shifts (E14)."""
+
+from __future__ import annotations
+
+import numpy as np
+import pytest
+
+from inspector.data.transforms import ImageTransform, exposure_shift
+
+
+def _image(seed: int = 0) -> np.ndarray:
+    rng = np.random.default_rng(seed)
+    return rng.integers(20, 120, size=(16, 12, 3), dtype=np.uint8) * 2  # even, so halving is exact
+
+
+def test_gain_normalization_cancels_a_global_exposure_change():
+    image = _image()
+    darker = (image // 2).astype(np.uint8)
+    t = ImageTransform(long_side=None, normalize="gain")
+    assert np.allclose(t.normalize_image(image), t.normalize_image(darker), atol=1e-5)
+
+
+def test_standardization_cancels_gain_and_offset():
+    image = _image(1).astype(np.float32)
+    shifted = np.clip(image * 0.6 + 30, 0, 255).astype(np.uint8)
+    t = ImageTransform(long_side=None, normalize="standardize")
+    out_a, out_b = t.normalize_image(image.astype(np.uint8)), t.normalize_image(shifted)
+    assert np.allclose(out_a.mean(axis=(1, 2)), 0, atol=1e-5)
+    assert np.allclose(out_a, out_b, atol=0.05)  # up to uint8 rounding
+
+
+def test_imagenet_normalization_is_unchanged():
+    image = _image(2)
+    out = ImageTransform(long_side=None).normalize_image(image)
+    expected = (image.astype(np.float32) / 255.0 - np.array([0.485, 0.456, 0.406])) / np.array([0.229, 0.224, 0.225])
+    assert np.allclose(out, expected.transpose(2, 0, 1), atol=1e-6)
+
+
+def test_unknown_normalization_is_rejected():
+    with pytest.raises(ValueError):
+        ImageTransform(long_side=None, normalize="bogus").normalize_image(_image())  # type: ignore[arg-type]
+
+
+def test_exposure_shift_is_identity_at_zero_and_monotone():
+    image = _image(3)
+    assert np.array_equal(exposure_shift(image, 0.0), image)
+    assert exposure_shift(image, 0.5).mean() > image.mean() > exposure_shift(image, -0.5).mean()
+    assert exposure_shift(image, 0.5).dtype == np.uint8
+
+
+def test_exposure_shift_matches_the_corruption_suite():
+    from inspector.robustness import apply_corruption
+
+    image = _image(4)
+    # severity 1 of `exposure_up` is +0.25 stop
+    corrupted, _ = apply_corruption(image, None, "exposure_up", 1)
+    assert np.abs(corrupted.astype(int) - exposure_shift(image, 0.25).astype(int)).max() <= 1

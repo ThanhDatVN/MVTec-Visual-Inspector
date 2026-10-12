@@ -194,6 +194,7 @@ def load_artifact(directory: str | Path, *, device: str = "auto") -> Inspector:
         bank_size=hp["bank_size"], coreset_projection_dim=hp["coreset_projection_dim"],
         patch_neighbors=hp["patch_neighbors"], patch_reduction=hp["patch_reduction"],
         reweight=hp["reweight"], reweight_neighbors=hp["reweight_neighbors"],
+        bank_exposures=tuple(hp.get("bank_exposures", ())),
         seed=hp["seed"], device=device,
     )
     model.load_state_dict({
