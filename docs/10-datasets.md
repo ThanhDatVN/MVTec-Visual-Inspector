@@ -29,7 +29,7 @@ fetched today without an account or an application, which is what makes the shor
 
 | Dataset | Images | Gate | License |
 |---------|--------|------|---------|
-| MVTec AD 2 | >8,000, 8 categories, ~30 GB | MVLogin registration | CC BY-NC-SA 4.0 |
+| MVTec AD 2 | >8,000, 8 categories, 30.4 GB | **No longer gated** (checked 2026-10-12): direct per-category archives, `scripts/fetch_mvtec_ad2.py`; formerly MVLogin | CC BY-NC-SA 4.0 |
 | MVTec AD (classic) | >5,000, 15 categories, ~4.9 GB | Registration (Kaggle / HF mirrors exist) | CC BY-NC-SA 4.0 |
 | MVTec LOCO AD | 3,644, 5 categories | Registration | CC BY-NC-SA 4.0 |
 | Eyecandies | synthetic, 10 categories | HTTP 401 on the Hugging Face archive | check |

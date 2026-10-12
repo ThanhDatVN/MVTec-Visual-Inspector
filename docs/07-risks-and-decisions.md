@@ -376,6 +376,69 @@ as MVTec AD (attribution in [ATTRIBUTION.md](../ATTRIBUTION.md)). And the shared
 fetched by script through SharePoint's guest API (`scripts/fetch_mpdd.py`, with a SHA-256
 manifest). The no-publication rule for MPDD images and derived figures stays as decided.
 
+### ADR-13 — Confirmation v2: candidate recipe v2 against v1 on MVTec AD 2
+**Status:** Accepted, 2026-10-12. Committed and pushed **before any MVTec AD 2 archive was
+downloaded**, so the git history timestamps the plan ahead of the data.
+
+**Context.** Recipe v1 (ADR-11) is confirmed on nine held-out VisA categories (E12) and transfers
+to MPDD (H1, ADR-12). The Gate E follow-up (E8) adopted, as a development result, `layer2`
+features at 960 px — candidate v2 — with the largest gains on the categories where v1 was weakest
+(`macaroni2` 0.887 → 0.979 image AUROC). Both earlier held-out sets are spent. MVTec AD 2, the
+headline dataset of ADR-1 that ADR-8 deferred because it sat behind a registration, is now offered
+as direct per-category downloads (checked 2026-10-12; CC BY-NC-SA 4.0). This project has never
+loaded an AD 2 image, so AD 2 shaped nothing: it can confirm or refute v2.
+
+**Decision.**
+
+1. **Data.** All eight categories — `can`, `fabric`, `fruit_jelly`, `rice`, `sheet_metal`,
+   `vial`, `wallplugs`, `walnuts` — fetched by `scripts/fetch_mvtec_ad2.py` (SHA-256 manifest).
+   Each recipe is fitted on the category's `train/good`, calibrated on the provided
+   `validation/good` (nothing carved), and evaluated once on `test_public`, the split with pixel
+   ground truth. The private splits are read only for §6. Data config
+   [`configs/data/mvtec_ad2.yaml`](../configs/data/mvtec_ad2.yaml).
+2. **Recipes, unchanged files, seeds 0–2, `role = confirmation`:** v1,
+   [`confirmation-v1-patchcore-640.yaml`](../configs/recipes/confirmation-v1-patchcore-640.yaml);
+   v2, [`candidate-v2-patchcore-layer2-960.yaml`](../configs/recipes/candidate-v2-patchcore-layer2-960.yaml).
+   Implementation `af89b5297f4d` (the E8 code with the GPU-memory fix, which changes no
+   computation). Floors, seed 0, 320 px long side: pixel PCA and the colour histogram, as in
+   ADR-12. Runs execute on the laptop; a run that fails for host or GPU memory is rerun unchanged
+   on a Kaggle T4 and the venue recorded. A category whose arms are incomplete is reported as
+   missing and counts as not significant.
+3. **Confirmatory hypotheses**, analysed by
+   [`scripts/ad2_confirmation_analysis.py`](../scripts/ad2_confirmation_analysis.py) (committed
+   with this ADR, dry-run on the E8 development runs only):
+   - **H3, detection.** Per category, mean image AUROC over seeds 0–2 of v2 minus that of v1,
+     paired class-stratified image bootstrap (10,000 resamples), two-sided (count + 1)/(n + 1)
+     p-value, Holm over the 8 categories at α = 0.05. *Holds* if at least 5 of 8 are
+     significantly positive and none significantly negative.
+   - **H3b, localization** (AU-PRO@0.05, the AD 2 headline metric). *Holds* if v2's mean over
+     seeds exceeds v1's on at least 7 of 8 categories (one-sided exact sign test, p = 0.035).
+   - **Verdict:** v2 is *confirmed* if H3 and H3b both hold — it then replaces v1 as the
+     recommended recipe; *partially confirmed* if one holds; *not confirmed* otherwise, and v1
+     stays. Whatever the verdict, both recipes' numbers are reported for every category.
+4. **Descriptive only:** AU-PRO@0.30, pixel AUROC, SegF1 at the validation 3σ threshold, recall
+   and realized FPR at the operating point against the effective bound (AD 2's 19–48 validation
+   normals cannot support a 1% request; the rank rule relaxes to 1/(n+1) and flags it), the exact
+   tail test per category and recipe (Holm over 16), pooled false alarms against the expected
+   count, the floors, fit time and time per image.
+5. **No retuning.** No parameter of either recipe changes for AD 2, including the input
+   resolution on images far larger than VisA's. A surprising result starts a new development
+   cycle, not a revision of this one.
+6. **Official evaluation (optional, after §3).** For the recipe the verdict selects (v2 if
+   confirmed, else v1), seed 0: float16 anomaly maps at native resolution for `test_private` and
+   `test_private_mixed`, and binary masks at the validation mean + 3σ of the map (our
+   `OP-3SIGMA`, also the baseline MVTec's utilities suggest), checked with MVTec's
+   `check_and_prepare_data_for_upload.py`. The account and the upload are the repository owner's;
+   the server's numbers are reported as received. Comparing `test_private` with
+   `test_private_mixed` is the real-lighting evidence the synthetic suite (E08) could not give
+   (G5), and is exploratory.
+
+**Consequences.** (+) A confirmation on the dataset the project was designed for, with real
+lighting variation behind the server. (+) H3 and H3b test the claim E8 makes, on data that shaped
+nothing. (−) ~30 GB, fetched one category at a time. (−) Small validation sets make the operating
+point loose (2.0–5.0% bounds). (−) CC BY-NC-SA 4.0: non-commercial, and no AD 2 image or derived
+figure is published here.
+
 ---
 
 ### Open decisions (resolve before the stated gate)

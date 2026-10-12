@@ -1,0 +1,14 @@
+# MVTec AD 2 — all eight categories, for confirmation v2 (ADR-13). Compose before a recipe:
+#   inspector run -c configs/data/mvtec_ad2.yaml -c configs/recipes/<recipe>.yaml \
+#                 --data-root data/raw/mvtec_ad2 --role confirmation --categories <...> --seeds 0 1 2
+# AD 2 ships its own normal-only validation split, so nothing is carved from train; evaluation is
+# on test_public (pixel ground truth). The private splits carry no labels and are read only to
+# export a submission for the official server (benchmark.mvtec.com).
+# Licence CC BY-NC-SA 4.0; no image is committed here.
+
+_base_: ../base.yaml
+
+data:
+  layout: mvtec_ad2
+  category: can
+  test_split: test_public

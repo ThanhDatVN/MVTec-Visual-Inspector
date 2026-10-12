@@ -315,6 +315,16 @@ run. Every category is reported, including failures and resource-limit outcomes,
 mean, the worst category, and development vs confirmation shown separately. Retuning after this
 point starts a new development cycle.
 
+### Stage H″ — Confirmation v2 on MVTec AD 2 (E13; laptop)
+
+| # | Run | n | Purpose |
+|---|-----|---|---------|
+| H″1 | Recipes v1 and candidate v2, unchanged, on all eight AD 2 categories, seeds 0–2, `role = confirmation` | 48 | Does the E8 adoption hold on data that shaped nothing? (ADR-13: H3 detection, H3b localization) |
+| H″2 | Pixel PCA and the colour histogram, 320 px, seed 0 | 16 | Floors |
+| H″3 | Optional: the selected recipe's `test_private` / `test_private_mixed` maps for benchmark.mvtec.com | — | Official numbers, and real lighting shift (G5) |
+
+*Status: pre-registered in ADR-13 before any AD 2 download.*
+
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 
 | # | Deliverable | Spec |
