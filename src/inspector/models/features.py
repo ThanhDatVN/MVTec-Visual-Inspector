@@ -109,10 +109,15 @@ class FeatureExtractor:
 
         # Forward hooks rather than a rebuilt truncated network: hooks cannot
         # get the layer wiring subtly wrong, and they keep the published
-        # architecture intact.
+        # architecture intact. The hooks hold the feature dict, never `self`:
+        # a hook closing over the extractor makes a cycle (extractor -> model ->
+        # hook -> extractor) that refcounting cannot free, so every finished run
+        # kept its backbone on the GPU until the cycle collector happened to run.
+        features = self._features
+
         def make_hook(name: str):
             def hook(_module, _inputs, output):
-                self._features[name] = output
+                features[name] = output
 
             return hook
 
@@ -148,6 +153,7 @@ class FeatureExtractor:
             model(tensor)
 
         maps: list[Any] = [self._features[layer] for layer in self.spec.layers]
+        self._features.clear()  # do not pin the last batch's feature maps on the GPU
         # The first requested layer defines the output grid. Higher layers are
         # upsampled to it: the study's whole point is that the *finest* grid is
         # what small defects need, so coarsening to the smallest would discard

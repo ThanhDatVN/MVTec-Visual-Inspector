@@ -10,6 +10,11 @@ E8): seed-averaged paired comparisons with the reference, Holm over that family,
 decision exactly as it was written down before the runs.
 
     python scripts/kaggle_studies.py --implementation e53218f1371e --out reports/studies/kaggle
+
+DR-1's VRAM criterion should come from `--vram-csv` (scripts/bench_inference.py, one fresh
+process per configuration): until the FeatureExtractor fix, the runner's per-run VRAM peaks include the
+backbones of earlier runs in the same session (see reports/K1), so the registry value is used only
+as a fallback and flagged as such.
 """
 
 from __future__ import annotations
@@ -100,7 +105,7 @@ def paired(a_runs: list[dict], b_runs: list[dict], seed: int = 0) -> dict:
             "p_boot": float(min(1.0, 2 * (tail + 1) / (N_BOOT + 1)))}
 
 
-def dr1(rows: list[dict]) -> str:
+def dr1(rows: list[dict], vram_mb: float) -> str:
     """DR-1 as written in docs/11 (Stage E, E8) before the follow-up ran.
 
     (1) mean AU-PRO@0.05 improves on >= 2 of 3 categories and drops by <= 0.01 on the third;
@@ -114,7 +119,7 @@ def dr1(rows: list[dict]) -> str:
                 and not any(bool(r["significant_holm"]) and r["d_auroc"] < 0 for r in rows))
     if not accuracy:
         return "not adopted"
-    if max(r["vram_predict_mb"] for r in rows) >= VRAM_BUDGET_MB:
+    if vram_mb >= VRAM_BUDGET_MB:
         return "accuracy-only variant"
     return "adopted (development)"
 
@@ -142,6 +147,7 @@ def main() -> int:
     ap.add_argument("--registry", default="reports/runs")
     ap.add_argument("--implementation", required=True)
     ap.add_argument("--out", default="reports/studies/kaggle")
+    ap.add_argument("--vram-csv", help="latency.csv from scripts/bench_inference.py (DR-1 criterion 4)")
     args = ap.parse_args()
     out = Path(args.out)
     runs = load(Path(args.registry), args.implementation)
@@ -213,9 +219,18 @@ def main() -> int:
                            **paired(rs, ref[c])})
     for row, (adj, sig) in zip(follow, holm_bonferroni([f["p_boot"] for f in follow])):
         row.update({"p_holm": adj, "significant_holm": sig})
-    decisions = [{"variant": v, "decision": dr1([f for f in follow if f["variant"] == v]),
-                  "vram_predict_mb_max": max(f["vram_predict_mb"] for f in follow if f["variant"] == v)}
-                 for v in followup_vs]
+    bench_vram: dict[str, float] = {}
+    if args.vram_csv:
+        with open(args.vram_csv, encoding="utf-8") as fh:
+            bench_vram = {row["variant"]: float(row["peak_vram_alloc_mb"])
+                          for row in csv.DictReader(fh) if row["device"] == "cuda"}
+    decisions = []
+    for v in followup_vs:
+        rows = [f for f in follow if f["variant"] == v]
+        vram = bench_vram.get(v, max(f["vram_predict_mb"] for f in rows))
+        decisions.append({"variant": v, "decision": dr1(rows, vram), "inference_vram_mb": vram,
+                          "vram_source": "bench, fresh process" if v in bench_vram
+                          else "registry, may include earlier runs' backbones"})
     if follow:
         write(out / "followup.csv", follow)
         write(out / "followup_decisions.csv", decisions)

@@ -74,10 +74,11 @@ defects are small relative to the frame: +0.06 to +0.08 image AUROC and +0.03 to
 `macaroni2` and `capsules`, with recall at the operating point up by 0.17–0.33. `pcb1` is
 saturated (seed 0: 0.978 → 0.990 at 960, 0.978 at 1280). 1280 px buys little over 960 px for 1.7× more
 cost. **Correction:** the host memory these need was estimated above 16 GB when the sweep was
-planned; measured, it peaks at 7.4 GB (960) and 11.5 GB (1280), within the laptop's 16 GB. GPU
-memory is the constraint instead: inference peaks at 4.1–4.4 GB (960) and 4.8–5.1 GB (1280) on
-the T4, above DR-1's 3.5 GB and the laptop's 4 GB card, so either resolution can at best be an
-accuracy-only variant.
+planned; measured, it peaks at 7.4 GB (960) and 11.5 GB (1280), within the laptop's 16 GB.
+(An earlier version of this report also quoted 4.1–5.1 GB of GPU memory at these resolutions.
+Those records are not usable: until the fix described in [E8](E8-gate-e-followup.md), every
+finished run left its backbone on the GPU until Python's cycle collector ran, so a run's recorded
+peak includes earlier runs'. Clean, one-process-per-configuration measurements are in E8.)
 
 **Feature level.** The strongest free lever. `layer2` alone beats `layer2+layer3` on every
 category (significant on two) at identical cost, and `layer3` alone loses 0.12–0.23 on

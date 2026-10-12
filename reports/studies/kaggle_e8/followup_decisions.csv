@@ -1,0 +1,5 @@
+variant,decision,inference_vram_mb,vram_source
+layers=['layer2'],adopted (development),572.91650390625,"bench, fresh process"
+"layers=['layer2'],long_side=960",adopted (development),745.5234375,"bench, fresh process"
+long_side=960,adopted (development),746.3984375,"bench, fresh process"
+weights=timm:racm_in1k,not adopted,573.94677734375,"bench, fresh process"

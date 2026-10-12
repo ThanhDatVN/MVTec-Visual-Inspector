@@ -1,0 +1,32 @@
+{
+ "implementation": "fc9dbe93129d",
+ "runs": 45,
+ "reference_hparams": {
+  "backbone": "wide_resnet50_2",
+  "weights": "IMAGENET1K_V1",
+  "layers": [
+   "layer2",
+   "layer3"
+  ],
+  "patch_pool": 3,
+  "projection_dim": 1024,
+  "dtype": "float16",
+  "candidate_fraction": 0.1,
+  "bank_ratio": null,
+  "bank_size": 10000,
+  "coreset_projection_dim": 128,
+  "patch_neighbors": 1,
+  "patch_reduction": "nearest",
+  "reweight": true,
+  "reweight_neighbors": 9
+ },
+ "sweep_comparisons": 0,
+ "followup_comparisons": 12,
+ "followup_decisions": {
+  "layers=['layer2']": "adopted (development)",
+  "layers=['layer2'],long_side=960": "adopted (development)",
+  "long_side=960": "adopted (development)",
+  "weights=timm:racm_in1k": "not adopted"
+ },
+ "c2_comparisons": 0
+}

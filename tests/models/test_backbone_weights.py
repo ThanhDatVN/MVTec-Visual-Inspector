@@ -1,4 +1,4 @@
-"""Backbone weights: torchvision names or a timm tag loaded into the same architecture."""
+"""Backbone weights (torchvision names or a timm tag), and the extractor's lifetime."""
 
 from __future__ import annotations
 
@@ -53,3 +53,23 @@ def test_a_mismatched_state_dict_fails_loudly(monkeypatch):
     extractor = FeatureExtractor(FeatureSpec(backbone="resnet18", weights="timm:broken", device="cpu"))
     with pytest.raises(RuntimeError):
         extractor.model  # noqa: B018
+
+
+def test_a_dropped_extractor_is_freed_without_the_cycle_collector():
+    """Forward hooks closing over the extractor made a reference cycle: every finished run kept
+    its backbone (and on a GPU ~300 MB) until Python's cycle collector happened to run."""
+    import gc
+    import weakref
+
+    import numpy as np
+    import torchvision  # noqa: F401  (imported once, as in any session after its first run)
+
+    gc.disable()
+    try:
+        extractor = FeatureExtractor(FeatureSpec(backbone="resnet18", device="cpu"))
+        extractor.embed_batch(np.zeros((1, 3, 64, 64), np.float32))
+        ref = weakref.ref(extractor)
+        del extractor
+        assert ref() is None
+    finally:
+        gc.enable()

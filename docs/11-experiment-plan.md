@@ -196,8 +196,8 @@ any adoption decision.
 *Status: E1–E6b and the resolution axis (960, 1280 px) done — [report](../reports/K1-kaggle-development.md)
 §2, 51 runs, Holm over 51.* Resolution keeps paying past 640 px on `macaroni2`/`capsules` (+0.06 to
 +0.08) and `layer2` alone beats `layer2+layer3` at no cost; bank size, k-NN averaging, re-weighting
-and projection are flat; `layer4` and `layer3`-only are catastrophic. Open: 3-seed reruns of 960 px
-and `layer2`, and E7 as their joint re-vary; adoption needs fresh held-out data (ADR-11, ADR-12).
+and projection are flat; `layer4` and `layer3`-only are catastrophic. The 3-seed reruns and E7 are
+E8 below; adoption on held-out data needs fresh data (ADR-11, ADR-12).
 
 **E8 — Gate E follow-up, pre-registered 2026-10-12 before any of its runs.** Four variants of
 the frozen recipe, each at seeds 0–2 on the three development categories, in one Kaggle session
@@ -224,6 +224,23 @@ and MPDD are spent, so a claim on held-out data needs data that shaped nothing (
 *Disclosure:* the notebook's smoke test (laptop, `capsules`, seed 0, a separate registry) ran the
 `layer2` and timm-weights variants after this rule was written and before it was committed. It
 changed nothing above, and its runs are not part of the analysis.
+
+*Measurement amendment (2026-10-12, after the runs; a first reading of the decision used the
+contaminated records below and is void):* criterion (4)
+cannot be taken from the runner's VRAM records. Until the fix in `FeatureExtractor` (its forward
+hooks closed over the extractor — a reference cycle), every finished run kept its backbone on the
+GPU until Python's cycle collector ran; within a session the recorded peaks climb by ≈ 280 MB a
+run and fall back when the collector runs. The 4.1–4.4 GB expected above for 960 px came from such
+records. (4) is evaluated instead with `scripts/bench_inference.py`: each configuration fitted and
+exported in its own process and measured in a fresh one on the laptop's 4 GB RTX 3050 (the
+deployment card), `pcb1`, peak allocated VRAM over 20 warm-up and 200 timed service-path
+predictions. The rule is unchanged; only its measurement is.
+
+*Status: done — [report](../reports/E8-gate-e-followup.md).* `layer2` only, 960 px and `layer2` at
+960 px are **adopted (development)** — e.g. `macaroni2` 0.887 → 0.979 image AUROC with both — at
+0.57–0.75 GB inference VRAM; timm's `racm_in1k` weights are not (−0.055 on `macaroni2`).
+Candidate recipe v2: `configs/recipes/candidate-v2-patchcore-layer2-960.yaml`, unconfirmed. Gate E
+closed.
 
 ### Stage F — Tier 1 autoencoder (Kaggle, ~12 GPU-h)
 

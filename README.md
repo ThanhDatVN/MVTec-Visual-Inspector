@@ -10,7 +10,8 @@ with an explainability case book, a robustness study, and a containerized demo s
 > Results: [confirmation](reports/E12-confirmation-v1.md) ·
 > [development](reports/E00-E04-development-findings.md) · [robustness](reports/E08-robustness.md) ·
 > [data efficiency](reports/E09-data-efficiency.md) · [MPDD transfer](reports/H1-mpdd-transfer.md) ·
-> [Kaggle studies](reports/K1-kaggle-development.md) · [case book](reports/case-book/README.md).
+> [Kaggle studies](reports/K1-kaggle-development.md) · [Gate E follow-up](reports/E8-gate-e-followup.md) ·
+> [case book](reports/case-book/README.md).
 
 ---
 
@@ -85,6 +86,11 @@ guards find the exposure or focus outside the training range), the rule `score >
 the threshold was calibrated to, the location of the map's peak, latency, and optionally a PNG
 overlay on a colour scale fixed by the threshold — so a normal image looks calm instead of being
 stretched to its own maximum.
+
+Measured on a laptop (RTX 3050 4 GB, Ryzen 5 6600H; batch 1, 200 timed requests through the
+service path): the frozen recipe answers in **99 / 102 ms** (p50 / p95) on the GPU with 0.6 GB of
+GPU memory, and in 890 / 957 ms on the CPU; the 960 px candidate takes 196 / 198 ms and 0.75 GB.
+`scripts/bench_inference.py`, [E8 §3](reports/E8-gate-e-followup.md).
 
 ## Notebooks
 
@@ -183,10 +189,17 @@ AU-PRO by 200 images. [Report](reports/E09-data-efficiency.md).
 **Kaggle development studies** (126 runs, bit-identical across three sessions;
 [report](reports/K1-kaggle-development.md)): resolution keeps paying past 640 px (+0.06 to +0.08
 image AUROC on `macaroni2`/`capsules` at 960 px, for twice the cost) and `layer2` alone beats
-`layer2+layer3` at no cost — screening results awaiting 3-seed reruns and fresh data. Bank size,
+`layer2+layer3` at no cost. Bank size,
 k-NN averaging and re-weighting are flat. The from-scratch autoencoder at 640 px and 150 epochs
 stays 0.17–0.67 behind PatchCore, closing that rung. Against anomalib v2.3.0's own pipeline (C2),
 our PatchCore is not distinguishable after correction, at a fifth of the memory.
+
+**Gate E follow-up** (E8, pre-registered, 3 seeds; [report](reports/E8-gate-e-followup.md)): the
+screen replicated. `layer2` features at 960 px take `macaroni2` from 0.887 to **0.979** image
+AUROC and `capsules` from 0.914 to 0.963, with AU-PRO@0.05 up 0.04–0.08 on every category; it is
+the candidate recipe v2 (`configs/recipes/candidate-v2-patchcore-layer2-960.yaml`), unconfirmed
+until it meets data that shaped nothing (MVTec AD 2). timm's backbone weights trade categories and
+were not adopted.
 
 ## Findings from building the apparatus
 
