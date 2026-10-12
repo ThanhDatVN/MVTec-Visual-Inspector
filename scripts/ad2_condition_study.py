@@ -13,6 +13,8 @@ pooled into one `shift` family here. Two consequences, both checked here on stor
    together, class-stratified), which is the sampling unit. Development analysis, written after
    E13; it does not change E13's frozen verdict, it measures how much the image bootstrap
    understated the uncertainty.
+3. With `--guards DATA_ROOT`: which captures the input guards (`inspector.api.guards`, fitted on
+   the training normals) refuse — the guards watch global exposure and focus.
 
     python scripts/ad2_condition_study.py --implementation af89b5297f4d --role confirmation \
         --compare 960px,layer2 640px,layer2+layer3 --out reports/studies/ad2-conditions
@@ -145,6 +147,30 @@ def cluster_paired(a: dict[int, tuple], b: dict[int, tuple], seed: int) -> dict:
     return out
 
 
+def guards_by_condition(data_root: Path, categories: list[str]) -> list[dict]:
+    """Share of test normals and anomalies each capture condition loses to the input guards."""
+    from inspector.api.guards import InputGuards
+    from inspector.data.transforms import load_image
+
+    rows = []
+    for category in categories:
+        guards = InputGuards.fit(load_image(p) for p in sorted((data_root / category / "train" / "good").glob("*.png")))
+        refused: dict[tuple[str, int], list[bool]] = defaultdict(list)
+        for label, folder in ((0, "good"), (1, "bad")):
+            for path in sorted((data_root / category / "test_public" / folder).glob("*.png")):
+                m = NAME.match(path.name)
+                cond = "shift" if m.group(2).startswith("shift_") else m.group(2)
+                refused[(cond, label)].append(not guards.check(load_image(path))["ok"])
+        for cond in CONDITIONS:
+            rows.append({"category": category, "condition": cond,
+                         "refused_normals": float(np.mean(refused[(cond, 0)])),
+                         "refused_anomalies": float(np.mean(refused[(cond, 1)])),
+                         "normals": len(refused[(cond, 0)]), "n_train": guards.n_reference})
+        print(category, " ".join(f"{r['condition']}={r['refused_normals']:.0%}" for r in rows[-len(CONDITIONS):]),
+              flush=True)
+    return rows
+
+
 def write_csv(path: Path, rows: list[dict]) -> None:
     with open(path, "w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0]))
@@ -158,6 +184,7 @@ def main() -> int:
     ap.add_argument("--implementation", nargs="+", required=True)
     ap.add_argument("--role", default="confirmation")
     ap.add_argument("--compare", nargs=2, metavar=("A", "B"), help="recipes for the paired A - B comparison")
+    ap.add_argument("--guards", metavar="DATA_ROOT", help="also report guard refusals by condition")
     ap.add_argument("--out", default="reports/studies/ad2-conditions")
     args = ap.parse_args()
     runs = load(Path(args.registry), args.implementation, args.role)
@@ -183,6 +210,10 @@ def main() -> int:
             n0 = sum(r["normals"] for r in block)
             print(f"  {c:<13} macro AUROC {np.mean([r['auroc'] for r in block]):.3f}  "
                   f"pooled false alarms {fa:.1f}/{n0} = {fa / n0:.1%}")
+
+    if args.guards:
+        write_csv(out / "guards_by_condition.csv",
+                  guards_by_condition(Path(args.guards), sorted({c for c, _ in runs})))
 
     if args.compare:
         a_name, b_name = args.compare

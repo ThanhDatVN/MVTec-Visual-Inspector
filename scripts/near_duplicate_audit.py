@@ -11,6 +11,11 @@ coarse on these rigs (distinct captures collide at distance 0), so the primary c
 RMSE between 64x64 grey thumbnails; RMSE < 1 grey level is treated as pixel-identical.
 
     python scripts/near_duplicate_audit.py --data-root <VisA> --out reports/studies/a4
+    python scripts/near_duplicate_audit.py --layout mvtec_ad2 --data-root <AD 2> --out reports/studies/a4-ad2
+    python scripts/near_duplicate_audit.py --layout mvtec_ad --data-root <MPDD> --out reports/studies/a4-mpdd
+
+The JSON lists the rel ids of pixel-identical images, so it is written only for VisA (CC BY 4.0);
+for the CC BY-NC-SA datasets only the counts table is written.
 """
 
 from __future__ import annotations
@@ -45,12 +50,21 @@ def main() -> int:
     ap.add_argument("--data-root", required=True)
     ap.add_argument("--out", default="reports/studies/a4")
     ap.add_argument("--percentile", type=float, default=1.0)
+    ap.add_argument("--layout", default="visa", choices=["visa", "mvtec_ad", "mvtec_ad2"])
     args = ap.parse_args()
 
+    if args.layout == "visa":
+        categories = list(summarize(args.data_root))
+    else:
+        categories = sorted(d.name for d in Path(args.data_root).iterdir() if (d / "train").is_dir())
     rows = []
-    for cat in summarize(args.data_root):
-        idx = load_category(args.data_root, cat, layout="visa")
+    for cat in categories:
+        idx = load_category(args.data_root, cat, layout=args.layout)
         idx, _ = ensure_validation(idx, val_fraction=0.15, seed=0)
+        # one held-out test split per layout: VisA and MPDD `test`, AD 2 `test_public`
+        idx = {k: v for k, v in idx.items() if k in ("train", "validation", "test", "test_public")}
+        if "test_public" in idx:
+            idx["test"] = idx.pop("test_public")
         hashes = {name: np.array([phash(s.image_path) for s in split], dtype=np.uint64)
                   for name, split in idx.items()}
         thumbs = {name: np.stack([thumb(s.image_path).ravel() for s in split]) for name, split in idx.items()}
@@ -97,7 +111,8 @@ def main() -> int:
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
-    (out / "near_duplicates.json").write_text(json.dumps(rows, indent=2), encoding="utf-8")
+    if args.layout == "visa":
+        (out / "near_duplicates.json").write_text(json.dumps(rows, indent=2), encoding="utf-8")
     lines = ["| category | pHash: train nn median / p1 | pHash exact matches val / test | thumbnail RMSE: train nn median / p1 | val below p1 | test below p1 | pixel-identical val / test |",
              "|---|---|---|---|---|---|---|"]
     for r in rows:

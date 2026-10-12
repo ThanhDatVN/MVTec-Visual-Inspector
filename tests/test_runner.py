@@ -190,6 +190,21 @@ def test_cli_run_populates_and_reuses_the_registry(synthetic_root, tmp_path):
     assert (tmp_path / "table.csv").read_text().count("\n") == 2  # header + one row
 
 
+def test_cli_dry_run_resolves_every_run_and_fits_nothing(synthetic_root, tmp_path, capsys):
+    """M8 (docs/14): a queued command with a bad setting must fail when it is planned, not hours
+    later; `--dry-run` resolves configs, overrides and models without fitting."""
+    from inspector.cli import main
+    from inspector.config import ConfigError
+
+    argv = ["run", "-c", CONFIG, "--methods", "mean_intensity", "--seeds", "0", "1",
+            "--data-root", str(synthetic_root), "--registry", str(tmp_path / "runs"), "--dry-run"]
+    assert main(argv) == 0
+    assert capsys.readouterr().out.count("dry-run [") == 2
+    assert not list((tmp_path / "runs").glob("*/result.json"))
+    with pytest.raises(ConfigError):  # a key the config does not have
+        main([*argv, "--set", "model.no_such_setting=1"])
+
+
 def test_model_fragment_composes_over_a_data_config():
     """Model configs are fragments. When they inherited base.yaml, composing
     one after a data config silently reset the layout to mvtec_ad2 and the

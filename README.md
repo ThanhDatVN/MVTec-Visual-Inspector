@@ -11,7 +11,8 @@ with an explainability case book, a robustness study, and a containerized demo s
 > [development](reports/E00-E04-development-findings.md) · [robustness](reports/E08-robustness.md) ·
 > [data efficiency](reports/E09-data-efficiency.md) · [MPDD transfer](reports/H1-mpdd-transfer.md) ·
 > [Kaggle studies](reports/K1-kaggle-development.md) · [Gate E follow-up](reports/E8-gate-e-followup.md) ·
-> [MVTec AD 2 confirmation](reports/E13-confirmation-v2-mvtec-ad2.md) · [case book](reports/case-book/README.md).
+> [MVTec AD 2 confirmation](reports/E13-confirmation-v2-mvtec-ad2.md) ·
+> [AD 2 development: lighting and scoring](reports/E14-E15-ad2-development.md) · [case book](reports/case-book/README.md).
 
 ---
 
@@ -173,6 +174,16 @@ against a rule of 7 — v1 stays. Both are far below their VisA level (macro ima
 chance on `can` and `wallplugs`), and both operating points fail (160 and 195 false alarms against
 29 expected): the guards show that 20–83% of the test normals lie outside the training normals'
 exposure and focus range in six categories. [Report](reports/E13-confirmation-v2-mvtec-ad2.md).
+
+**Why AD 2 breaks the operating point, and what does not fix it** (E14–E15, development).
+`test_public` shows each object under the training lighting and under changed ones; the false
+alarms are the changed light *direction and colour* (22.8% of those normals for v1), not exposure
+(5–6%, at the bound). Five photometric remedies — per-image gain and standardization, an
+exposure-augmented bank, flat-field normalization, a relit bank — were screened against
+pre-registered rules and none carried; a moved specular highlight is not a gain or a smooth field.
+The image-score failure is separate: it persists under the training lighting. The captures of one
+object are one sample, so AD 2 intervals are computed over objects from here on.
+[Report](reports/E14-E15-ad2-development.md).
 
 **Robustness (E08, frozen threshold, development categories):** the ranking survives far longer
 than the operating point. Sensor noise with JPEG down to quality 40, a 0.35× resize round-trip

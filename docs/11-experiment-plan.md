@@ -352,6 +352,13 @@ worse on none. A carried variant must also cost no more than 0.01 image AUROC on
 development categories (seed 0). Everything here is development evidence: the held-out arbiter is
 MVTec's server on the private splits, with v1 and the best variant submitted once each.
 
+*Outcome (2026-10-13).* E14-ref reproduced E13's seed-0 prediction digests on all eight
+categories. No variant carried: gain 47 → 73 pooled false alarms, 1 gain / 1 loss; standardize
+47 → 64, 1 / 2; exposure-augmented bank 47 → 49, 2 / 0. E14d first failed at its turn (a `--set`
+of a key no config has) and was rerun from an overlay at the same implementation. E14a: top-k
+aggregation +0.01–0.02 macro, no rule repairs `can`, `rice`, `wallplugs`. Report:
+[E14–E15](../reports/E14-E15-ad2-development.md).
+
 ### Stage H⁗ — Lighting remedies on MVTec AD 2 (E15; laptop)
 
 *Diagnosis (2026-10-13, `scripts/ad2_condition_study.py` on the stored E13 predictions).*
@@ -366,6 +373,9 @@ colour (blue/red ratio down to 0.78). E13's excess false alarms sit almost entir
 |---|---|---|---|---|
 | false alarms / normals, pooled | 5.7% (2.6%) | 5.7% (3.6%) | 5.2% (4.2%) | 22.8% (31.2%) |
 | macro image AUROC | 0.686 (0.742) | 0.694 (0.734) | 0.698 (0.740) | 0.684 (0.659) |
+
+(Correction, same day: the `shift` correlation range is 0.82–1.00; `vial`'s shifts are
+near-identical to `regular` at this scale.)
 
 So the operating point holds under the training lighting, and E14b–d, which target global
 exposure, address a condition that is not failing; they run to completion as registered. The
@@ -391,6 +401,10 @@ AUROC on the VisA development categories (seed 0). If both carry, their combinat
 next, and a carried remedy is also screened on v2 (`layer2`, 960 px), which is the better recipe
 under `regular` lighting. The arbiter stays MVTec's server: `test_private_mixed` is the mixed-lighting
 split, so it is the direct held-out test of any lighting remedy.
+
+*Outcome (2026-10-13).* E15-ref reproduced E13's seed-0 digests. Neither variant carried:
+flat-field raised the `shift` false alarms 41 → 60 of 187; the relit bank left them at 39, with no
+category significantly changed. The conditional follow-ups (combination, v2 screen) do not run.
 
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 

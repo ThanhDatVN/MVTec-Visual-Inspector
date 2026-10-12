@@ -228,6 +228,12 @@ def cmd_run(args) -> int:
                     cfg, method=method, category=category, seed=seed,
                     data_root=data["root"], role=args.role,
                 )
+                if args.dry_run:
+                    state = "completed" if registry.completed(spec.run_id) else "new"
+                    settings = {**spec.model["hparams"], "transform": spec.transform}
+                    print(f"  dry-run [{spec.run_id}] {method} {category} s{seed} ({state}): "
+                          f"{json.dumps(settings, sort_keys=True)}")
+                    continue
                 try:
                     result, reused = execute(
                         spec, model, indices, data_root=data["root"], registry=registry,
@@ -241,6 +247,8 @@ def cmd_run(args) -> int:
                 print(f"  {tag}[{spec.run_id}] " + result.summary(), file=sys.stderr)
                 results.append(result)
 
+    if args.dry_run:
+        return 0
     if args.results:
         path = write_results(registry.results(), args.results)
         print(f"\nregistry table -> {path}")
@@ -434,6 +442,8 @@ def build_parser() -> argparse.ArgumentParser:
     p_run.add_argument("--role", default="development", choices=["development", "confirmation"])
     p_run.add_argument("--force", action="store_true", help="re-run even if completed")
     p_run.add_argument("--no-maps", action="store_true", help="do not store raw maps")
+    p_run.add_argument("--dry-run", action="store_true",
+                       help="resolve every run and print its id and settings; fit nothing")
     p_run.set_defaults(func=cmd_run)
 
     p_res = sub.add_parser("results", help="regenerate the results table from the registry")

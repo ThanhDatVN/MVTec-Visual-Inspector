@@ -87,8 +87,11 @@ away:
 
 Real capture shift is measured on MVTec AD 2 (E13): its `test_public` normals fall outside the
 training normals' exposure and focus range in 20–83% of cases in six categories, and the operating
-point fails there (pooled false alarms 160 against 29 expected). The private mixed-lighting split
-needs MVTec's server and is not measured.
+point fails there (pooled false alarms 160 against 29 expected). By capture condition (E14–E15):
+under the training lighting and under a global exposure change the false-alarm rate is 5–6%, near
+its bound; under a changed light direction and colour it is 22.8%, and none of five photometric
+remedies brought it down. The private mixed-lighting split needs MVTec's server and is not
+measured.
 
 **By defect type:** VisA's one-class split labels every defect "anomaly", so no per-type breakdown
 exists. By defect *size*, misses concentrate on small defects whose peaks fall below a threshold
@@ -137,7 +140,9 @@ on its own validation normals and say so.
   a lighting change breaks the operating point long before it breaks the ranking (E08): a quarter
   to two thirds of a stop of over-exposure or a blur of 2–4 native pixels sends false alarms to
   45–100%. The guards refuse those inputs, but they cannot see a frame shift or new content at the
-  frame edge.
+  frame edge. On AD 2 they refuse many exposure changes the model handles and pass most of the
+  changed-lighting captures that it does not (E14–E15): re-capturing normals under a new
+  lighting, not the guards, is what a lighting change calls for.
 - **The false-alarm bound is not guaranteed in practice.** It assumes exchangeable normals;
   capture-session debris broke it on `pcb1` (4.3% vs 0.73%) and on held-out `pipe_fryum`, and a
   larger calibration pool did not fix it ([negative results](reports/negative-results.md) #2).

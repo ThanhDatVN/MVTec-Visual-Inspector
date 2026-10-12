@@ -1,0 +1,3 @@
+variant,categories,shift_false_alarms_ref,shift_false_alarms_variant,shift_normals,all_false_alarms_ref,all_false_alarms_variant,significant_gains,significant_losses,macro_auroc_ref,macro_auroc_variant,macro_auroc_shift_ref,macro_auroc_shift_variant,macro_auroc_regular_ref,macro_auroc_regular_variant,carry_to_three_seeds
+bank_relight=2,8,41,39,187,47,52,0,0,0.676326616505188,0.6749987974987975,0.6776233064774733,0.6624565095398429,0.6738167388167388,0.6867153679653679,False
+normalize=flatfield,8,41,60,187,47,77,0,0,0.676326616505188,0.6523141205135252,0.6776233064774733,0.6342906746031747,0.6738167388167388,0.669817821067821,False

@@ -1,0 +1,70 @@
+{
+  "dataset": {
+    "layout": "mvtec_ad2",
+    "category": "sheet_metal",
+    "test_split": "test_public",
+    "val_carve_fraction": 0.15,
+    "val_carve_seed": 0,
+    "split_listing": {
+      "test_private": "fb2fe7a2ef3c14d5",
+      "test_private_mixed": "34c0c1bbd7d385b5",
+      "test_public": "b3c86dfc09a2c6b2",
+      "train": "58fb1b7e18c1f055",
+      "validation": "d4134016189abb5e"
+    }
+  },
+  "model": {
+    "name": "patchcore",
+    "class": "PatchCore",
+    "hparams": {
+      "backbone": "wide_resnet50_2",
+      "weights": "IMAGENET1K_V1",
+      "layers": [
+        "layer2",
+        "layer3"
+      ],
+      "patch_pool": 3,
+      "projection_dim": 1024,
+      "dtype": "float16",
+      "candidate_fraction": 0.1,
+      "bank_ratio": null,
+      "bank_size": 10000,
+      "coreset_projection_dim": 128,
+      "patch_neighbors": 1,
+      "patch_reduction": "nearest",
+      "reweight": true,
+      "reweight_neighbors": 9,
+      "seed": 0
+    }
+  },
+  "transform": {
+    "mode": "aspect_preserving",
+    "long_side": 640,
+    "short_side": null,
+    "interpolation_down": "area",
+    "interpolation_up": "linear",
+    "normalize": "imagenet"
+  },
+  "evaluation": {
+    "smoothing_sigma": 4.0,
+    "smoothing_units": "input_px",
+    "target_fpr": 0.01,
+    "threshold_policy": "relax",
+    "sigma_n": 3.0,
+    "pixel_fpr": 0.001,
+    "aupro_limits": [
+      0.05,
+      0.3
+    ],
+    "aupro_num_thresholds": 512,
+    "max_negative_samples": 2000000,
+    "sampling_seed": 0,
+    "pixel_auroc_bins": 65536,
+    "report_oracle": true,
+    "metrics_version": "2"
+  },
+  "seed": 0,
+  "role": "development",
+  "protocol_version": "2",
+  "implementation_id": "67985a22598d64da44557b976e4a5eed1f419ac3be08e370937e957c572fb06f"
+}

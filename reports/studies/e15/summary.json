@@ -1,0 +1,52 @@
+{
+ "implementation": "67985a22598d",
+ "seed": 0,
+ "reference_reproduces_e13": {
+  "can": true,
+  "fabric": true,
+  "fruit_jelly": true,
+  "rice": true,
+  "sheet_metal": true,
+  "vial": true,
+  "wallplugs": true,
+  "walnuts": true
+ },
+ "decisions": [
+  {
+   "variant": "bank_relight=2",
+   "categories": 8,
+   "shift_false_alarms_ref": 41,
+   "shift_false_alarms_variant": 39,
+   "shift_normals": 187,
+   "all_false_alarms_ref": 47,
+   "all_false_alarms_variant": 52,
+   "significant_gains": 0,
+   "significant_losses": 0,
+   "macro_auroc_ref": 0.676326616505188,
+   "macro_auroc_variant": 0.6749987974987975,
+   "macro_auroc_shift_ref": 0.6776233064774733,
+   "macro_auroc_shift_variant": 0.6624565095398429,
+   "macro_auroc_regular_ref": 0.6738167388167388,
+   "macro_auroc_regular_variant": 0.6867153679653679,
+   "carry_to_three_seeds": false
+  },
+  {
+   "variant": "normalize=flatfield",
+   "categories": 8,
+   "shift_false_alarms_ref": 41,
+   "shift_false_alarms_variant": 60,
+   "shift_normals": 187,
+   "all_false_alarms_ref": 47,
+   "all_false_alarms_variant": 77,
+   "significant_gains": 0,
+   "significant_losses": 0,
+   "macro_auroc_ref": 0.676326616505188,
+   "macro_auroc_variant": 0.6523141205135252,
+   "macro_auroc_shift_ref": 0.6776233064774733,
+   "macro_auroc_shift_variant": 0.6342906746031747,
+   "macro_auroc_regular_ref": 0.6738167388167388,
+   "macro_auroc_regular_variant": 0.669817821067821,
+   "carry_to_three_seeds": false
+  }
+ ]
+}
