@@ -1,0 +1,54 @@
+{
+ "archives": {
+  "can": {
+   "bytes": 2854215530,
+   "files": 1352,
+   "sha256": "4aae5f9b1dca55b4f9b74ea738d22d6ffc722b68b4b308183d07b13f89309fbf",
+   "url": "https://www.mydrive.ch/shares/121501/26456e2f3ef813930866f8f9b072593a/download/466651130-1743159807/can.tar.gz"
+  },
+  "fabric": {
+   "bytes": 10837826502,
+   "files": 1304,
+   "sha256": "d175254717808d823fb4dbc6d6406b7bc8f0a0e192af7f8277bd19faca71aac9",
+   "url": "https://www.mydrive.ch/shares/150999/2c2026421bcf68e37e9268885d355081/download/466651519-1743162446/fabric.tar.gz"
+  },
+  "fruit_jelly": {
+   "bytes": 1287968687,
+   "files": 950,
+   "sha256": "6ae4f37969e3bae328a013366b223f52c8c5a16d5b6407de6a1d977a98488a2c",
+   "url": "https://www.mydrive.ch/shares/121503/951a46ce30a3af3787ce9671cfa8613a/download/466651800-1743164023/fruit_jelly.tar.gz"
+  },
+  "rice": {
+   "bytes": 6763156245,
+   "files": 1124,
+   "sha256": "3f5496513f8a7fc6215e0124d088e6cc3b47b5e0ce326b5c437a1b0447857f04",
+   "url": "https://www.mydrive.ch/shares/121504/0014676292c3c44931712a54fb3bdbe8/download/466653907-1743164943/rice.tar.gz"
+  },
+  "sheet_metal": {
+   "bytes": 1652118784,
+   "files": 644,
+   "sha256": "d19989389ced5e9d0dd272d756891fefb697456e9c9f1791611109bb157159cc",
+   "url": "https://www.mydrive.ch/shares/121505/2d8fcdc8e988456bdd18696746eda0a0/download/466654829-1743166795/sheet_metal.tar.gz"
+  },
+  "vial": {
+   "bytes": 812067164,
+   "files": 1129,
+   "sha256": "002d8671479ee935657cc72207f7be98bdf13e7051b2485588d7afe80e59d9ec",
+   "url": "https://www.mydrive.ch/shares/121506/739dc6459c939fe464c0d26acc6c2d55/download/466654885-1743167505/vial.tar.gz"
+  },
+  "wallplugs": {
+   "bytes": 2210879897,
+   "files": 1030,
+   "sha256": "571199e0e36ec36c1656d02db194acfd0b976010eda28a6526ba7b4316ac7fd7",
+   "url": "https://www.mydrive.ch/shares/121507/66fe6e114b498e03be8d48c711794be7/download/466655287-1743168151/wallplugs.tar.gz"
+  },
+  "walnuts": {
+   "bytes": 6321331441,
+   "files": 1176,
+   "sha256": "c634f554b314e0835ed82aaf014ae0751df6477982c367a7c3cab283aeecb485",
+   "url": "https://www.mydrive.ch/shares/121508/9fcf67e49f0dc61a9608f57ba0482356/download/466656233-1743168988/walnuts.tar.gz"
+  }
+ },
+ "licence": "CC BY-NC-SA 4.0",
+ "source": "https://www.mvtec.com/company/research/datasets/mvtec-ad-2/downloads"
+}
