@@ -82,12 +82,17 @@ def download(url: str, dest: Path, attempts: int = 8) -> tuple[int, str]:
     size = tmp.stat().st_size
     if total and size != total:
         raise OSError(f"truncated download: {size} of {total} bytes from {url}")
+    digest = sha256_of(tmp)
+    tmp.replace(dest)
+    return size, digest
+
+
+def sha256_of(path: Path) -> str:
     h = hashlib.sha256()
-    with open(tmp, "rb") as fh:
+    with open(path, "rb") as fh:
         while block := fh.read(1 << 22):
             h.update(block)
-    tmp.replace(dest)
-    return size, h.hexdigest()
+    return h.hexdigest()
 
 
 def safe_extract(archive: Path, dest: Path) -> list[str]:
@@ -130,13 +135,18 @@ def main() -> int:
             print(f"{cat}: already fetched")
             continue
         archive = out / f"{cat}.tar.gz"
-        print(f"{cat}: downloading {links[cat]}", flush=True)
-        size, digest = download(links[cat], archive)
+        if archive.is_file():  # renamed from .part only once complete and size-checked
+            size, digest = archive.stat().st_size, sha256_of(archive)
+            print(f"{cat}: reusing the downloaded archive", flush=True)
+        else:
+            print(f"{cat}: downloading {links[cat]}", flush=True)
+            size, digest = download(links[cat], archive)
         if (out / cat).exists():  # a killed extraction: start the category again
             shutil.rmtree(out / cat)
         tops = safe_extract(archive, out)
-        if tops != [cat]:
-            print(f"error: {cat}.tar.gz holds {tops}, expected [{cat!r}]", file=sys.stderr)
+        # each archive holds its category folder plus the dataset's licence.txt and readme.txt
+        if cat not in tops or any((out / t).is_dir() for t in tops if t != cat):
+            print(f"error: {cat}.tar.gz holds {tops}, expected the {cat!r} folder", file=sys.stderr)
             return 1
         archive.unlink()
         n_files = sum(1 for p in (out / cat).rglob("*") if p.is_file())
