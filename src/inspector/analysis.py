@@ -334,7 +334,7 @@ def aggregation_study(
     rules: tuple[str, ...] = ("stored", "max", "top0.1%", "top1%", "top5%", "mean"),
     target_fpr: float = 0.01,
     reference: str = "stored",
-    n_resamples: int = 1000,
+    n_resamples: int = 10_000,
     seed: int = 0,
     extra: dict[str, list[tuple[np.ndarray, np.ndarray]]] | None = None,
 ) -> dict[str, dict]:
@@ -566,7 +566,7 @@ def run_studies(
     sizes: tuple[int, ...] = (20, 40, 80),
     targets: tuple[float, ...] = (0.01, 0.02, 0.05),
     draws: int = 200,
-    n_resamples: int = 1000,
+    n_resamples: int = 10_000,
     seed: int = 0,
     data_root: str | Path | None = None,
     roi_methods: tuple[str, ...] = (),
@@ -716,7 +716,7 @@ def method_comparisons(
     registry_root: str | Path,
     *,
     reference_method: str = "patchcore",
-    n_resamples: int = 1000,
+    n_resamples: int = 10_000,
     seed: int = 0,
 ) -> list[dict]:
     """Paired image-level comparison of every method against a reference, per
@@ -759,8 +759,13 @@ def method_comparisons(
                 "ci_low": float(np.quantile(diffs, 0.025)), "ci_high": float(np.quantile(diffs, 0.975)),
                 "p_bootstrap": p, "seeds_reference": len(ref_runs), "seeds_method": len(other_runs),
             })
+    # A bootstrap p-value cannot fall below 2 / (n + 1); after Holm the floor is family-size times
+    # that. Recorded with every row so a "significant" at the floor is read as such, and a family
+    # too large for the resample count is visible instead of silently never significant.
+    floor = min(1.0, 2.0 * len(rows) / (n_resamples + 1))
     for row, (adj, reject) in zip(rows, holm_bonferroni([r["p_bootstrap"] for r in rows])):
-        row.update({"p_holm": adj, "significant_holm": reject, "family_size": len(rows)})
+        row.update({"p_holm": adj, "significant_holm": reject, "family_size": len(rows),
+                    "p_holm_floor": floor})
     return rows
 
 
@@ -801,7 +806,7 @@ def roi_study(
     margins: tuple[float, ...] = ROI_MARGINS,
     reducers: tuple[str, ...] = ("max", "top5%"),
     target_fpr: float = 0.01,
-    n_resamples: int = 1000,
+    n_resamples: int = 10_000,
     seed: int = 0,
     max_train_images: int = 100,
 ) -> dict[str, Any]:

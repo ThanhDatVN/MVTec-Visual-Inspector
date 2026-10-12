@@ -120,6 +120,7 @@ Both are **generated** by `scripts/build_notebooks.py`, never hand-edited. Opera
 | 11 | [**Experiment plan & run register**](docs/11-experiment-plan.md) | Every planned run: purpose, venue, cost, decision rule |
 | 12 | [Running the notebooks](docs/12-running-the-notebooks.md) | Laptop and Kaggle operation |
 | 13 | [External review & research roadmap](docs/13-project-review-and-research-roadmap.md) | Historical review findings and research programme |
+| 14 | [**Open problems & remedies**](docs/14-open-problems-and-remedies.md) | Every known gap, measured error and defect after E13, with the technique proposed for each |
 
 ## Compute
 
