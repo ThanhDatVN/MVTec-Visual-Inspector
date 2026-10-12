@@ -5,7 +5,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from inspector.data.transforms import ImageTransform, exposure_shift
+from inspector.data.transforms import ImageTransform, exposure_shift, relight
 
 
 def _image(seed: int = 0) -> np.ndarray:
@@ -55,3 +55,30 @@ def test_exposure_shift_matches_the_corruption_suite():
     # severity 1 of `exposure_up` is +0.25 stop
     corrupted, _ = apply_corruption(image, None, "exposure_up", 1)
     assert np.abs(corrupted.astype(int) - exposure_shift(image, 0.25).astype(int)).max() <= 1
+
+
+def _scene(h: int = 64, w: int = 96) -> np.ndarray:
+    rng = np.random.default_rng(5)
+    return rng.integers(60, 200, size=(h, w, 3), dtype=np.uint8)
+
+
+def test_flatfield_cancels_a_smooth_shading_gradient_and_a_colour_cast():
+    scene = _scene().astype(np.float32)
+    ramp = np.linspace(0.7, 1.2, scene.shape[1], dtype=np.float32)[None, :, None]
+    cast = np.array([1.1, 1.0, 0.85], dtype=np.float32)
+    lit = np.clip(np.rint(scene * ramp * cast), 0, 255).astype(np.uint8)
+    t = ImageTransform(long_side=None, normalize="flatfield")
+    a, b = t.normalize_image(scene.astype(np.uint8)), t.normalize_image(lit)
+    plain = ImageTransform(long_side=None)
+    raw_gap = np.abs(plain.normalize_image(scene.astype(np.uint8)) - plain.normalize_image(lit)).mean()
+    assert np.abs(a - b).mean() < 0.25 * raw_gap
+
+
+def test_relight_is_seeded_bounded_and_not_the_identity():
+    image = _scene()
+    one = relight(image, np.random.default_rng((0, 1, 0)))
+    assert np.array_equal(one, relight(image, np.random.default_rng((0, 1, 0))))
+    assert not np.array_equal(one, relight(image, np.random.default_rng((0, 1, 1))))
+    assert one.dtype == np.uint8 and one.shape == image.shape
+    ratio = one.astype(np.float64).mean() / image.astype(np.float64).mean()
+    assert 0.3 < ratio < 1.8

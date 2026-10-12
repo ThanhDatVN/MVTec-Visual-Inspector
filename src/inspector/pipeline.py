@@ -88,6 +88,12 @@ class ExperimentResult:
     segf1_3sigma: float = NAN
     iou_3sigma: float = NAN
     threshold_3sigma: float = NAN
+    # the validation pixel-quantile threshold (docs/14, B3)
+    segf1_valq: float = NAN
+    iou_valq: float = NAN
+    threshold_valq: float = NAN
+    pixel_fpr_3sigma: float = NAN
+    pixel_fpr_valq: float = NAN
     n_regions: int = 0
     n_negatives_sampled: int = 0
     smoothing_sigma: float = NAN

@@ -93,8 +93,10 @@ class ImageTransform:
     #: options remove capture-to-capture exposure differences per image before that:
     #: `gain` scales each image so its mean luminance is ImageNet's mean (contrast ratios kept);
     #: `standardize` gives each image's channels zero mean and unit variance (exposure and
-    #: contrast removed). Both apply identically at fit and at test time.
-    normalize: Literal["imagenet", "gain", "standardize", "unit", "none"] = "imagenet"
+    #: contrast removed); `flatfield` divides each channel by its own heavily blurred copy, which
+    #: removes smooth shading and colour casts (a changed light direction or colour) and keeps
+    #: edges and texture. All apply identically at fit and at test time.
+    normalize: Literal["imagenet", "gain", "standardize", "flatfield", "unit", "none"] = "imagenet"
 
     # -- provenance --------------------------------------------------------
     def as_dict(self) -> dict:
@@ -152,6 +154,9 @@ class ImageTransform:
             mean = array.mean(axis=(0, 1))
             std = array.std(axis=(0, 1))
             array = (array - mean) / np.maximum(std, 1e-3)
+        elif self.normalize == "flatfield":
+            array = array / np.maximum(shading(array), 0.05) * IMAGENET_MEAN
+            array = (array - IMAGENET_MEAN) / IMAGENET_STD
         elif self.normalize not in ("unit", "none"):
             raise ValueError(f"unknown normalization: {self.normalize!r}")
         return np.ascontiguousarray(array.transpose(2, 0, 1))
@@ -160,6 +165,43 @@ class ImageTransform:
         out_image = self.normalize_image(self.resize_image(image))
         out_mask = self.resize_mask(mask) if mask is not None else None
         return out_image, out_mask
+
+
+def shading(array: np.ndarray, *, sigma_fraction: float = 0.1) -> np.ndarray:
+    """The smooth illumination component of an HxWxC float image: a Gaussian blur with
+    sigma = `sigma_fraction` x the long side, computed on a 16x reduced copy (the blur is far
+    wider than the reduction, so nothing it keeps is lost) and resized back."""
+    cv2 = _cv2()
+    h, w = array.shape[:2]
+    small = cv2.resize(array, (max(1, w // 16), max(1, h // 16)), interpolation=cv2.INTER_AREA)
+    sigma = sigma_fraction * max(small.shape[:2])
+    blurred = cv2.GaussianBlur(small, (0, 0), sigmaX=sigma, sigmaY=sigma, borderType=cv2.BORDER_REFLECT)
+    return cv2.resize(blurred, (w, h), interpolation=cv2.INTER_LINEAR).reshape(array.shape)
+
+
+def relight(image: np.ndarray, rng: np.random.Generator) -> np.ndarray:
+    """A random change of light direction, intensity and colour on a uint8 image (E15).
+
+    A smooth multiplicative field — a linear gradient in a random direction and one broad
+    highlight or shadow — times a global gain and a warm/cool colour cast. The ranges cover the
+    changed-lighting captures (`shift_k`) of MVTec AD 2 as measured against its `regular` ones
+    (docs/14): channel gains 0.60-1.17 and a blue/red ratio down to 0.78. Sharp specular
+    highlights that move with the light are outside what this model produces.
+    """
+    h, w = image.shape[:2]
+    unit = float(max(h, w))
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+    xx = xx / unit - 0.5 * w / unit
+    yy = yy / unit - 0.5 * h / unit
+    theta = rng.uniform(0.0, 2.0 * np.pi)
+    field = 1.0 + rng.uniform(-0.4, 0.4) * (xx * np.cos(theta) + yy * np.sin(theta))
+    cx, cy = rng.uniform(-0.5, 0.5) * w / unit, rng.uniform(-0.5, 0.5) * h / unit
+    radius = rng.uniform(0.15, 0.4)
+    field += rng.uniform(-0.3, 0.3) * np.exp(-((xx - cx) ** 2 + (yy - cy) ** 2) / (2.0 * radius**2))
+    tint = rng.uniform(-0.12, 0.12)
+    gain = np.array([1.0 + tint, 1.0, 1.0 - tint], dtype=np.float32) * rng.uniform(0.6, 1.2)
+    out = image.astype(np.float32) * field[..., None] * gain
+    return np.clip(np.rint(out), 0, 255).astype(np.uint8)
 
 
 def exposure_shift(image: np.ndarray, stops: float) -> np.ndarray:

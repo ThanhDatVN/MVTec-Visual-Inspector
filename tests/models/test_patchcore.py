@@ -271,3 +271,37 @@ def test_exposure_variants_enter_the_bank_but_keep_the_source_index(fitted):
     assert model.hparams()["bank_exposures"] == [-0.5, 0.5]
     assert model.fit_extra()["patches_total"] == 3 * base.fit_extra()["patches_total"]
     assert model.bank_sources[:, 0].max() < len(indices["train"])
+
+
+#: The hyperparameter keys of a default PatchCore before E14. A new setting must stay out of
+#: `hparams()` at its default, or every earlier run's identity and the frozen recipe matching
+#: of `scripts/ad2_confirmation_analysis.py` break (as `bank_exposures` once did).
+DEFAULT_HPARAM_KEYS = {
+    "backbone", "weights", "layers", "patch_pool", "projection_dim", "dtype",
+    "candidate_fraction", "bank_ratio", "bank_size", "coreset_projection_dim", "patch_neighbors",
+    "patch_reduction", "reweight", "reweight_neighbors", "seed",
+}
+
+
+def test_default_hyperparameters_keep_their_pre_e14_keys():
+    from inspector.models.patchcore import PatchCore
+
+    assert set(PatchCore().hparams()) == DEFAULT_HPARAM_KEYS
+    assert PatchCore(bank_relight=2).hparams()["bank_relight"] == 2
+    with pytest.raises(ValueError):
+        PatchCore(bank_relight=-1)
+
+
+@pytest.mark.needs_torch
+@pytest.mark.slow
+def test_relit_variants_enter_the_bank_but_keep_the_source_index(fitted):
+    """E15: relit copies are embedded like exposure variants, deterministically."""
+    from inspector.data.transforms import ImageTransform
+    from inspector.models.patchcore import PatchCore
+
+    base, indices, kwargs = fitted
+    make = lambda: PatchCore(ImageTransform(long_side=64), **{**kwargs, "bank_relight": 2})  # noqa: E731
+    model = make().fit(indices["train"])
+    assert model.fit_extra()["patches_total"] == 3 * base.fit_extra()["patches_total"]
+    assert model.bank_sources[:, 0].max() < len(indices["train"])
+    assert np.array_equal(model.memory_bank, make().fit(indices["train"]).memory_bank)

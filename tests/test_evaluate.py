@@ -42,6 +42,9 @@ def test_evaluation_produces_every_headline_metric(predictions):
                 "pixel_auroc", "aupro_005", "aupro_030", "segf1_3sigma", "metrics_version"):
         assert key in out, key
     assert out["threshold_comparator"] == ">"
+    for key in ("segf1_valq", "iou_valq", "threshold_valq", "pixel_fpr_3sigma", "pixel_fpr_valq"):
+        assert key in out, key
+    assert out["validation_pixel_fpr_valq"] <= CFG.pixel_fpr
     assert out["tp"] + out["fn"] == int(test.labels.sum())
     assert out["fp"] + out["tn"] == int((test.labels == 0).sum())
 
@@ -59,7 +62,8 @@ def test_severity_zero_reproduces_the_clean_evaluation(predictions):
 
     corrupted = SplitPredictions.from_model(model, indices["test_public"], image_fn=identity)
     again = evaluate(val, corrupted, CFG)
-    for key in ("image_auroc", "pixel_auroc", "aupro_005", "aupro_030", "segf1_3sigma", "fpr_at_op1"):
+    for key in ("image_auroc", "pixel_auroc", "aupro_005", "aupro_030", "segf1_3sigma", "segf1_valq",
+                "fpr_at_op1"):
         assert again[key] == clean[key], key
 
 
@@ -101,7 +105,7 @@ def test_changing_the_image_score_leaves_localization_unchanged(predictions):
     alt_val = val.with_scores(np.array([m.max() for m in val.raw_maps]))
     alt_test = test.with_scores(np.array([m.max() for m in test.raw_maps]))
     other = evaluate(alt_val, alt_test, CFG)
-    for key in ("pixel_auroc", "aupro_005", "aupro_030", "segf1_3sigma"):
+    for key in ("pixel_auroc", "aupro_005", "aupro_030", "segf1_3sigma", "segf1_valq"):
         assert other[key] == base[key], key
 
 

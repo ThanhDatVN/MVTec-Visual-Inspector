@@ -16,7 +16,7 @@ from typing import Literal
 
 import numpy as np
 
-ThresholdMethod = Literal["conformal", "sigma", "f1_max", "manual", "always_accept"]
+ThresholdMethod = Literal["conformal", "sigma", "quantile", "f1_max", "manual", "always_accept"]
 
 #: What to do when the requested false-alarm rate is finer than `n` calibration
 #: normals can resolve. Chosen explicitly by the caller and recorded, because
@@ -264,6 +264,42 @@ def sigma_from_stats(
         method="sigma",
         source_split=split_name,
         params={"n_sigma": n_sigma, "mean": mean, "std": std, "n_pixels": n_pixels},
+    )
+
+
+def pixel_quantile_from_histogram(
+    counts: np.ndarray, edges: np.ndarray, *, pixel_fpr: float = 0.001,
+    split_name: str = "validation",
+) -> Threshold:
+    """`OP-PIXQ`: the validation pixel score above which at most `pixel_fpr` of pixels lie.
+
+    Read off a histogram of the validation maps, which the evaluator streams: the
+    threshold is the lower edge of the lowest bin whose upper tail holds no more
+    than ``pixel_fpr`` of the pixels, so binning rounds towards fewer flagged
+    pixels. Unlike `OP-3SIGMA` it assumes nothing about the shape of the pixel
+    distribution. Pixels within an image are spatially correlated, so this is an
+    empirical rate on validation, not a finite-sample bound like the image rule.
+    """
+    counts = np.asarray(counts, dtype=np.int64)
+    edges = np.asarray(edges, dtype=np.float64)
+    if counts.ndim != 1 or edges.size != counts.size + 1:
+        raise ValueError("need bins + 1 edges for bins counts")
+    if not 0.0 < pixel_fpr < 1.0:
+        raise ValueError(f"pixel_fpr must be in (0, 1), got {pixel_fpr}")
+    total = int(counts.sum())
+    if total == 0:
+        raise ValueError("empty histogram")
+    upper_tail = np.cumsum(counts[::-1])[::-1]  # upper_tail[j]: pixels in bins j and above
+    ok = np.flatnonzero(upper_tail <= pixel_fpr * total + 1e-9)
+    # When even the top bin holds too many pixels, the maximum flags none.
+    j = int(ok[0]) if ok.size else counts.size
+    flagged = int(upper_tail[j]) if j < counts.size else 0
+    return Threshold(
+        value=float(edges[j]),
+        method="quantile",
+        source_split=split_name,
+        params={"requested_fpr": float(pixel_fpr), "effective_fpr": flagged / total,
+                "n_pixels": float(total)},
     )
 
 

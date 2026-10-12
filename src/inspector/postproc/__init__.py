@@ -8,6 +8,7 @@ from .thresholds import (
     from_validation_percentile,
     from_validation_sigma,
     min_achievable_fpr,
+    pixel_quantile_from_histogram,
     sigma_from_stats,
 )
 
@@ -19,5 +20,6 @@ __all__ = [
     "from_validation_percentile",
     "from_validation_sigma",
     "min_achievable_fpr",
+    "pixel_quantile_from_histogram",
     "sigma_from_stats",
 ]

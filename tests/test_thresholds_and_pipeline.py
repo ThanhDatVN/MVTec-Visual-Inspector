@@ -18,6 +18,7 @@ from inspector.postproc import (
     from_validation_fpr,
     from_validation_percentile,
     min_achievable_fpr,
+    pixel_quantile_from_histogram,
     sigma_from_stats,
 )
 from inspector.results import COLUMNS, append_results, render_markdown
@@ -145,6 +146,56 @@ def test_sigma_from_stats_matches_the_official_rule():
     assert threshold.value == pytest.approx(0.8)
     assert threshold.source_split == "validation"
     assert not threshold.oracle
+
+
+def _histogram(values: np.ndarray, bins: int = 1 << 16):
+    edges = np.linspace(values.min(), values.max(), bins + 1)
+    idx = np.clip(np.searchsorted(edges, values, side="right") - 1, 0, bins - 1)
+    return np.bincount(idx, minlength=bins), edges
+
+
+def test_pixel_quantile_flags_at_most_the_requested_share():
+    values = np.random.default_rng(0).lognormal(sigma=1.0, size=200_000)
+    counts, edges = _histogram(values)
+    for fpr in (0.1, 0.01, 0.001):
+        threshold = pixel_quantile_from_histogram(counts, edges, pixel_fpr=fpr)
+        realized = float(np.mean(values > threshold.value))
+        assert realized <= fpr
+        assert realized >= 0.9 * fpr  # and not much below it at this bin width
+        assert threshold.params["effective_fpr"] <= fpr
+        assert threshold.method == "quantile" and threshold.source_split == "validation"
+
+
+def test_pixel_quantile_survives_the_bimodal_maps_that_break_three_sigma():
+    """docs/14 B3, AD 2 `fruit_jelly` at `layer2`: object pixels score high and
+    background pixels low, so mean + 3 SD lands above every test pixel and
+    SegF1 is 0. The quantile threshold stays inside the normal range."""
+    rng = np.random.default_rng(1)
+    normal = np.concatenate([rng.normal(0.2, 0.05, 60_000), rng.normal(2.0, 0.2, 40_000)])
+    defect = rng.normal(2.9, 0.1, 2_000)
+    sigma = sigma_from_stats(float(normal.mean()), float(normal.std()), n_sigma=3.0)
+    assert sigma.value > defect.max()  # the failure: nothing would be flagged
+    counts, edges = _histogram(normal)
+    quantile = pixel_quantile_from_histogram(counts, edges, pixel_fpr=0.001)
+    assert quantile.value < np.median(defect)
+    assert float(np.mean(normal > quantile.value)) <= 0.001
+
+
+def test_pixel_quantile_of_a_constant_map_flags_nothing():
+    counts = np.zeros(8, dtype=np.int64)
+    counts[-1] = 1000
+    threshold = pixel_quantile_from_histogram(counts, np.linspace(0.0, 1.0, 9), pixel_fpr=0.001)
+    assert threshold.value == 1.0
+    assert threshold.params["effective_fpr"] == 0.0
+
+
+def test_pixel_quantile_rejects_bad_input():
+    with pytest.raises(ValueError):
+        pixel_quantile_from_histogram(np.ones(4), np.linspace(0, 1, 4), pixel_fpr=0.01)
+    with pytest.raises(ValueError):
+        pixel_quantile_from_histogram(np.zeros(4), np.linspace(0, 1, 5), pixel_fpr=0.01)
+    with pytest.raises(ValueError):
+        pixel_quantile_from_histogram(np.ones(4), np.linspace(0, 1, 5), pixel_fpr=0.0)
 
 
 def test_normalizer_fit_bounds_obeys_the_same_rules():

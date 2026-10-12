@@ -14,8 +14,8 @@ Design:
   plus the image score. Smoothing, upsampling and thresholding happen here, so
   a smoothing ablation, an aggregation study or a calibration study re-evaluates
   cached predictions without refitting (docs/13, E02/E03/E05).
-* **One streaming pass per split.** Validation: pooled mean/std of the native
-  maps for the pixel threshold. Test: the pixel-AUROC histogram, the confusion
+* **One streaming pass per split.** Validation: pooled mean/std and a histogram
+  of the native maps for the two pixel thresholds. Test: the pixel-AUROC histogram, the confusion
   counts at the pixel threshold, and the AU-PRO region/negative samples, all
   accumulated together. No split's native maps are ever resident at once.
 * **Thresholds are validation-derived and strict** (`score > threshold`), with
@@ -39,7 +39,12 @@ from .metrics.aupro import PROAccumulator
 from .metrics.image_level import compute_image_metrics, escape_rate_by_defect
 from .metrics.pixel_level import PixelHistogram
 from .models.base import AnomalyModel, postprocess_map
-from .postproc.thresholds import from_test_f1_max, from_validation_fpr, sigma_from_stats
+from .postproc.thresholds import (
+    from_test_f1_max,
+    from_validation_fpr,
+    pixel_quantile_from_histogram,
+    sigma_from_stats,
+)
 
 #: Bump when any metric definition, convention or default changes. Recorded with
 #: every result so numbers computed under different conventions never share a
@@ -245,6 +250,8 @@ class EvalConfig:
     target_fpr: float = 0.01
     threshold_policy: str = "relax"
     sigma_n: float = 3.0
+    #: Normal-pixel false-positive rate for the quantile pixel threshold (docs/14, B3).
+    pixel_fpr: float = 0.001
     aupro_limits: tuple[float, ...] = (0.05, 0.30)
     aupro_num_thresholds: int = 512
     max_negative_samples: int = 2_000_000
@@ -304,17 +311,30 @@ def image_metrics(
 def pixel_metrics(
     val: SplitPredictions, test: SplitPredictions, cfg: EvalConfig
 ) -> dict[str, Any]:
-    """Pixel-level metrics in one streaming pass per split."""
-    # Validation pass: pooled statistics of native maps for the 3-sigma rule.
+    """Pixel-level metrics in one streaming pass per split.
+
+    Two segmentation thresholds come from the validation normals. ``3sigma`` is
+    the MVTec AD 2 benchmark rule, kept for comparability; it assumes a roughly
+    Gaussian pixel distribution and lands above every test pixel when the maps
+    are skewed or bimodal (AD 2 `fruit_jelly` at `layer2`: SegF1 = 0, docs/14 B3).
+    ``valq`` is the validation pixel quantile at `cfg.pixel_fpr`, which makes no
+    assumption about the shape. Pixels of one image are correlated, so the
+    quantile is an empirical rate, not a bound.
+    """
+    # Validation pass: pooled statistics and a histogram of the native maps.
     total = total_sq = count = 0.0
+    vlo, vhi = val.raw_range()
+    vhist = PixelHistogram(vlo, vhi, bins=cfg.pixel_auroc_bins)
     for native in val.native_maps(cfg.smoothing_sigma):
         flat = native.ravel()
         total += float(flat.sum())
         total_sq += float(np.square(flat).sum())
         count += flat.size
+        vhist.add(flat, np.zeros(flat.size, dtype=bool))
     mean = total / count
     std = float(np.sqrt(max(0.0, total_sq / count - mean**2)))
     tau = sigma_from_stats(mean, std, n_sigma=cfg.sigma_n, n_pixels=count)
+    tau_q = pixel_quantile_from_histogram(vhist.neg, vhist.edges, pixel_fpr=cfg.pixel_fpr)
 
     # Test pass: histogram, confusion counts and AU-PRO samples together.
     lo, hi = test.raw_range()
@@ -322,31 +342,38 @@ def pixel_metrics(
     est_negatives = float(sum(w * h for w, h in test.native_sizes))
     rate = min(1.0, cfg.max_negative_samples / max(est_negatives, 1.0))
     pro = PROAccumulator(negative_rate=rate, seed=cfg.sampling_seed)
-    tp = fp = fn = tn = 0
+    # confusion counts (tp, fp, fn, tn) at each segmentation threshold
+    thresholds = {"3sigma": tau.value, "valq": tau_q.value}
+    counts = {name: np.zeros(4, dtype=np.int64) for name in thresholds}
 
     for native, mask in zip(test.native_maps(cfg.smoothing_sigma), test.masks()):
         if native.shape != mask.shape:
             raise ValueError(f"map {native.shape} and mask {mask.shape} differ")
         hist.add(native, mask)
         pro.add(native, mask)
-        pred = native > tau.value
-        tp += int(np.count_nonzero(pred & mask))
-        fp += int(np.count_nonzero(pred & ~mask))
-        fn += int(np.count_nonzero(~pred & mask))
-        tn += int(np.count_nonzero(~pred & ~mask))
+        for name, value in thresholds.items():
+            pred = native > value
+            counts[name] += (np.count_nonzero(pred & mask), np.count_nonzero(pred & ~mask),
+                             np.count_nonzero(~pred & mask), np.count_nonzero(~pred & ~mask))
 
-    precision = tp / (tp + fp) if (tp + fp) else 0.0
-    recall = tp / (tp + fn) if (tp + fn) else 0.0
+    tp, fp, fn, tn = (int(c) for c in counts["3sigma"])
     out: dict[str, Any] = {
-        "threshold_3sigma": tau.value,
         "pixel_auroc": hist.auroc() if (tp + fn) and (fp + tn) else float("nan"),
-        "segf1_3sigma": 2 * precision * recall / (precision + recall) if precision + recall else 0.0,
-        "iou_3sigma": tp / (tp + fp + fn) if (tp + fp + fn) else 0.0,
         "pixel_tp": tp,
         "pixel_fp": fp,
         "pixel_fn": fn,
         "negative_sample_rate": rate,
+        "pixel_fpr_requested": cfg.pixel_fpr,
+        "validation_pixel_fpr_valq": float(tau_q.params["effective_fpr"]),
     }
+    for name, c in counts.items():
+        tp, fp, fn, tn = (int(x) for x in c)
+        precision = tp / (tp + fp) if (tp + fp) else 0.0
+        recall = tp / (tp + fn) if (tp + fn) else 0.0
+        out[f"threshold_{name}"] = thresholds[name]
+        out[f"segf1_{name}"] = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+        out[f"iou_{name}"] = tp / (tp + fp + fn) if (tp + fp + fn) else 0.0
+        out[f"pixel_fpr_{name}"] = fp / (fp + tn) if (fp + tn) else float("nan")
     if pro.regions:
         curves = pro.curves(cfg.aupro_limits, num_thresholds=cfg.aupro_num_thresholds)
         for limit, curve in curves.items():

@@ -125,6 +125,18 @@ def _squared_distances(data, squared_norms, centre, tile: int):
 # ---------------------------------------------------------------------------
 
 
+#: Settings added after runs were registered, with their defaults. `hparams()` omits each one
+#: at its default, so every configuration registered before it existed keeps its identity and
+#: the frozen analyses that match recipes by their hyperparameters keep matching (adding
+#: `bank_exposures` unconditionally broke `scripts/ad2_confirmation_analysis.py`).
+LATE_SETTINGS: dict[str, Any] = {"bank_exposures": [], "bank_relight": 0}
+
+
+def _late_settings(hparams: dict[str, Any]) -> dict[str, Any]:
+    """`hparams` without the late settings that sit at their defaults."""
+    return {k: v for k, v in hparams.items() if not (k in LATE_SETTINGS and v == LATE_SETTINGS[k])}
+
+
 @dataclass(frozen=True)
 class PatchScores:
     patch_scores: Any  # torch.Tensor (P,)
@@ -251,6 +263,7 @@ class PatchCore(AnomalyModel):
         reweight: bool = True,
         reweight_neighbors: int = 9,
         bank_exposures: tuple[float, ...] = (),
+        bank_relight: int = 0,
         query_chunk: int = 4096,
         batch_size: int = 4,
         feature_dtype: str = "float16",
@@ -287,6 +300,11 @@ class PatchCore(AnomalyModel):
         #: shifts (in stops), so normal patches seen under other lighting are in the candidate
         #: pool. Calibration and test images are never shifted.
         self.bank_exposures = tuple(float(s) for s in bank_exposures)
+        #: Likewise for light direction and colour: this many randomly relit copies of each
+        #: training image (`transforms.relight`, seeded by model seed, image and copy).
+        if bank_relight < 0:
+            raise ValueError(f"bank_relight must be >= 0, got {bank_relight}")
+        self.bank_relight = int(bank_relight)
         self.query_chunk = query_chunk
         self.batch_size = batch_size
         self.seed = seed
@@ -301,17 +319,25 @@ class PatchCore(AnomalyModel):
         self._stats: dict[str, Any] = {}
 
     # -- fitting -----------------------------------------------------------
+    @property
+    def _variants_per_image(self) -> int:
+        return 1 + len(self.bank_exposures) + self.bank_relight
+
     def _iter_preprocessed(self, index) -> Iterator[np.ndarray]:
-        if not self.bank_exposures:
+        if self._variants_per_image == 1:
             yield from super()._iter_preprocessed(index)
             return
-        from ..data.transforms import exposure_shift, load_image
+        from ..data.transforms import exposure_shift, load_image, relight
 
-        for sample in index:
+        for i, sample in enumerate(index):
             image = load_image(sample.image_path)
             for stops in (0.0, *self.bank_exposures):
                 shifted = image if stops == 0.0 else exposure_shift(image, stops)
                 yield self.transform.normalize_image(self.transform.resize_image(shifted))
+            resized = self.transform.resize_image(image)  # the field is smooth: relight after resizing
+            for copy in range(self.bank_relight):
+                rng = np.random.default_rng((self.seed, i, copy))
+                yield self.transform.normalize_image(relight(resized, rng))
 
     # -- fitting -----------------------------------------------------------
     def _fit(self, images: Iterator[np.ndarray]) -> None:
@@ -338,8 +364,8 @@ class PatchCore(AnomalyModel):
                 pick = np.sort(rng.choice(n_patches, size=n_pick, replace=False))
             kept.append(np.asarray(desc[pick]))
             rows, cols = np.divmod(pick, grid[1])
-            # with exposure variants, several embedded images come from one training image
-            source = image_idx // (1 + len(self.bank_exposures))
+            # with exposure or relit variants, several embedded images come from one training image
+            source = image_idx // self._variants_per_image
             sources.append(np.stack([np.full_like(pick, source), rows, cols], axis=1))
 
         if not kept:
@@ -393,7 +419,7 @@ class PatchCore(AnomalyModel):
             "patch_reduction": self.patch_reduction,
             "reweight": self.reweight,
             "reweight_neighbors": self.reweight_neighbors,
-            "bank_exposures": list(self.bank_exposures),
+            **_late_settings({"bank_exposures": list(self.bank_exposures), "bank_relight": self.bank_relight}),
             "seed": self.seed,
         }
 
@@ -469,7 +495,7 @@ class PatchCore(AnomalyModel):
 
     def load_state_dict(self, state: dict[str, Any]) -> PatchCore:
         """Restore a fitted bank. Hyperparameters must match the constructor."""
-        if state["hparams"] != self.hparams():
+        if _late_settings(state["hparams"]) != _late_settings(self.hparams()):
             raise ValueError(
                 "hyperparameters differ from the saved model; construct the model with the "
                 f"saved settings. saved={state['hparams']}, current={self.hparams()}"

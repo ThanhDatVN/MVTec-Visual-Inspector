@@ -352,6 +352,46 @@ worse on none. A carried variant must also cost no more than 0.01 image AUROC on
 development categories (seed 0). Everything here is development evidence: the held-out arbiter is
 MVTec's server on the private splits, with v1 and the best variant submitted once each.
 
+### Stage H⁗ — Lighting remedies on MVTec AD 2 (E15; laptop)
+
+*Diagnosis (2026-10-13, `scripts/ad2_condition_study.py` on the stored E13 predictions).*
+`test_public` shows every object under several captures, `<object>_<condition>.png`: `regular`,
+`overexposed`, `underexposed` and `shift_1`..`shift_k`. Train and validation hold `regular` only.
+Against the `regular` capture of the same object, over- and under-exposure are a pure global gain
+(grey-level correlation ≥ 0.992, equal channel gains 0.76–1.18), while `shift_k` changes the
+spatial structure of the lighting (correlation 0.82–0.99: highlights and shading move) and its
+colour (blue/red ratio down to 0.78). E13's excess false alarms sit almost entirely in `shift`:
+
+| v1 (v2) | regular | overexposed | underexposed | shift |
+|---|---|---|---|---|
+| false alarms / normals, pooled | 5.7% (2.6%) | 5.7% (3.6%) | 5.2% (4.2%) | 22.8% (31.2%) |
+| macro image AUROC | 0.686 (0.742) | 0.694 (0.734) | 0.698 (0.740) | 0.684 (0.659) |
+
+So the operating point holds under the training lighting, and E14b–d, which target global
+exposure, address a condition that is not failing; they run to completion as registered. The
+six captures of one object are also not independent: E13's image bootstrap understated the
+uncertainty (object bootstrap: `sheet_metal` +0.156 is no longer significant, `vial` −0.111 still
+is; the verdict, not confirmed, stands). From E15 on, the object is the resampling unit on AD 2.
+
+Written down before any E15 run, after the diagnosis above and after a dry run of the analysis
+script on the partial E14 `gain` runs (2026-10-13):
+
+| # | Run | n | Addresses |
+|---|-----|---|-----------|
+| E15-ref | Recipe v1, seed 0, at the E15 implementation | 8 | must reproduce E13's seed-0 predictions |
+| E15a | v1 + flat-field normalization (`preprocess.normalize: flatfield`: each channel divided by its blur at σ = 0.1 × long side) | 8 | smooth shading and colour casts, removed |
+| E15b | v1 + relit bank (`model.bank_relight: 2`: two copies of each training image under a random smooth light field, gain 0.6–1.2 and colour cast, `transforms.relight`) | 8 | the same, covered in the bank |
+
+*Screen → 3 seeds* (`scripts/e15_analysis.py`). Against E15-ref, all eight categories, seed 0: a
+variant goes to seeds 1–2 if the pooled false alarms among `shift` normals fall by at least half
+with no category significantly worse in image AUROC, **or** image AUROC is significantly better on
+≥ 3 categories and worse on none — significance by the paired, class-stratified **object**
+bootstrap (10,000 resamples, Holm over 8). A carried variant must also cost no more than 0.01 image
+AUROC on the VisA development categories (seed 0). If both carry, their combination is screened
+next, and a carried remedy is also screened on v2 (`layer2`, 960 px), which is the better recipe
+under `regular` lighting. The arbiter stays MVTec's server: `test_private_mixed` is the mixed-lighting
+split, so it is the direct held-out test of any lighting remedy.
+
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 
 | # | Deliverable | Spec |
