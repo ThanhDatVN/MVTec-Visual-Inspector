@@ -269,7 +269,9 @@ class TiledKNN(AnomalyModel):
                 best[a:a + self.query_chunk] = torch.minimum(best[a:a + self.query_chunk], d2.min(1).values)
         return best.clamp_min(0).sqrt()
 
-    def _score(self, image: np.ndarray) -> tuple[float, np.ndarray]:
+    def layer_maps(self, image: np.ndarray) -> np.ndarray:
+        """Per-block distance maps (L, Ht, Wt) of one preprocessed image, each divided by its
+        feature dimension; their mean is the anomaly map. Exposed for learned fusion (E23)."""
         import torch
 
         if not self.banks:
@@ -279,7 +281,10 @@ class TiledKNN(AnomalyModel):
         with torch.inference_mode():
             maps = [self._nn_distance(li, g.reshape(g.shape[0], -1).T).reshape(ht, wt) / g.shape[0]
                     for li, g in enumerate(grids)]
-            anomaly_map = torch.stack(maps).mean(0).cpu().numpy().astype(np.float64)
+            return torch.stack(maps).cpu().numpy().astype(np.float64)
+
+    def _score(self, image: np.ndarray) -> tuple[float, np.ndarray]:
+        anomaly_map = self.layer_maps(image).mean(0)
         return float(anomaly_map.max()), anomaly_map
 
     # -- identity ---------------------------------------------------------

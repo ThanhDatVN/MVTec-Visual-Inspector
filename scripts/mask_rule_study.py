@@ -72,7 +72,7 @@ def gains_args() -> dict:
 
 def evaluate_rules(val: SplitPredictions, test: SplitPredictions, ev: dict, name: str, category: str,
                    posts: dict[str, MaskRule] | None = None, keep: set[str] | None = None,
-                   dump: Path | None = None) -> list[dict]:
+                   dump: Path | None = None, extra_taus: dict[str, float] | None = None) -> list[dict]:
     """One row per (rule, subset): `all` images (the mixed-lighting proxy) and `regular` only (the
     `test_private` proxy: the private split holds the training lighting only).
 
@@ -83,8 +83,9 @@ def evaluate_rules(val: SplitPredictions, test: SplitPredictions, ev: dict, name
     rejection) of every rule are saved there, for split-half analyses of threshold choices.
     """
     sigma = ev["smoothing_sigma"]
-    taus = thresholds(val, sigma, ev["sigma_n"])
+    taus = {**thresholds(val, sigma, ev["sigma_n"]), **(extra_taus or {})}
     posts = posts or {"plain": PLAIN, "morph": MORPH}
+    keep = None if keep is None else set(keep) | set(extra_taus or {})
     base = {(t, kind): (taus[t], rule) for t in taus if keep is None or t in keep for kind, rule in posts.items()}
     keys = [(t, kind, c) for (t, kind) in base for c in (0.0, *MARKS)]
     subsets = ("all", "regular", "defective")  # defective: anomalous images only (SuperADD's TEST_pub F1)
