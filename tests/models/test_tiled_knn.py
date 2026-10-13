@@ -15,7 +15,7 @@ timm = pytest.importorskip("timm")
 
 
 def test_tile_plan_covers_every_token_once_with_the_requested_overlap():
-    for length in (40, 41, 95, 165, 400):
+    for length in (40, 41, 57, 95, 165, 400):
         plan = tile_plan(length, 40, 8)
         kept = np.zeros(length, dtype=int)
         for s, e, a, b in plan:
@@ -27,6 +27,8 @@ def test_tile_plan_covers_every_token_once_with_the_requested_overlap():
             assert e0 - s1 >= 16  # at least `overlap` on each side of the boundary
             assert b0 == a1 and b0 - s1 >= 8 and e0 - b0 >= 8  # each token at least 8 from a window edge
     assert tile_plan(30, 40, 8) == [(0, 30, 0, 30)]
+    assert tile_plan(56, 40, 8) == [(0, 56, 0, 56)]  # within tile + 2 * overlap: one window
+    assert len(tile_plan(57, 40, 8)) == 2
 
 
 def test_density_subsample_drops_duplicates_before_outliers():

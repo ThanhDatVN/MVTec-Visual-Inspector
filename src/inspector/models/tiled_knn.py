@@ -44,9 +44,11 @@ def tile_plan(length: int, tile: int, overlap: int) -> list[tuple[int, int, int,
     Windows of `tile` tokens, evenly spread so the first starts at 0 and the last ends at
     `length`, with at least `overlap` tokens shared on each side of an interior boundary. Each
     token is kept from the window in which it lies furthest from the edge: the boundary between
-    two windows is the middle of their overlap. An axis shorter than `tile` is one window.
+    two windows is the middle of their overlap. An axis no longer than `tile + 2 * overlap` is one
+    window of its full length: two windows would overlap almost entirely (`sheet_metal` scaled by
+    0.625 is 41 tokens high against a 40-token tile) and double the cost for nothing.
     """
-    if length <= tile:
+    if length <= tile + 2 * overlap:
         return [(0, length, 0, length)]
     step = tile - 2 * overlap
     if step <= 0:
@@ -95,7 +97,7 @@ class TiledKNN(AnomalyModel):
         image_score: str = "max",
         compute: str = "autocast",
         tile_batch: int = 2,
-        query_chunk: int = 4096,
+        query_chunk: int = 1024,
         bank_chunk: int = 32768,
         device: str = "auto",
         seed: int = 0,

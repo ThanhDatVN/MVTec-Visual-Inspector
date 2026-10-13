@@ -5,7 +5,7 @@ For each run, the validation maps (normal images only) give the thresholds:
 * `3sigma`  — mean + 3 SD of the validation pixels (what S1 submitted);
 * `p95xG`   — the validation pixels' 95th percentile times a gain G (SuperADD's rule, which
               sets G = 1.421 for its own maps; the gain depends on the map type, so it is scanned);
-* `q0.1%`   — the validation pixel quantile at a 0.1% rate.
+* `qR`      — the validation pixel quantile at a normal-pixel rate R (1% down to 0.01%).
 
 Each threshold is applied bare (`plain`) and with the shape post-processing of
 `inspector.postproc.binarize.MaskRule` (`morph`). SegF1 and ClassF1 are computed as the server does
@@ -30,7 +30,8 @@ from inspector.metrics.pixel_level import PixelHistogram
 from inspector.postproc.binarize import PLAIN, MaskRule
 from inspector.postproc.thresholds import pixel_quantile_from_histogram, sigma_from_stats
 
-GAINS = (1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 2.0, 2.3)
+GAINS = tuple(round(1.0 + 0.05 * i, 2) for i in range(21))  # 1.00 .. 2.00
+RATES = (1e-2, 5e-3, 2e-3, 1e-3, 5e-4, 2e-4, 1e-4)
 MORPH = MaskRule()
 
 
@@ -47,8 +48,8 @@ def thresholds(val: SplitPredictions, sigma: float, n_sigma: float) -> dict[str,
     mean = total / count
     std = float(np.sqrt(max(0.0, total_sq / count - mean**2)))
     p95 = pixel_quantile_from_histogram(hist.neg, hist.edges, pixel_fpr=0.05).value
-    out = {"3sigma": sigma_from_stats(mean, std, n_sigma=n_sigma).value,
-           "q0.1%": pixel_quantile_from_histogram(hist.neg, hist.edges, pixel_fpr=0.001).value}
+    out = {"3sigma": sigma_from_stats(mean, std, n_sigma=n_sigma).value}
+    out.update({f"q{r:g}": pixel_quantile_from_histogram(hist.neg, hist.edges, pixel_fpr=r).value for r in RATES})
     out.update({f"p95x{g:g}": p95 * g for g in GAINS})
     return out
 
