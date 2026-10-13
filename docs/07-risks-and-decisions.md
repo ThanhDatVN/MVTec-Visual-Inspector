@@ -500,6 +500,61 @@ not displayed). ([report](../reports/E14-E15-ad2-development.md), S1.)
 
 ---
 
+### ADR-15 — Candidate v4 for MVTec's server: tiled DINOv3 fused with WRN50, masks per server metric
+
+**Status:** Accepted, 2026-10-13. Committed and pushed before the v4 export and before any server
+result for it. The last submission the protocol allows (two; S1 was the first).
+
+**Context.** S1 put recipe v1 at AU-PRO@0.05 37.64 / 35.11 and SegF1 26.42 / 23.01 on
+`test_private` / `test_private_mixed` — above every baseline of the AD 2 paper and about half of
+the challenge systems (VAND 3.0 winner ISVL 53.81 / 51.43 SegF1; SuperADD, VAND 4.0, 57.42 /
+54.35). E21 (development, `test_public`) rebuilt the localization pipeline from the published
+training-free methods (SuperAD, SuperADD) and measured each server metric separately, with a proxy
+that reproduces the server's numbers for v1 within −1.2 to +3.2 points
+(`scripts/mask_rule_study.py`; `regular` captures for the private split, all captures for the
+mixed one).
+
+**Decision.**
+
+1. **Maps (AU-PRO).** Two components, each fitted on `train/good` (seed 0):
+   [`candidate-v4-component-dinov3l.yaml`](../configs/recipes/candidate-v4-component-dinov3l.yaml)
+   — DINOv3 ViT-L/16 blocks 5, 11, 17, 23 over 640 px tiles of the image scaled by 0.625, a
+   density-subsampled 100k bank per block, brightness augmentation 0.8–1.2 — and
+   [`candidate-v3-patchcore-1280.yaml`](../configs/recipes/candidate-v3-patchcore-1280.yaml)
+   (frozen by ADR-14). Each map is divided by the 95th percentile of its own validation pixels at
+   a quarter of native resolution; the submitted map is their maximum.
+2. **Masks (SegF1).** Threshold: the fused validation pixels' 95th percentile × 1.25. Shape:
+   `MaskRule` — line closing at 16 orientations, radius 26 px at quarter resolution, kept where
+   the map exceeds 0.8 × the threshold, holes filled, 1 px erosion.
+3. **Image decision (ClassF1).** `mark = 0.9`: an image whose mask is empty but whose map
+   exceeds 0.9 × the threshold receives one quarter-resolution pixel at its maximum. The server
+   derives the image decision from mask emptiness; this encodes an image-level decision at a
+   lower threshold than the pixel one, at a cost of 16 pixels per marked image.
+4. **Frozen as one global setting:**
+   [`candidate-v4-fusion.yaml`](../configs/recipes/candidate-v4-fusion.yaml). No category has its
+   own setting. Chosen on `test_public`: ViT-L over ViT-H+ (four-category screen: AU-PRO 0.595
+   vs 0.581, half the cost), max fusion over DINOv3 alone (AU-PRO 0.500 → 0.564) and over mean
+   fusion, the gain and the mark from grids.
+5. **Export** with `scripts/export_ad2_submission.py` from a clean worktree at this commit,
+   checked with MVTec's `check_and_prepare_data_for_upload.py`; the owner uploads it once.
+6. **H5, pre-registered predictions** on the server's means (development estimates in brackets,
+   private / mixed: AU-PRO 58.1 / 56.4, SegF1 59.5 / 57.1, ClassF1 — / 80.6):
+   - H5a: AU-PRO@0.05 at least **10 points** above v1 on both splits (≥ 47.64 and ≥ 45.11);
+   - H5b: SegF1 at least **20 points** above v1 on both splits (≥ 46.42 and ≥ 43.01);
+   - H5c: ClassF1 not below v1's (73.91 / 76.21).
+   v4 is *confirmed* as the project's localization recipe for AD 2 if H5a and H5b hold. The
+   development estimates are selection-biased (D1: twice before, development effects shrank on
+   held-out data), which is why the bars sit well below them.
+
+**Consequences.** (+) The pipeline closest to the published state of the art that the 4 GB card
+can run. (+) One configuration for every category, as VAND 4.0 requires. (−) About 2 s per image
+on the RTX 3050 and two models per category; v1 stays the recipe where an image-level decision at a
+calibrated false-alarm rate is what matters (VisA, MPDD, E12). (−) DINOv3 weights are Meta's
+(DINOv3 License); SuperAD/SuperADD are reimplemented from their papers, no code copied (theirs is
+CC BY-NC 4.0).
+
+---
+
 ### Open decisions (resolve before the stated gate)
 
 | # | Question | Resolve by |

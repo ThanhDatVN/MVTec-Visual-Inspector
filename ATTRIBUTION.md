@@ -86,6 +86,17 @@ the same licence, so the reference pipeline can run as a comparator (`anomalib_p
 `lib`) without installing anomalib. Its modifications are listed at the top of that file.
 
 
+
+## Methods and weights used by candidate v4 (ADR-15)
+
+- **DINOv3** backbone weights (`vit_large_patch16_dinov3.lvd1689m`, loaded through timm), © Meta
+  Platforms, under the DINOv3 License; Siméoni et al., *DINOv3*, arXiv:2508.10104, 2025. Downloaded
+  at run time; no weights are redistributed here.
+- `src/inspector/models/tiled_knn.py` and `src/inspector/postproc/binarize.py` reimplement, from
+  the papers' descriptions, methods of **SuperAD** (Zhang et al., arXiv:2505.19750, 2025) and
+  **SuperADD** (Roming et al., arXiv:2605.14808, 2026). No code is copied from their repositories
+  (SuperADD's is CC BY-NC 4.0).
+
 ---
 
 > ⚠ **Verification pending (Gate P1).** The MVTec AD 2 author list and page numbers above were

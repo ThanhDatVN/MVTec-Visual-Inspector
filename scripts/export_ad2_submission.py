@@ -71,7 +71,12 @@ def main() -> int:
     ap.add_argument("--categories", nargs="+", default=list(CATEGORIES), choices=CATEGORIES)
     ap.add_argument("--train-limit", type=int, default=None,
                     help="testing the export only; a real submission fits on the full training split")
+    ap.add_argument("--test-images", type=int, default=None,
+                    help="testing the export only: the first N images of each split")
     args = ap.parse_args()
+
+    def first(index):
+        return list(index)[: args.test_images] if args.test_images else list(index)
     try:
         import tifffile
     except ImportError:
@@ -121,7 +126,7 @@ def main() -> int:
                                         gains=gains)[name]
 
             def test_maps(split, model=model, idx=idx, sigma=ev.smoothing_sigma):
-                for sample in idx[split]:
+                for sample in first(idx[split]):
                     yield sample, native_map(model, sample, sigma)
 
             provenance = {"run_spec_id": spec.run_id, "method": cfg["model"]["name"]}
@@ -138,7 +143,7 @@ def main() -> int:
                 ids.append(spec.run_id)
                 for split in ("validation", *SPLITS):
                     (store / str(k) / split).mkdir(parents=True, exist_ok=True)
-                    for sample in idx[split]:
+                    for sample in (idx[split] if split == "validation" else first(idx[split])):
                         np.save(store / str(k) / split / f"{Path(sample.image_path).stem}.npy",
                                 quarter(native_map(model, sample, sigma)) / norms[-1])
                 del model, val
@@ -160,7 +165,7 @@ def main() -> int:
                 lo, hi, n_sigma=ev.sigma_n, gains=gains)[name]
 
             def test_maps(split, idx=idx):
-                for sample in idx[split]:
+                for sample in first(idx[split]):
                     with Image.open(sample.image_path) as im:
                         size = im.size
                     m = fused(split, Path(sample.image_path).stem)
@@ -185,10 +190,11 @@ def main() -> int:
                 mask = rule.apply(native, tau)
                 n_rejected += bool(mask.any())
                 Image.fromarray(np.where(mask, 255, 0).astype(np.uint8)).save(masks_dir / f"{stem}.png")
-            counts[split], rejected[split] = len(idx[split]), n_rejected
+            counts[split], rejected[split] = len(first(idx[split])), n_rejected
         log.append({"category": cat, **provenance, "seed": args.seed, "threshold_rule": name, "pixel_threshold": tau,
                     "mask_rule": rule.as_dict(), "counts": counts, "images_with_mask": rejected,
-                    "seconds": time.perf_counter() - t0, "train_limit": args.train_limit})
+                    "seconds": time.perf_counter() - t0, "train_limit": args.train_limit,
+                    "test_images": args.test_images})
         print(log[-1], flush=True)
         log_path.parent.mkdir(parents=True, exist_ok=True)
         log_path.write_text(json.dumps({"recipe": args.recipe, "categories": log}, indent=1), encoding="utf-8")

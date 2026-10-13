@@ -1,0 +1,29 @@
+# FROZEN component of candidate v4 (ADR-15): the tiled DINOv3-L nearest-neighbour model
+# (src/inspector/models/tiled_knn.py, after SuperAD/SuperADD, arXiv:2505.19750 / 2605.14808,
+# reimplemented). Selected on MVTec AD 2 test_public (development) by E21; ViT-L over ViT-H+ on a
+# four-category screen (higher AU-PRO, half the cost). Do not edit: a change needs a new ADR.
+
+experiment:
+  tier: T3
+  owner: own
+
+preprocess:
+  resize_mode: none   # the model scales and tiles internally
+  long_side: null
+
+model:
+  name: tiled_knn
+  backbone: vit_large_patch16_dinov3
+  weights: lvd1689m
+  layers: [5, 11, 17, 23]
+  scale: 0.625
+  tile: 640
+  overlap: 128
+  brightness: [0.8, 1.2]
+  candidate_fraction: 0.1
+  bank_size: 100000
+  density_neighbors: 100
+  subset_size: 4096
+  image_score: max
+  compute: autocast
+  tile_batch: 2
