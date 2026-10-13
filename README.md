@@ -187,6 +187,12 @@ changed-lighting normals and the defects are simply not separable with these fea
 Resolution is the one lever that works on AD 2 (E19): v1 at 1280 px lifts `sheet_metal` from
 0.63 to 0.86 image AUROC (3 seeds) and `fabric`'s AU-PRO from 0.15 to 0.52 — but applied to every
 category it costs `vial` 0.14, so the pre-registered gate kept it off the server (ADR-14, E20).
+
+**Held-out, MVTec's server (S1):** v1 scores AU-PRO@0.05 **37.6** on `test_private` and **35.1** on
+`test_private_mixed`, SegF1 26.4 / 23.0 — above every baseline in the AD 2 paper (best: 30.8 AU-PRO,
+21.8 SegF1, all at 256×256) and with the smallest lighting drop, but about half of the VAND 2025
+challenge system RoBiS (67.3 / 51.0). ClassF1 (73.9 / 76.2) sits near the trivial reject-all floor,
+as RoBiS's does. [Report](reports/E14-E15-ad2-development.md).
 The image-score failure is separate: it persists under the training lighting. The captures of one
 object are one sample, so AD 2 intervals are computed over objects from here on.
 [Report](reports/E14-E15-ad2-development.md).

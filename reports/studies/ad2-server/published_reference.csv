@@ -1,0 +1,9 @@
+method,source,input,aupro_005_private,aupro_005_mixed,segf1_private,segf1_mixed,classf1_private,classf1_mixed
+PatchCore (ensemble WRN101/ResNeXt101/DenseNet201),AD 2 paper arXiv:2503.21622 Tables VII/VIII/XII,256x256,28.8,26.0,3.7,3.4,8.0,9.9
+RD,AD 2 paper,256x256,26.4,25.0,18.1,16.7,70.8,72.9
+RD++,AD 2 paper,256x256,27.1,25.2,19.2,16.7,70.5,73.0
+EfficientAD,AD 2 paper,256x256,30.8,19.2,15.4,8.0,76.8,77.8
+MSFlow,AD 2 paper,256x256,24.3,11.9,21.8,9.0,51.1,72.0
+SimpleNet,AD 2 paper,256x256,21.1,13.7,17.7,8.7,73.3,77.1
+DSR,AD 2 paper,256x256,20.3,17.4,10.9,9.5,78.0,78.0
+RoBiS (INP-Former DINOv2-R ViT-B + MEBin + SAM),arXiv:2505.21152 Table 2,1024 crops resized to 518,67.25,59.65,51.00,46.52,79.62,79.86

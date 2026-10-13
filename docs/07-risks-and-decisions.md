@@ -494,6 +494,10 @@ fit time and host memory; still within the laptop.
 0.731 and macro AU-PRO@0.05 0.351 → 0.473 (higher on all eight categories). v3 is not exported,
 H4 is not tested, and v1 remains the recipe; S1 is the only submission.
 
+**S1 result (2026-10-13, owner's upload):** v1 AU-PRO@0.05 37.64 / 35.11, SegF1 26.42 / 23.01,
+ClassF1 73.91 / 76.21 on `test_private` / `test_private_mixed` (server means; per-category numbers
+not displayed). ([report](../reports/E14-E15-ad2-development.md), S1.)
+
 ---
 
 ### Open decisions (resolve before the stated gate)
@@ -503,6 +507,6 @@ H4 is not tested, and v1 remains the recipe; S1 is the only submission.
 | OD-1 | Does `test_public` contain lighting variation, or is that confined to `test_private_mixed`? Determines whether the native-lighting control needs a leaderboard submission. | **Resolved (E13):** the guards fitted on training normals refuse 20–83% of `test_public` normals in six of eight categories (0–8% of validation normals); `test_public` contains capture shifts. |
 | OD-2 | Which classic-AD categories and which published PatchCore numbers form the G5 reproduction target, and at what tolerance? | G2 |
 | OD-3 | Which AU-PRO FPR-normalization convention does the reference implementation use (normal images only, vs all normal pixels)? Pin it in a docstring. | G2 |
-| OD-4 | Resolve the AD 2 "below 60% AU-PRO" vs ~31% AU-PRO@0.05 discrepancy — different integration limit, or different split? | G2 |
+| OD-4 | Resolve the AD 2 "below 60% AU-PRO" vs ~31% AU-PRO@0.05 discrepancy — different integration limit, or different split? | **Resolved (2026-10-13):** different integration limit — the abstract's figure is AU-PRO@0.30 (EfficientAD 58.7 on TEST_priv, AD 2 paper Table IX). |
 | OD-5 | DINOv2/DINOv3 ViT backbones in the PatchCore ablation: worth the patch-token plumbing, or cut for time? | **Resolved (E18):** built and screened; not carried (`rice` +0.33, `vial` −0.17, more lighting-sensitive). |
 | OD-6 | Do we make a leaderboard submission at all? | **Resolved (ADR-13 §6, ADR-14):** v1 exported and checked (S1); v3 after its gate (S2); uploads are the owner's. |

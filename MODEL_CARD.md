@@ -69,6 +69,7 @@ validation mean + 3σ of the map (`OP-3SIGMA`).
 | 9 VisA confirmation categories, pre-registered (ADR-11) | **0.981** macro (0.971–0.996) | 0.766 | 10 observed / 19.7 expected over 27 runs; bound fails on `pipe_fryum` | [E12](reports/E12-confirmation-v1.md) |
 | MPDD, 6 categories, other camera and factory, pre-registered (ADR-12) | **0.943** macro (≥ 0.88 each) | 0.861 | 31 / 28.4 at relaxed bounds (2.3–11.1%) | [H1](reports/H1-mpdd-transfer.md) |
 | MVTec AD 2 `test_public`, 8 categories, pre-registered (ADR-13) | **0.685** macro (0.48–0.90) | 0.357 | 160 / 29.2 at relaxed bounds (2.0–5.0%) | [E13](reports/E13-confirmation-v2-mvtec-ad2.md) |
+| MVTec AD 2 `test_private` / `test_private_mixed`, MVTec's server, seed 0 | — (server reports localization) | **0.376 / 0.351**; SegF1 0.264 / 0.230 | — | [S1](reports/E14-E15-ad2-development.md) |
 
 ### Performance across conditions
 
@@ -90,8 +91,10 @@ training normals' exposure and focus range in 20–83% of cases in six categorie
 point fails there (pooled false alarms 160 against 29 expected). By capture condition (E14–E15):
 under the training lighting and under a global exposure change the false-alarm rate is 5–6%, near
 its bound; under a changed light direction and colour it is 22.8%, and none of five photometric
-remedies brought it down. The private mixed-lighting split needs MVTec's server and is not
-measured.
+remedies brought it down. On the server's held-out splits the mixed lighting costs 2.5 AU-PRO points
+(37.6 → 35.1) and 3.4 SegF1 points (26.4 → 23.0) — less than any baseline of the AD 2 paper —
+and v1 is above all of those baselines on both splits, but at about half the AU-PRO and SegF1
+of the VAND 2025 challenge system RoBiS (67.3, 51.0).
 
 **By defect type:** VisA's one-class split labels every defect "anomaly", so no per-type breakdown
 exists. By defect *size*, misses concentrate on small defects whose peaks fall below a threshold

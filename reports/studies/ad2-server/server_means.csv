@@ -1,0 +1,3 @@
+recipe,submission,date,split,aupro_005,classf1,segf1,runtime_ms,memory_mb,source
+v1,v1-patchcore-640.tar.gz (sha256 f98eb8ba66983592085436a6e53a8d1dda923ae869071fc930e07362c3f024aa),2026-10-13,test_private,37.64,73.91,26.42,99,574,benchmark.mvtec.com submission table (owner's account; means over 8 categories as displayed)
+v1,v1-patchcore-640.tar.gz (sha256 f98eb8ba66983592085436a6e53a8d1dda923ae869071fc930e07362c3f024aa),2026-10-13,test_private_mixed,35.11,76.21,23.01,99,574,benchmark.mvtec.com submission table (owner's account; means over 8 categories as displayed)

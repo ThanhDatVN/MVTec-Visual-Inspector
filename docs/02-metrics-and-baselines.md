@@ -83,7 +83,14 @@ benchmark so we can recognize a broken implementation.
 | DSR | 20.3 | 10.9 | Quantized latent reconstruction |
 | RoBiS (VAND 3.0 challenge) | — | **51.0** | Challenge system: Swin-cropping + augmentation + adaptive binarization |
 
-> **Verification task (P2).** These figures were extracted from the arXiv HTML of the AD 2 paper
+> **Verified 2026-10-13** against arXiv:2503.21622 (Tables VII and VIII; every method at 256×256,
+> PatchCore as an ensemble of WRN-101, ResNeXt-101 and DenseNet-201) and arXiv:2505.21152 (Table 2:
+> RoBiS 67.25 / 59.65 AU-PRO@0.05 and 51.00 / 46.52 SegF1 on private / mixed). The "below 60%"
+> of the AD 2 abstract is AU-PRO@**0.30** (EfficientAD 58.7 on TEST_priv, Table IX), so there is
+> no discrepancy. Full table with the mixed split and ClassF1:
+> [`reports/studies/ad2-server/published_reference.csv`](../reports/studies/ad2-server/published_reference.csv).
+>
+> *Original note.* These figures were extracted from the arXiv HTML of the AD 2 paper
 > and the RoBiS paper. Before any of them appears in the final report, re-read the published IJCV
 > table and confirm each cell. Note also that the AD 2 abstract describes state-of-the-art
 > performance as "below 60% average AU-PRO", which does not match the ~20–31% in the per-method

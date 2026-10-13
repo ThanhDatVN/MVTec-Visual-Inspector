@@ -339,6 +339,62 @@ thin scratches need it, a backlit vial under changing light is hurt by it — an
 would be a new recipe for a new held-out test, not a revision of this one. Recipe v1 remains
 the recommended recipe, and S1 (v1) is the only submission.
 
+### S1 — the held-out result: recipe v1 on MVTec's server (2026-10-13)
+
+The only number in this project computed on AD 2 data that shaped nothing: v1, seed 0, exported as
+ADR-13 §6 prescribes (native-resolution float16 maps, masks at the validation mean + 3σ), uploaded
+by the owner, scored by benchmark.mvtec.com. The server shows means over the eight categories only
+([studies/ad2-server/server_means.csv](studies/ad2-server/server_means.csv)). Published anchors,
+re-read from the sources on 2026-10-13
+([studies/ad2-server/published_reference.csv](studies/ad2-server/published_reference.csv)):
+
+| method | input | AU-PRO@0.05 private / mixed | SegF1 private / mixed | ClassF1 private / mixed |
+|---|---|---|---|---|
+| **v1 (this project)** | 640 px long side | **37.64 / 35.11** | **26.42 / 23.01** | 73.91 / 76.21 |
+| PatchCore, AD 2 paper (ensemble of three backbones) | 256×256 | 28.8 / 26.0 | 3.7 / 3.4 | 8.0 / 9.9 |
+| EfficientAD, AD 2 paper (best paper AU-PRO) | 256×256 | 30.8 / 19.2 | 15.4 / 8.0 | 76.8 / 77.8 |
+| MSFlow, AD 2 paper (best paper SegF1) | 256×256 | 24.3 / 11.9 | 21.8 / 9.0 | 51.1 / 72.0 |
+| RoBiS, VAND 2025 challenge system | 1024 px crops → 518 | 67.25 / 59.65 | 51.00 / 46.52 | 79.62 / 79.86 |
+
+(AD 2 paper: arXiv:2503.21622, Tables VII, VIII and XII. RoBiS: arXiv:2505.21152, Table 2 — an
+INP-Former trained for 200 epochs on DINOv2-R ViT-B features, sliding-window crops, lighting
+augmentation, MEBin binarization and SAM refinement.)
+
+Reading:
+
+1. **v1 is above every baseline of the AD 2 paper on both localization metrics and both splits,**
+   and loses the least to the mixed lighting (−2.5 AU-PRO points against −11.6 for EfficientAD
+   and −12.4 for MSFlow). The paper ran every method at 256×256; v1 keeps the aspect ratio at a
+   640 px long side. Its SegF1 at the same 3σ rule is 26.4 against the paper PatchCore's 3.7.
+2. **It is far below the challenge system:** 56% of RoBiS's AU-PRO and 52% of its SegF1. The gap
+   is resolution (RoBiS sees each part through 1024 px crops), a trained model, and a
+   binarization stage (MEBin + SAM) — not something the operating point can recover.
+3. **ClassF1 says little.** The server rejects an image when any pixel of its mask is set. On
+   `test_public` the trivial rule *reject every image* scores 79.4 macro, because 65% of the images
+   are anomalous; v1's masks reject 65% of the normal images and score 77.7 there, 73.9 on the
+   private split. RoBiS's 79.6 sits at the same floor.
+4. **The development estimate held.** `scripts/ad2_server_proxy.py` recomputes the server's metrics
+   on `test_public` from the stored maps: v1 seed 0 gives AU-PRO 35.1, SegF1 20.5, ClassF1 77.7
+   against the server's 37.6, 26.4 and 73.9 on `test_private`. `test_public` predicts the private
+   split within a few points, which is what lets it select a candidate.
+
+**What the proxy says a next submission would gain** (development, `test_public`, seed 0;
+[studies/ad2-server/](studies/ad2-server/)):
+
+| candidate | AU-PRO@0.05 | SegF1 (3σ masks) | SegF1 (validation quantile masks) | ClassF1 (3σ / quantile) |
+|---|---|---|---|---|
+| v1, 640 px (submitted) | 35.1 | 20.5 | 21.7 | 77.7 / 79.5 |
+| v3, 1280 px | **47.3** | 16.3 | **21.4** | 71.6 / 80.8 |
+
+At 1280 px AU-PRO is higher on all eight categories (+12.2 macro). The 3σ masks fail at 1280 px on
+`fruit_jelly` (SegF1 0.001: the threshold lies above the defects, as for v2 in E13) and the
+validation-quantile masks repair it (0.221). Emptying the masks of images below the image
+operating threshold (`+gate`) costs both SegF1 and ClassF1 (v1: 20.5 → 15.0 and 77.7 → 34.4),
+because that threshold's recall is low; it is not a lever. ADR-14's gate kept v3 off the server
+for a loss in *image* AUROC on `vial`; the server ranks on localization, where v3 is better on
+every category. A localization candidate needs its own decision record (ADR-15), not a revision
+of ADR-14.
+
 ## 4. Localization: the pixel threshold (docs/14 B3, fixed)
 
 The evaluator now reports SegF1 at a second threshold, the validation pixel quantile at a 0.1%
