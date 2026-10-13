@@ -460,6 +460,22 @@ variant must also cost no more than 0.01 image AUROC on the VisA development cat
 (seed 0). The 14 px token grid is coarser than WRN50's 8 px `layer2` grid, so AU-PRO is reported
 and may fall; it is not part of the rule.
 
+*E18 outcome (2026-10-13).* E18-ref reproduced E13's seed-0 digests on all eight categories.
+Neither variant carried: ViT-S 1 gain (`rice` +0.334) / 1 loss (`vial` −0.172), ViT-B 1 / 1
+(+0.265 / −0.170); `shift` false alarms 41 → 95 of 187 for both.
+
+**E19 — resolution for the thin-defect categories (R1, A2).** Written down before any E19 run
+(2026-10-13), after E18. R1 as planned split images into tiles; on these images the 4 GB card
+embeds the whole image at the target resolution with batch size 1, so the experiment is the
+resolution itself, with recipe v1 otherwise unchanged (`layer2+3`, 10k bank, 10% candidates).
+Host memory for the candidate pool bounds the levels: `sheet_metal` (4224×1056, 137 training
+images) at 1280, 1920 and 2816 px; `fabric` and `rice` (2448×2048, 387 and 313 images) at 1280 px
+(1920 px would need ~11 GB for the pool). Seed 0, against E18-ref (640 px) at the same
+implementation; image AUROC by the object bootstrap, Holm over the five comparisons. Reading: a
+resolution goes to seeds 1–2 for its category if image AUROC is significantly better and AU-PRO
+not lower. `sheet_metal` has four normal objects, so only a large effect can reach significance;
+effect sizes are reported either way. 5 runs.
+
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 
 | # | Deliverable | Spec |

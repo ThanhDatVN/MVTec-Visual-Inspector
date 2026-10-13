@@ -1,4 +1,4 @@
-# E14–E17 — Development on MVTec AD 2 after E13: what fails, and why
+# E14–E18 — Development on MVTec AD 2 after E13: what fails, and why
 
 E13 left recipe v1 with near-chance image AUROC on four AD 2 categories and 5–7× its false-alarm
 bound. This report takes the two failures apart on `test_public`, which is development data from
@@ -39,12 +39,15 @@ MVTec's server). Dataset: MVTec AD 2 © MVTec Software GmbH, CC BY-NC-SA 4.0 —
    than the unadapted one's (−0.014 [−0.034, +0.003]), and with 1–3 calibration objects even
    recalibration leaves false alarms above their bound (17 against 7.6 expected). On `can` the
    changed-lighting normals and the defects are not separable by these features.
-6. **The image score is a separate problem.** It fails under the training lighting too (v1 on
+6. **DINOv2 features do not replace WRN50 here (E18).** In the same PatchCore pipeline, ViT-S/14
+   and ViT-B/14 lift `rice` from 0.52 to 0.85 / 0.78 and lose 0.17 on `vial`; under changed
+   lighting they are *more* fragile — `shift` false alarms 41 → 95 of 187. Not carried.
+7. **The image score is a separate problem.** It fails under the training lighting too (v1 on
    `regular` captures: `can` 0.57, `rice` 0.53, `sheet_metal` 0.53, `wallplugs` 0.46). No
    aggregation rule, object region or location normalization fixes it in general (E14a, R2); an
    image-level branch helps under the training lighting (`rice` 0.53 → 0.78) and fails under
    changed lighting (R4).
-7. **Two defects found and fixed:** the 3σ pixel threshold (SegF1 0 on `fruit_jelly` v2 → 0.22
+8. **Two defects found and fixed:** the 3σ pixel threshold (SegF1 0 on `fruit_jelly` v2 → 0.22
    at the validation quantile), and a regression that made the frozen E13 analysis match no run.
 
 ## 1. What `test_public` contains
@@ -255,6 +258,27 @@ light: across all captures the Gaussian alone loses 0.22 on `vial` and 0.27 on `
 the patch score (object bootstrap, significant after Holm over 8), and `wallplugs` — the missing-part category it was meant for — stays at chance
 (0.46–0.53). R4 waits for a lighting-invariant representation.
 
+### E18 — DINOv2 features (R8, pre-registered, `scripts/e15_analysis.py`)
+
+PatchCore unchanged except the backbone: DINOv2 patch tokens of blocks 8 and 11 (after the final
+norm), no channel projection, 672 px (a multiple of the 14 px patch). Against E18-ref (v1 at
+implementation `5ab1a8956c23`, reproducing E13's seed-0 digests on all eight categories), seed 0,
+object bootstrap and Holm over 8:
+
+| variant | significant gains | significant losses | macro AUROC all | `regular` | `shift` | `shift` false alarms (of 187) | all false alarms (of 379) | carried |
+|---|---|---|---|---|---|---|---|---|
+| reference (WRN50 `layer2+3`, 640 px) | – | – | 0.676 | 0.674 | 0.678 | 41 | 47 | – |
+| E18a ViT-S/14 | 1 (`rice` +0.334) | 1 (`vial` −0.172) | 0.647 | **0.730** | 0.639 | 95 | 126 | no |
+| E18b ViT-B/14 | 1 (`rice` +0.265) | 1 (`vial` −0.170) | 0.636 | 0.632 | 0.656 | 95 | 120 | no |
+
+`rice` — many grains, defects that change what a grain looks like — is the one category where
+self-supervised features see what ImageNet-supervised ones miss, and `fabric`'s pixel AUROC jumps
+from 0.68 to 0.97 although its image AUROC falls (0.66 → 0.54/0.57): the maps localize, the
+maximum over a normal image does not stay low. Under changed lighting the tokens move more than
+WRN50's features do: `wallplugs` 27–28 and `walnuts` 24 of 30 `shift` normals alarm (1 and 0
+before). The 14 px token grid also costs AU-PRO on the small-defect categories (`can`
+0.09 → 0.01). DINOv2 is a per-category option for `rice`-like parts, not a replacement.
+
 ## 4. Localization: the pixel threshold (docs/14 B3, fixed)
 
 The evaluator now reports SegF1 at a second threshold, the validation pixel quantile at a 0.1%
@@ -295,11 +319,10 @@ similar arrangements, not copies.
   Real normals under the new lighting halve the false alarms at the old threshold (E16) but buy
   no recall at a recalibrated one (E17), and a few calibration objects do not restore the bound.
   For deployment: re-collect *many* normal parts (tens, not a handful) under each lighting before
-  trusting the false-alarm figure, or fix the lighting. For research: features that separate
-  `can`'s changed-lighting normals from its defects (E18, R8).
-- **Image score** (A1, A3). Under the training lighting the failures persist; R1 tiling for
-  `sheet_metal`/`fabric`/`rice`, and R8 stronger features, are the untested levers. R4 needs a
-  lighting-robust descriptor first.
+  trusting the false-alarm figure, or fix the lighting. DINOv2 features (E18) are more
+  lighting-sensitive, not less.
+- **Image score** (A1, A3). Under the training lighting the failures persist. R8 helps `rice`
+  only (E18); resolution for the thin-defect categories is E19.
 - **Held-out.** No variant earned a server submission beyond v1; submitting v1 to MVTec's server
   (`test_private`, `test_private_mixed`) measures the private lighting shift once (owner action).
 - **Statistics.** On AD 2 the object is the resampling unit from here on.

@@ -1,0 +1,52 @@
+{
+ "implementation": "5ab1a8956c23",
+ "seed": 0,
+ "reference_reproduces_e13": {
+  "can": true,
+  "fabric": true,
+  "fruit_jelly": true,
+  "rice": true,
+  "sheet_metal": true,
+  "vial": true,
+  "wallplugs": true,
+  "walnuts": true
+ },
+ "decisions": [
+  {
+   "variant": "vit_base_patch14_dinov2,672px,block8+block11",
+   "categories": 8,
+   "shift_false_alarms_ref": 41,
+   "shift_false_alarms_variant": 95,
+   "shift_normals": 187,
+   "all_false_alarms_ref": 47,
+   "all_false_alarms_variant": 120,
+   "significant_gains": 1,
+   "significant_losses": 1,
+   "macro_auroc_ref": 0.676326616505188,
+   "macro_auroc_variant": 0.6364026389175199,
+   "macro_auroc_shift_ref": 0.6776233064774733,
+   "macro_auroc_shift_variant": 0.6555078062369729,
+   "macro_auroc_regular_ref": 0.6738167388167388,
+   "macro_auroc_regular_variant": 0.6322835497835498,
+   "carry_to_three_seeds": false
+  },
+  {
+   "variant": "vit_small_patch14_dinov2,672px,block8+block11",
+   "categories": 8,
+   "shift_false_alarms_ref": 41,
+   "shift_false_alarms_variant": 95,
+   "shift_normals": 187,
+   "all_false_alarms_ref": 47,
+   "all_false_alarms_variant": 126,
+   "significant_gains": 1,
+   "significant_losses": 1,
+   "macro_auroc_ref": 0.676326616505188,
+   "macro_auroc_variant": 0.647454727261275,
+   "macro_auroc_shift_ref": 0.6776233064774733,
+   "macro_auroc_shift_variant": 0.6385844055635722,
+   "macro_auroc_regular_ref": 0.6738167388167388,
+   "macro_auroc_regular_variant": 0.7297601010101009,
+   "carry_to_three_seeds": false
+  }
+ ]
+}

@@ -1,0 +1,3 @@
+variant,categories,shift_false_alarms_ref,shift_false_alarms_variant,shift_normals,all_false_alarms_ref,all_false_alarms_variant,significant_gains,significant_losses,macro_auroc_ref,macro_auroc_variant,macro_auroc_shift_ref,macro_auroc_shift_variant,macro_auroc_regular_ref,macro_auroc_regular_variant,carry_to_three_seeds
+"vit_base_patch14_dinov2,672px,block8+block11",8,41,95,187,47,120,1,1,0.676326616505188,0.6364026389175199,0.6776233064774733,0.6555078062369729,0.6738167388167388,0.6322835497835498,False
+"vit_small_patch14_dinov2,672px,block8+block11",8,41,95,187,47,126,1,1,0.676326616505188,0.647454727261275,0.6776233064774733,0.6385844055635722,0.6738167388167388,0.7297601010101009,False

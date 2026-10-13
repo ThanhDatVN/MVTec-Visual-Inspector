@@ -1,0 +1,113 @@
+{
+ "recipe": "configs/recipes/confirmation-v1-patchcore-640.yaml",
+ "categories": [
+  {
+   "category": "can",
+   "run_spec_id": "fed8f89687732e4b",
+   "seed": 0,
+   "pixel_threshold": 1.5150035212505928,
+   "counts": {
+    "test_private": 321,
+    "test_private_mixed": 321
+   },
+   "seconds": 170.6781270999927,
+   "train_limit": null
+  },
+  {
+   "category": "fabric",
+   "run_spec_id": "a40b384c0d01e0c0",
+   "seed": 0,
+   "pixel_threshold": 1.8084406875133767,
+   "counts": {
+    "test_private": 314,
+    "test_private_mixed": 314
+   },
+   "seconds": 364.503332200009,
+   "train_limit": null
+  },
+  {
+   "category": "fruit_jelly",
+   "run_spec_id": "0f24ad44c09c6ae9",
+   "seed": 0,
+   "pixel_threshold": 1.86112821340731,
+   "counts": {
+    "test_private": 255,
+    "test_private_mixed": 255
+   },
+   "seconds": 187.28242869999667,
+   "train_limit": null
+  },
+  {
+   "category": "rice",
+   "run_spec_id": "56aae9d0ce4bcf02",
+   "seed": 0,
+   "pixel_threshold": 1.3488191354573698,
+   "counts": {
+    "test_private": 277,
+    "test_private_mixed": 277
+   },
+   "seconds": 326.89589539999724,
+   "train_limit": null
+  },
+  {
+   "category": "sheet_metal",
+   "run_spec_id": "8f8f827163a09725",
+   "seed": 0,
+   "pixel_threshold": 1.5324850378569579,
+   "counts": {
+    "test_private": 142,
+    "test_private_mixed": 142
+   },
+   "seconds": 74.28825040000083,
+   "train_limit": null
+  },
+  {
+   "category": "vial",
+   "run_spec_id": "3112f07cc264b0cf",
+   "seed": 0,
+   "pixel_threshold": 1.6981454573328734,
+   "counts": {
+    "test_private": 276,
+    "test_private_mixed": 276
+   },
+   "seconds": 200.64948499998718,
+   "train_limit": null
+  },
+  {
+   "category": "wallplugs",
+   "run_spec_id": "4feaf1449517c3e0",
+   "seed": 0,
+   "pixel_threshold": 1.8441392033926494,
+   "counts": {
+    "test_private": 232,
+    "test_private_mixed": 232
+   },
+   "seconds": 218.5293043999991,
+   "train_limit": null
+  },
+  {
+   "category": "walnuts",
+   "run_spec_id": "288d4fa83a21d97f",
+   "seed": 0,
+   "pixel_threshold": 1.624832699000648,
+   "counts": {
+    "test_private": 228,
+    "test_private_mixed": 228
+   },
+   "seconds": 314.11161509998783,
+   "train_limit": null
+  }
+ ],
+ "exported_from": {
+  "git_sha": "a4c9acb",
+  "implementation_id": "67985a22598d"
+ },
+ "checker": "MVTecAD2_public_code_utils/check_and_prepare_data_for_upload.py: All checks successful (2026-10-13 08:24)",
+ "archive": {
+  "name": "v1-patchcore-640.tar.gz",
+  "bytes": 8320929175,
+  "sha256": "f98eb8ba66983592085436a6e53a8d1dda923ae869071fc930e07362c3f024aa",
+  "files": 8180
+ },
+ "upload": "pending (owner)"
+}
