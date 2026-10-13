@@ -26,7 +26,23 @@ BACKBONES = {
     "wide_resnet50_2": "WideResNet50-2, ImageNet. PatchCore's published default.",
     "resnet50": "ResNet50, ImageNet.",
     "resnet18": "ResNet18, ImageNet. The cheap option for the 4 GB card.",
+    "vit_small_patch14_dinov2": "DINOv2 ViT-S/14 (timm, weights `timm:lvd142m`). Self-supervised, 384-d tokens.",
+    "vit_base_patch14_dinov2": "DINOv2 ViT-B/14 (timm, weights `timm:lvd142m`). Self-supervised, 768-d tokens.",
 }
+
+#: ViT backbones take `block<i>` layers (the output of transformer block i, 0-based) and a
+#: patch size; their input is resized to a multiple of it.
+VIT_PATCH = {"vit_small_patch14_dinov2": 14, "vit_base_patch14_dinov2": 14}
+
+
+def is_vit(backbone: str) -> bool:
+    return backbone in VIT_PATCH
+
+
+def vit_block(layer: str) -> int:
+    if not layer.startswith("block") or not layer[5:].isdigit():
+        raise ValueError(f"ViT layers are named block<i>, got {layer!r}")
+    return int(layer[5:])
 
 
 @dataclass(frozen=True)
@@ -65,6 +81,13 @@ def timm_state_dict(backbone: str, tag: str) -> dict:
     return timm.create_model(f"{backbone}.{tag}", pretrained=True).state_dict()
 
 
+def timm_vit(backbone: str, tag: str):
+    """timm's pretrained ViT `<backbone>.<tag>` at any input size (downloaded on first use)."""
+    import timm
+
+    return timm.create_model(f"{backbone}.{tag}", pretrained=True, dynamic_img_size=True)
+
+
 def resolve_device(requested: str = "auto") -> str:
     import torch
 
@@ -92,6 +115,8 @@ class FeatureExtractor:
             raise ValueError(
                 f"unknown backbone {self.spec.backbone!r}; known: {sorted(BACKBONES)}"
             )
+        if is_vit(self.spec.backbone):
+            return self._build_vit()
         for layer in self.spec.layers:
             if layer not in RESNET_LAYERS:
                 raise ValueError(f"unknown layer {layer!r}; known: {RESNET_LAYERS}")
@@ -127,6 +152,35 @@ class FeatureExtractor:
         self._model = model
         return model
 
+    def _build_vit(self):
+        if not self.spec.weights.startswith("timm:"):
+            raise ValueError(f"{self.spec.backbone} needs timm weights (timm:<tag>), got {self.spec.weights!r}")
+        model = timm_vit(self.spec.backbone, self.spec.weights[5:])
+        depth = len(model.blocks)
+        for layer in self.spec.layers:
+            if not 0 <= vit_block(layer) < depth:
+                raise ValueError(f"{layer!r} outside the {depth} blocks of {self.spec.backbone}")
+        model.eval().to(self.device)
+        for param in model.parameters():
+            param.requires_grad_(False)
+        self._model = model
+        return model
+
+    def _vit_maps(self, model, tensor) -> list[Any]:
+        """Patch-token maps (B, C, H/p, W/p) of the requested blocks, after the final norm (as
+        DINOv2's own `get_intermediate_layers`). The input is resized to a multiple of the patch
+        size, so the token grid covers the whole image and the map stays aligned with it."""
+        import torch.nn.functional as F
+
+        p = VIT_PATCH[self.spec.backbone]
+        h, w = tensor.shape[-2:]
+        size = (max(p, round(h / p) * p), max(p, round(w / p) * p))
+        if size != (h, w):
+            tensor = F.interpolate(tensor, size=size, mode="bilinear", align_corners=False)
+        return list(model.forward_intermediates(
+            tensor, indices=[vit_block(layer) for layer in self.spec.layers], norm=True,
+            output_fmt="NCHW", intermediates_only=True))
+
     @property
     def model(self):
         return self._model if self._model is not None else self._build()
@@ -148,12 +202,15 @@ class FeatureExtractor:
         model = self.model
         tensor = torch.as_tensor(batch, dtype=torch.float32, device=self.device)
 
-        self._features.clear()
-        with torch.no_grad():
-            model(tensor)
-
-        maps: list[Any] = [self._features[layer] for layer in self.spec.layers]
-        self._features.clear()  # do not pin the last batch's feature maps on the GPU
+        if is_vit(self.spec.backbone):
+            with torch.no_grad():
+                maps: list[Any] = self._vit_maps(model, tensor)
+        else:
+            self._features.clear()
+            with torch.no_grad():
+                model(tensor)
+            maps = [self._features[layer] for layer in self.spec.layers]
+            self._features.clear()  # do not pin the last batch's feature maps on the GPU
         # The first requested layer defines the output grid. Higher layers are
         # upsampled to it: the study's whole point is that the *finest* grid is
         # what small defects need, so coarsening to the smallest would discard

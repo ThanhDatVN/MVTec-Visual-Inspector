@@ -76,3 +76,35 @@ def test_a_dropped_extractor_is_freed_without_the_cycle_collector(monkeypatch):
         assert ref() is None
     finally:
         gc.enable()
+
+
+def _tiny_vit(backbone, tag):  # stands in for the DINOv2 download: same family, two small blocks
+    timm = pytest.importorskip("timm")
+    return timm.create_model(backbone, pretrained=False, depth=2, embed_dim=48, num_heads=3,
+                             img_size=56, dynamic_img_size=True)
+
+
+def test_a_vit_backbone_yields_a_token_grid_at_any_input_size(monkeypatch):
+    """R8: DINOv2 patch tokens enter the same PatchCore pipeline. The input is resized to a
+    multiple of the 14 px patch, so the grid covers the whole image."""
+    import numpy as np
+
+    monkeypatch.setattr(features, "timm_vit", _tiny_vit)
+    spec = FeatureSpec(backbone="vit_small_patch14_dinov2", weights="timm:lvd142m", layers=("block0", "block1"),
+                       projection_dim=0, device="cpu", dtype="float32")
+    descriptors, grid = FeatureExtractor(spec).embed_batch(np.zeros((2, 3, 100, 60), dtype=np.float32))
+    assert grid == (7, 4)  # round(100 / 14), round(60 / 14)
+    assert tuple(descriptors.shape) == (2, 28, 96)  # two blocks of 48 channels, no projection
+
+
+def test_a_vit_backbone_refuses_bad_layers_and_weights(monkeypatch):
+    import numpy as np
+
+    monkeypatch.setattr(features, "timm_vit", _tiny_vit)
+    batch = np.zeros((1, 3, 56, 56), dtype=np.float32)
+    for spec in (FeatureSpec(backbone="vit_small_patch14_dinov2", weights="timm:x", layers=("block5",), device="cpu"),
+                 FeatureSpec(backbone="vit_small_patch14_dinov2", weights="timm:x", layers=("layer2",), device="cpu"),
+                 FeatureSpec(backbone="vit_small_patch14_dinov2", weights="IMAGENET1K_V1", layers=("block1",),
+                             device="cpu")):
+        with pytest.raises(ValueError):
+            FeatureExtractor(spec).embed_batch(batch)
