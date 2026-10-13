@@ -1,0 +1,45 @@
+{
+  "run_id": "77ebf17cfd6fdebf",
+  "status": "failed",
+  "finished_utc": "2026-10-13T06:48:14+00:00",
+  "failure_reason": "ValueError: tiled_knn produced a non-finite image score: nan",
+  "traceback": [
+    "Traceback (most recent call last):\n",
+    "  File \"C:\\Users\\thanh\\AppData\\Local\\Temp\\claude\\d--GitHub-MVTec-Visual-Inspector\\cb9e528b-cfb8-4b88-8ca8-c453fcae2863\\scratchpad\\wt-dev\\src\\inspector\\runner.py\", line 392, in execute\n    result, val_preds, test_preds = run_with_predictions(\n                                    ^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"C:\\Users\\thanh\\AppData\\Local\\Temp\\claude\\d--GitHub-MVTec-Visual-Inspector\\cb9e528b-cfb8-4b88-8ca8-c453fcae2863\\scratchpad\\wt-dev\\src\\inspector\\pipeline.py\", line 167, in run_with_predictions\n    val_preds = SplitPredictions.from_model(model, validation)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"C:\\Users\\thanh\\AppData\\Local\\Temp\\claude\\d--GitHub-MVTec-Visual-Inspector\\cb9e528b-cfb8-4b88-8ca8-c453fcae2863\\scratchpad\\wt-dev\\src\\inspector\\evaluate.py\", line 95, in from_model\n    raw = model.predict_raw(image)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"C:\\Users\\thanh\\AppData\\Local\\Temp\\claude\\d--GitHub-MVTec-Visual-Inspector\\cb9e528b-cfb8-4b88-8ca8-c453fcae2863\\scratchpad\\wt-dev\\src\\inspector\\models\\base.py\", line 196, in predict_raw\n    raise ValueError(f\"{self.name} produced a non-finite image score: {score}\")\n",
+    "ValueError: tiled_knn produced a non-finite image score: nan\n"
+  ],
+  "provenance": {
+    "git_sha": "14788aa2d7301fbbbed4c74e24a6fa0971809a18",
+    "git_branch": "HEAD",
+    "dirty": false,
+    "implementation_id": "5cdceb1996acc8ad06f187c72659267278682d0610ef95a316f8b2fefe4d05ad",
+    "environment": {
+      "python": "3.11.9",
+      "numpy": "2.4.6",
+      "scipy": "1.17.1",
+      "PIL": "12.3.0",
+      "torch": "2.14.0+cu126",
+      "torchvision": "0.29.0+cu126",
+      "cv2": "5.0.0"
+    },
+    "device": {
+      "platform": "Windows-10-10.0.26300-SP0",
+      "processor": "AMD64 Family 25 Model 68 Stepping 1, AuthenticAMD",
+      "cuda_available": true,
+      "torch_cuda_version": "12.6",
+      "gpu_name": "NVIDIA GeForce RTX 3050 Laptop GPU",
+      "gpu_total_mb": 4096,
+      "cudnn_version": 91002
+    },
+    "dataset_manifests": {
+      "test_private": "22c9c4b370ede9d7038803518c4120d689b609ebd2b943957a51de4a615df6f2",
+      "test_private_mixed": "4150b8d89a31b47da47f760c75239fec5ad47d07673659f702ef851c373e6516",
+      "test_public": "fd768c6e265df942b125984abdcef9cdae20a50ec963fb8b64ef05366f336f5a",
+      "train": "b19fa5c578cb3c616b8faf02b6e35d5a76dbe4db2a084328e38289b3bd67e174",
+      "validation": "d93c44d25d212b0280ee9bfeec2b911a164df3186e5be8b9d4d3e51877ae1e40"
+    }
+  }
+}
