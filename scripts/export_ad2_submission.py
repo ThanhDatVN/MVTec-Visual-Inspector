@@ -71,6 +71,8 @@ def main() -> int:
     ap.add_argument("--categories", nargs="+", default=list(CATEGORIES), choices=CATEGORIES)
     ap.add_argument("--train-limit", type=int, default=None,
                     help="testing the export only; a real submission fits on the full training split")
+    ap.add_argument("--keep-components", action="store_true",
+                    help="keep each component's normalized quarter-resolution maps (for re-processing)")
     ap.add_argument("--test-images", type=int, default=None,
                     help="testing the export only: the first N images of each split")
     args = ap.parse_args()
@@ -198,7 +200,7 @@ def main() -> int:
         print(log[-1], flush=True)
         log_path.parent.mkdir(parents=True, exist_ok=True)
         log_path.write_text(json.dumps({"recipe": args.recipe, "categories": log}, indent=1), encoding="utf-8")
-        if components:
+        if components and not args.keep_components:
             import shutil
 
             shutil.rmtree(out / "_components" / cat, ignore_errors=True)
