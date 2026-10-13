@@ -264,8 +264,10 @@ similar arrangements, not copies.
 
 - **Lighting** (B1). Synthetic photometric invariance is exhausted for now (five remedies, none
   carried). Real normals under the new lighting work (E16): a handful of good parts per lighting,
-  added to the bank, halve the changed-lighting false alarms. The open half is recalibration —
-  adaptation normals split between the bank and the threshold, so recall is not paid for it.
+  added to the bank, halve the changed-lighting false alarms. The open half is recalibration:
+  the training-lighting threshold no longer bounds false alarms under the new lighting, and the
+  fair comparison is recall at a threshold that does (E17). Recalibrating cannot raise recall —
+  new-lighting normals only raise the threshold — it makes the false-alarm figure true.
 - **Image score** (A1, A3). Under the training lighting the failures persist; R1 tiling for
   `sheet_metal`/`fabric`/`rice`, and R8 stronger features, are the untested levers. R4 needs a
   lighting-robust descriptor first.

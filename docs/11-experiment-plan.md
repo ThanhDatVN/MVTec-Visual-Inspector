@@ -426,6 +426,35 @@ recipe change; 32 fits.
 recall at the unchanged operating point 0.239 → 0.195. Report:
 [E14–E16](../reports/E14-E15-ad2-development.md).
 
+### Stage J — After E16 (laptop; owner for the server)
+
+Written down on 2026-10-13, before any run below. Order: S1 (export, running), E17, E18, then
+E19 if E18 leaves the image-score problem open.
+
+| # | Run | n | Addresses |
+|---|-----|---|-----------|
+| S1 | Recipe v1 exported for MVTec's server (`test_private`, `test_private_mixed`; ADR-13 §6, 3σ masks) | 8 fits | the held-out lighting shift, measured once — **upload is the owner's** |
+| E17 | Recalibration under the new lighting, with and without an adapted bank (`scripts/e17_recalibration.py`) | 16 fits | B1: E16's threshold no longer bounds false alarms under the new lighting |
+| E18-ref | Recipe v1, seed 0, at the E18 implementation | 8 | must reproduce E13's seed-0 predictions |
+| E18a | v1 with DINOv2 ViT-S/14 features (`backbone: vit_small_patch14_dinov2`, `weights: timm:lvd142m`, blocks 8 + 11 after the final norm, no channel projection, 672 px) | 8 | R8: A1, A5, and lighting robustness |
+| E18b | the same with DINOv2 ViT-B/14 | 8 | R8 |
+| E19 | R1 tiling for `sheet_metal`, `fabric`, `rice` — designed after E18 | – | A2 |
+
+*E17 reading.* Same folds as E16; the other fold's normal objects are split, the first half into
+the adapted bank, the rest (every capture) into the calibration set beside `validation/good`.
+Recalibration restores the bound if the reference recalibrated (R+cal) raises no more false alarms
+than its expected count plus two Poisson SDs; adaptation pays at a valid operating point if the
+adapted, recalibrated arm's macro recall exceeds R+cal's (object bootstrap 95% CI above zero) with
+pooled false alarms no higher.
+
+*E18 screen → 3 seeds* (`scripts/e15_analysis.py`, its variant label extended by the backbone).
+Against E18-ref, all eight AD 2 categories, seed 0: a variant goes to seeds 1–2 if image AUROC
+is significantly better on ≥ 3 categories and worse on none, **or** the false alarms among
+`shift` normals fall by at least half with none worse — object bootstrap, Holm over 8. A carried
+variant must also cost no more than 0.01 image AUROC on the VisA development categories
+(seed 0). The 14 px token grid is coarser than WRN50's 8 px `layer2` grid, so AU-PRO is reported
+and may fall; it is not part of the rule.
+
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 
 | # | Deliverable | Spec |

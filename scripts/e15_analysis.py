@@ -44,6 +44,8 @@ def variant_of(spec: dict) -> str:
         parts.append(f"bank_relight={hp['bank_relight']}")
     if tr["long_side"] != 640 or hp.get("layers") != ["layer2", "layer3"]:
         parts.append(f"{tr['long_side']}px,{'+'.join(hp.get('layers', []))}")
+    if hp.get("backbone", "wide_resnet50_2") != "wide_resnet50_2":  # E18; no E15 run has another
+        parts.insert(0, hp["backbone"])
     return ",".join(parts) or "reference"
 
 
