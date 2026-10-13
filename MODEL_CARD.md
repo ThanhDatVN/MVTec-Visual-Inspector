@@ -142,8 +142,10 @@ on its own validation normals and say so.
   45–100%. The guards refuse those inputs, but they cannot see a frame shift or new content at the
   frame edge. On AD 2 they refuse many exposure changes the model handles and pass most of the
   changed-lighting captures that it does not (E14–E15): re-capturing normals under a new
-  lighting, not the guards, is what a lighting change calls for — adding 2–6 good parts per
-  lighting to the bank halves those false alarms (E16); recalibrate the threshold as well.
+  lighting, not the guards, is what a lighting change calls for — but a handful is not enough:
+  2–6 good parts in the bank halve those false alarms only by giving up recall, and 1–3 parts
+  for recalibration do not restore the false-alarm bound (E16–E17). Collect tens of normal
+  parts per lighting, or keep the lighting fixed.
 - **The false-alarm bound is not guaranteed in practice.** It assumes exchangeable normals;
   capture-session debris broke it on `pcb1` (4.3% vs 0.73%) and on held-out `pipe_fryum`, and a
   larger calibration pool did not fix it ([negative results](reports/negative-results.md) #2).

@@ -1,0 +1,38 @@
+{
+ "categories": 8,
+ "R": {
+  "false_alarms": 47,
+  "expected": 9.74742636136201,
+  "bound_held": false,
+  "shift_false_alarms": 41,
+  "macro_recall": 0.23918650793650795
+ },
+ "R+cal": {
+  "false_alarms": 17,
+  "expected": 7.582356486737077,
+  "bound_held": false,
+  "shift_false_alarms": 14,
+  "macro_recall": 0.18085317460317463
+ },
+ "A": {
+  "false_alarms": 36,
+  "expected": 9.74742636136201,
+  "bound_held": false,
+  "shift_false_alarms": 27,
+  "macro_recall": 0.20823412698412697
+ },
+ "A+cal": {
+  "false_alarms": 18,
+  "expected": 7.582356486737077,
+  "bound_held": false,
+  "shift_false_alarms": 12,
+  "macro_recall": 0.16656746031746034
+ },
+ "recall_A+cal_minus_R+cal": {
+  "estimate": -0.01428571428571429,
+  "ci_low": -0.03432539682539682,
+  "ci_high": 0.002579365079365078
+ },
+ "recalibration_restores_bound": false,
+ "adaptation_pays_at_valid_op": false
+}

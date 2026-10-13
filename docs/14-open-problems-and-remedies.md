@@ -33,7 +33,7 @@ sampling unit, not 6–7. Several entries below change because of it (B1, B4, D2
 
 | # | Problem | Evidence | Cause | Remedy |
 |---|---|---|---|---|
-| B1 | **Validation normals do not represent test normals** | VisA `pcb1` 4.3% realized vs 0.73% bound, `pipe_fryum` (E12); AD 2 pooled false alarms 160 (v1) / 195 (v2) against 29.2 expected, `can` 51% of normals flagged | **Established:** session debris (VisA). On AD 2 the excess is **changed light direction and colour** (§0): false alarms among `regular` / `overexposed` / `underexposed` / `shift` normals are 5.7 / 5.7 / 5.2 / **22.8%** for v1 and 2.6 / 3.6 / 4.2 / **31.2%** for v2 (`can` `shift`: 96%). The operating point holds under the training lighting and under a global exposure change | **Measured:** five photometric remedies (E14b–d, E15a–b) leave the `shift` false alarms where they were — `can`'s moved specular highlights are neither a gain nor a smooth field. **R11 works** (E16): every capture of 2–6 good parts added to the bank halves the `shift` false alarms (41 → 19 of 187, mostly `can`), at a recall cost at the unchanged threshold (0.24 → 0.19). Left: recalibration with held-back adaptation normals; R8 features; the held-out test is AD 2 `test_private_mixed` (server) |
+| B1 | **Validation normals do not represent test normals** | VisA `pcb1` 4.3% realized vs 0.73% bound, `pipe_fryum` (E12); AD 2 pooled false alarms 160 (v1) / 195 (v2) against 29.2 expected, `can` 51% of normals flagged | **Established:** session debris (VisA). On AD 2 the excess is **changed light direction and colour** (§0): false alarms among `regular` / `overexposed` / `underexposed` / `shift` normals are 5.7 / 5.7 / 5.2 / **22.8%** for v1 and 2.6 / 3.6 / 4.2 / **31.2%** for v2 (`can` `shift`: 96%). The operating point holds under the training lighting and under a global exposure change | **Measured:** five photometric remedies (E14b–d, E15a–b) leave the `shift` false alarms where they were — `can`'s moved specular highlights are neither a gain nor a smooth field. **R11 is a trade, not a fix:** 2–6 good parts in the bank halve the `shift` false alarms at the old threshold (E16, 41 → 19 of 187, mostly `can`) at a recall cost; at a threshold recalibrated on new-lighting normals the adapted bank buys no recall (E17, −0.014 [−0.034, +0.003]), and 1–3 calibration objects leave false alarms above the bound (17 vs 7.6). On `can` it is a separability problem. Left: R8 features (E18); many more normals per lighting; the held-out test is AD 2 `test_private_mixed` (server) |
 | B2 | **Calibration sets too small for 1%** | AD 2 19–48 and MPDD 8–43 validation normals: bounds relaxed to 2.0–11.1%; MPDD realized 0–18% per category | **Established:** a rank rule needs n ≥ 99 for 1% | More calibration normals when collecting; meanwhile report the relaxed bound (done) and pool across seeds; R5(b) can use the unlabeled stream |
 | B3 | **Pixel threshold (3σ) breaks on skewed maps — a defect in the metric (fixed)** | AD 2 `fruit_jelly` v2: validation pixel mean 0.99, SD 0.83, so the 3σ threshold 3.41 lies above every test map (max 3.27) and SegF1 = 0.000 on all seeds; `vial` v2 SegF1 0.05 | **Established:** mean + 3σ assumes near-Gaussian pixel scores; `layer2` maps are bimodal (object vs background) | **Fixed** (`d95cf0f`): SegF1 also at the validation pixel quantile (0.1%); on E13's maps v2 `fruit_jelly` 0.000 → 0.222, `vial` 0.102 → 0.267, macro 0.131 → 0.184 |
 | B4 | **Input guards watch the wrong variable** | Blind to a frame shift and to new content at the frame edge (G4, E08). On AD 2 they refuse the captures the model handles — over/under-exposed normals refused 100% on `rice`, 73–82% on `fabric`, 60–100% on `vial` — and accept most of those it does not: 61% of `can`'s `shift` normals pass, where 96% raise an alarm. They also refuse 20–25% of `regular` normals on `sheet_metal`, `vial`, `wallplugs` | **Established** by E08b, G4, E13 and the condition analysis: exposure is the condition the model tolerates, lighting structure the one it does not | R10: a lighting-structure guard (gain-normalized low-frequency field against the training fields); guards on feature-space statistics; a drift monitor on the score distribution of incoming images |
@@ -99,8 +99,9 @@ sampling unit, not 6–7. Several entries below change because of it (B1, B4, D2
 - **R11 — Few-shot adaptation to a new lighting.** Add a handful of normal images captured
   under the new condition to the memory bank and to the calibration set — what a line does when
   its lighting is changed. E16 (disjoint objects for adaptation and evaluation): one part is not
-  enough, 2–6 parts halve the changed-lighting false alarms; recalibrating on held-back
-  adaptation normals is the untested second half.
+  enough, 2–6 parts halve the changed-lighting false alarms at the old threshold. E17: at a
+  recalibrated threshold the adapted bank buys no recall, and a few calibration objects do not
+  restore the bound. A line needs many normal parts per lighting, or a fixed lighting.
 - **R7 — Robust pixel threshold.** The validation pixel score at a 0.1% pixel false-positive rate
   (a pixel-level analogue of the image rank rule), reported beside 3σ.
 - **R8 — Stronger features.** DINOv2-class ViT features in the same PatchCore pipeline, under
@@ -119,8 +120,8 @@ sampling unit, not 6–7. Several entries below change because of it (B1, B4, D2
 Done on 2026-10-13: E14 and E15 (no variant carried), E14a, R2, R4 and R10 (exploratory), B3
 fixed, the capture-condition and object-bootstrap analysis, M6–M9.
 
-1. **Done:** E16, few-shot adaptation (R11) works on the bank side; recalibration with held-back
-   adaptation normals is next on the lighting side.
+1. **Done:** E16–E17, few-shot adaptation and recalibration (R11): a trade along the same
+   curve, not a gain. **Next:** E18, DINOv2 features (R8), the remaining lever for both A1 and B1.
 2. **Then, refit:** R1 tiling on the small-defect categories; R8 stronger features under the same
    protocol, which also bears on B1 (lighting) and R4.
 3. **Methodology:** R3 for every later selection; the object bootstrap on AD 2 and R9 elsewhere.

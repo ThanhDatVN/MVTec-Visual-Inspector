@@ -1,4 +1,4 @@
-# E14–E16 — Development on MVTec AD 2 after E13: what fails, and why
+# E14–E17 — Development on MVTec AD 2 after E13: what fails, and why
 
 E13 left recipe v1 with near-chance image AUROC on four AD 2 categories and 5–7× its false-alarm
 bound. This report takes the two failures apart on `test_public`, which is development data from
@@ -34,7 +34,11 @@ MVTec's server). Dataset: MVTec AD 2 © MVTec Software GmbH, CC BY-NC-SA 4.0 —
    capture of 2–6 good parts per category to the bank halves the false alarms among `shift`
    normals (41 → 19 of 187; one part, 41 → 28), no category worse — the pre-registered reading is
    met, narrowly, and almost entirely on `can` (35 → 13 of 36). The price at the unchanged
-   operating point is recall (macro 0.24 → 0.19).
+   operating point is recall (macro 0.24 → 0.19), and **E17 shows the trade is not a gain**:
+   at a threshold recalibrated on new-lighting normals, the adapted model's recall is no better
+   than the unadapted one's (−0.014 [−0.034, +0.003]), and with 1–3 calibration objects even
+   recalibration leaves false alarms above their bound (17 against 7.6 expected). On `can` the
+   changed-lighting normals and the defects are not separable by these features.
 6. **The image score is a separate problem.** It fails under the training lighting too (v1 on
    `regular` captures: `can` 0.57, `rice` 0.53, `sheet_metal` 0.53, `wallplugs` 0.46). No
    aggregation rule, object region or location normalization fixes it in general (E14a, R2); an
@@ -152,6 +156,31 @@ validation normals while the adapted bank lowers anomaly scores too, so recall f
 adapts its bank should recalibrate as well — with normals under the new lighting that the bank
 did not see — which E16 did not do.
 
+### E17: recalibration under the new lighting (pre-registered, `scripts/e17_recalibration.py`)
+
+E16 kept the training-lighting threshold, which does not bound false alarms under the new
+lighting. E17 compares the arms at a threshold that is meant to: same folds; the other fold's
+normal objects are split, the first half into the adapted bank, the rest (every capture) into the
+calibration set beside `validation/good`. 16 fits from a pinned worktree at E15-ref's
+implementation.
+
+| arm | false alarms (of 379) | expected (Σ bound × normals) | `shift` false alarms (of 187) | macro recall at OP |
+|---|---|---|---|---|
+| R — reference, validation threshold | 47 | 9.7 | 41 | 0.239 |
+| R+cal — reference, recalibrated | 17 | 7.6 | 14 | 0.181 |
+| A — half-fold bank, validation threshold | 36 | 9.7 | 27 | 0.208 |
+| A+cal — half-fold bank, recalibrated | 18 | 7.6 | 12 | 0.167 |
+
+Both readings fail. Recalibrating on 1–3 new-lighting objects cuts the false alarms by almost
+two thirds but not to the bound (17 against 7.6 + 2√7.6 = 13.1): `can` 8 of 72, `fabric` 5 of 66,
+`wallplugs` 4 of 60 — a handful of objects does not cover the object-to-object variation, so the
+calibration maximum understates the tail. At the recalibrated threshold the adapted bank does not
+buy recall: A+cal − R+cal = −0.014 [−0.034, +0.003] (object bootstrap over anomalous objects).
+`can` shows why: once the threshold must clear its changed-lighting normals, recall falls to
+0.09 (R+cal) and 0.04 (A+cal). E16's halving of the false alarms was a move along the same
+trade-off curve, not a better curve; the `can` failure under changed lighting is one of
+separability (AUROC ≈ 0.5–0.6), which a bank or a threshold cannot fix.
+
 ### Guards by condition (exploratory)
 
 The deployed guards (global exposure and focus, fitted on `train/good`) against a
@@ -262,12 +291,12 @@ similar arrangements, not copies.
 
 ## 7. What follows
 
-- **Lighting** (B1). Synthetic photometric invariance is exhausted for now (five remedies, none
-  carried). Real normals under the new lighting work (E16): a handful of good parts per lighting,
-  added to the bank, halve the changed-lighting false alarms. The open half is recalibration:
-  the training-lighting threshold no longer bounds false alarms under the new lighting, and the
-  fair comparison is recall at a threshold that does (E17). Recalibrating cannot raise recall —
-  new-lighting normals only raise the threshold — it makes the false-alarm figure true.
+- **Lighting** (B1). Synthetic photometric invariance is exhausted (five remedies, none carried).
+  Real normals under the new lighting halve the false alarms at the old threshold (E16) but buy
+  no recall at a recalibrated one (E17), and a few calibration objects do not restore the bound.
+  For deployment: re-collect *many* normal parts (tens, not a handful) under each lighting before
+  trusting the false-alarm figure, or fix the lighting. For research: features that separate
+  `can`'s changed-lighting normals from its defects (E18, R8).
 - **Image score** (A1, A3). Under the training lighting the failures persist; R1 tiling for
   `sheet_metal`/`fabric`/`rice`, and R8 stronger features, are the untested levers. R4 needs a
   lighting-robust descriptor first.

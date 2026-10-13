@@ -181,8 +181,9 @@ alarms are the changed light *direction and colour* (22.8% of those normals for 
 (5–6%, at the bound). Five photometric remedies — per-image gain and standardization, an
 exposure-augmented bank, flat-field normalization, a relit bank — were screened against
 pre-registered rules and none carried; a moved specular highlight is not a gain or a smooth field.
-Real normals do what synthesis did not (E16): every capture of 2–6 good parts added to the bank
-halves the changed-lighting false alarms (41 → 19 of 187), at a recall cost at the old threshold.
+Real normals halve the changed-lighting false alarms at the old threshold (E16, 41 → 19 of 187),
+but at a threshold recalibrated on new-lighting normals they buy no recall (E17): on `can` the
+changed-lighting normals and the defects are simply not separable with these features.
 The image-score failure is separate: it persists under the training lighting. The captures of one
 object are one sample, so AD 2 intervals are computed over objects from here on.
 [Report](reports/E14-E15-ad2-development.md).

@@ -447,6 +447,11 @@ than its expected count plus two Poisson SDs; adaptation pays at a valid operati
 adapted, recalibrated arm's macro recall exceeds R+cal's (object bootstrap 95% CI above zero) with
 pooled false alarms no higher.
 
+*E17 outcome (2026-10-13).* 16 fits, pinned worktree (`e781cd2`, implementation `67985a22598d`).
+R+cal: 17 false alarms against 7.6 expected (limit 13.1) — the bound is **not** restored. A+cal −
+R+cal macro recall −0.014 [−0.034, +0.003] — adaptation does **not** pay at a valid operating
+point. Report: [E14–E17](../reports/E14-E15-ad2-development.md).
+
 *E18 screen → 3 seeds* (`scripts/e15_analysis.py`, its variant label extended by the backbone).
 Against E18-ref, all eight AD 2 categories, seed 0: a variant goes to seeds 1–2 if image AUROC
 is significantly better on ≥ 3 categories and worse on none, **or** the false alarms among
