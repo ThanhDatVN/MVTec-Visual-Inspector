@@ -82,3 +82,14 @@ def test_mark_rejects_an_image_whose_mask_came_out_empty():
     ys, xs = np.nonzero(marked)
     assert 28 <= ys.mean() <= 32 and 40 <= xs.mean() <= 44
     assert not MaskRule(mark=0.9).apply(m, 1.0).any()  # the map never reaches 0.9 * tau
+
+
+def test_min_area_drops_specks_and_keeps_regions():
+    from inspector.postproc.binarize import remove_small
+
+    mask = np.zeros((40, 40), dtype=bool)
+    mask[5, 5] = True
+    mask[20:26, 20:26] = True
+    out = remove_small(mask, 4)
+    assert not out[5, 5] and out[22, 22]
+    assert np.array_equal(remove_small(mask, 0), mask)

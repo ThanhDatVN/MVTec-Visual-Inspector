@@ -81,6 +81,18 @@ def erode(mask: np.ndarray, radius: int) -> np.ndarray:
     return cv2.erode(mask.astype(np.uint8), k).astype(bool)
 
 
+def remove_small(mask: np.ndarray, min_area: int) -> np.ndarray:
+    """Drop connected regions (8-connectivity) smaller than `min_area` pixels."""
+    import cv2
+
+    if min_area <= 1 or not mask.any():
+        return mask.astype(bool)
+    n, labels, stats, _ = cv2.connectedComponentsWithStats(mask.astype(np.uint8), connectivity=8)
+    keep = np.zeros(n, dtype=bool)
+    keep[1:] = stats[1:, cv2.CC_STAT_AREA] >= min_area
+    return keep[labels]
+
+
 @dataclass(frozen=True)
 class MaskRule:
     """Everything that turns a map into a mask, given its threshold. Recorded with a submission."""
@@ -97,6 +109,10 @@ class MaskRule:
     #: map exceeds `mark * tau` somewhere gets one work-resolution pixel (a `work_downscale`-sized
     #: block) at its maximum: rejected, at a SegF1 cost of a handful of pixels.
     mark: float = 0.0
+    #: Regions smaller than this many work-resolution pixels are dropped before the mark (the
+    #: connected-component filtering of the VAND 4.0 entries): isolated specks on normal images
+    #: are false pixels and, worse for ClassF1, reject the whole image.
+    min_area: int = 0
 
     def as_dict(self) -> dict:
         return asdict(self)
@@ -126,6 +142,7 @@ class MaskRule:
             if self.fill:
                 mask = fill_holes(mask)
             mask = erode(mask, self.erosion)
+            mask = remove_small(mask, self.min_area)
         if self.mark > 0 and not mask.any() and small.max() > self.mark * tau:
             mask = np.zeros(small.shape, dtype=bool)
             mask[np.unravel_index(int(np.argmax(small)), small.shape)] = True

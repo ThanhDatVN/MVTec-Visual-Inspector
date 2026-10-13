@@ -21,7 +21,7 @@ from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
-from mask_rule_study import evaluate_rules
+from mask_rule_study import evaluate_rules, focus_args
 
 from inspector.evaluate import SplitPredictions
 from inspector.postproc.binarize import validation_thresholds
@@ -66,6 +66,7 @@ def main() -> int:
     ap.add_argument("--mode", choices=("mean", "max"), default="mean")
     ap.add_argument("--label", required=True)
     ap.add_argument("--out", default="reports/studies/fusion")
+    ap.add_argument("--focus", action="store_true", help="the P95 band and variations of the mask rule")
     args = ap.parse_args()
     reg = Path(args.registry)
     by_cat = {}
@@ -82,7 +83,7 @@ def main() -> int:
         val_f = fuse(val_a, val_b, sa, sb, na, nb, args.mode)
         test_f = fuse(test_a, test_b, sa, sb, na, nb, args.mode)
         ev = {**spec_a["evaluation"], "smoothing_sigma": 0.0}
-        got = evaluate_rules(val_f, test_f, ev, f"{rid}+{by_cat[cat]}", cat)
+        got = evaluate_rules(val_f, test_f, ev, f"{rid}+{by_cat[cat]}", cat, **(focus_args() if args.focus else {}))
         rows += [{"label": args.label, **r} for r in got]
         best = max((r for r in got if r["subset"] == "all"), key=lambda r: r["segf1"])
         print(f"{cat:<12} AU-PRO all {best['aupro_005']:.3f}  best {best['threshold']}/{best['post']} "

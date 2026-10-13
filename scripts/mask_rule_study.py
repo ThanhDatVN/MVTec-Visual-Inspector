@@ -32,6 +32,15 @@ from inspector.postproc.binarize import PLAIN, MaskRule, validation_thresholds
 GAINS = tuple(round(1.0 + 0.05 * i, 2) for i in range(21))  # 1.00 .. 2.00
 RATES = (1e-2, 5e-3, 2e-3, 1e-3, 5e-4, 2e-4, 1e-4)
 MORPH = MaskRule()
+#: `--focus`: the useful threshold band and variations of the morphological rule (E21b).
+FOCUS_KEEP = {f"p95x{g:g}" for g in (1.15, 1.2, 1.25, 1.3, 1.35, 1.4, 1.45)}
+FOCUS_POSTS = {
+    "morph": MORPH,
+    "morph-a4": MaskRule(min_area=4), "morph-a16": MaskRule(min_area=16), "morph-a64": MaskRule(min_area=64),
+    "morph-r13": MaskRule(closing_radius=13), "morph-r40": MaskRule(closing_radius=40),
+    "morph-low0.7": MaskRule(lower=0.7), "morph-low0.9": MaskRule(lower=0.9),
+    "morph-e0": MaskRule(erosion=0),
+}
 MARKS = (0.9, 0.8, 0.7, 0.6, 0.5, 0.4)
 
 
@@ -44,14 +53,20 @@ def f1(tp: int, fp: int, fn: int) -> float:
     return 2 * tp / (2 * tp + fp + fn) if tp else 0.0
 
 
-def study(run_dir: Path, data_root: str) -> list[dict]:
+def study(run_dir: Path, data_root: str, focus: bool = False) -> list[dict]:
     spec = json.loads((run_dir / "spec.json").read_text(encoding="utf-8"))
     val = SplitPredictions.load(run_dir, "validation", root=data_root)
     test = SplitPredictions.load(run_dir, spec["dataset"]["test_split"], root=data_root)
-    return evaluate_rules(val, test, spec["evaluation"], run_dir.name, spec["dataset"]["category"])
+    return evaluate_rules(val, test, spec["evaluation"], run_dir.name, spec["dataset"]["category"],
+                          **(focus_args() if focus else {}))
 
 
-def evaluate_rules(val: SplitPredictions, test: SplitPredictions, ev: dict, name: str, category: str) -> list[dict]:
+def focus_args() -> dict:
+    return {"posts": FOCUS_POSTS, "keep": FOCUS_KEEP}
+
+
+def evaluate_rules(val: SplitPredictions, test: SplitPredictions, ev: dict, name: str, category: str,
+                   posts: dict[str, MaskRule] | None = None, keep: set[str] | None = None) -> list[dict]:
     """One row per (rule, subset): `all` images (the mixed-lighting proxy) and `regular` only (the
     `test_private` proxy: the private split holds the training lighting only).
 
@@ -62,7 +77,8 @@ def evaluate_rules(val: SplitPredictions, test: SplitPredictions, ev: dict, name
     """
     sigma = ev["smoothing_sigma"]
     taus = thresholds(val, sigma, ev["sigma_n"])
-    base = {(t, kind): (taus[t], rule) for t in taus for kind, rule in (("plain", PLAIN), ("morph", MORPH))}
+    posts = posts or {"plain": PLAIN, "morph": MORPH}
+    base = {(t, kind): (taus[t], rule) for t in taus if keep is None or t in keep for kind, rule in posts.items()}
     keys = [(t, kind, c) for (t, kind) in base for c in (0.0, *MARKS)]
     subsets = ("all", "regular", "defective")  # defective: anomalous images only (SuperADD's TEST_pub F1)
     pix = {(k, s): np.zeros(3, dtype=np.int64) for k in keys for s in subsets}
@@ -78,13 +94,17 @@ def evaluate_rules(val: SplitPredictions, test: SplitPredictions, ev: dict, name
             normals[sub] += int(label == 0)
             pro[sub].add(native, mask)
         # the single-pixel mark of each mask kind, and the maximum it is compared with
-        marks = {}
-        for kind, rule in (("plain", PLAIN), ("morph", MORPH)):
-            work = rule.work_map(native)
-            one = np.zeros(work.shape, dtype=bool)
-            one[np.unravel_index(int(np.argmax(work)), work.shape)] = True
-            block = rule.to_native(one, native.shape)
-            marks[kind] = (float(work.max()), int(np.count_nonzero(block & mask)), int(np.count_nonzero(block & ~mask)))
+        marks, by_scale = {}, {}
+        for kind, rule in posts.items():
+            f = rule.work_downscale
+            if f not in by_scale:
+                work = rule.work_map(native)
+                one = np.zeros(work.shape, dtype=bool)
+                one[np.unravel_index(int(np.argmax(work)), work.shape)] = True
+                block = rule.to_native(one, native.shape)
+                by_scale[f] = (float(work.max()), int(np.count_nonzero(block & mask)),
+                               int(np.count_nonzero(block & ~mask)))
+            marks[kind] = by_scale[f]
         for (t, kind), (tau, rule) in base.items():
             pred = rule.apply(native, tau)
             px = np.array((np.count_nonzero(pred & mask), np.count_nonzero(pred & ~mask),
@@ -119,10 +139,11 @@ def main() -> int:
     ap.add_argument("--runs", nargs="+", required=True)
     ap.add_argument("--label", required=True)
     ap.add_argument("--out", default="reports/studies/mask-rules")
+    ap.add_argument("--focus", action="store_true", help="the P95 band and variations of the mask rule")
     args = ap.parse_args()
     rows = []
     for run_id in args.runs:
-        got = study(Path(args.registry) / run_id, args.data_root)
+        got = study(Path(args.registry) / run_id, args.data_root, focus=args.focus)
         rows += [{"label": args.label, **r} for r in got]
         got = [r for r in got if r["subset"] == "all"]
         best = max(got, key=lambda r: r["segf1"])
