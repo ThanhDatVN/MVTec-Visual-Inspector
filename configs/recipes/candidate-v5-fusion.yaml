@@ -1,0 +1,24 @@
+# FROZEN candidate v5 (ADR-16, supersedes v4 of ADR-15 before any export): the submission recipe for MVTec's server. Not a single model: the
+# maxima of two components' maps, each divided by the 95th percentile of its own validation
+# pixels at a quarter of native resolution (scripts/fusion_study.py), then masks from the fused
+# validation maps' 95th percentile x 1.3 with morphological post-processing and the image mark
+# (inspector.postproc.binarize.MaskRule). Every setting below was chosen on test_public
+# (development) as one global setting for all eight categories; none per category.
+# Export: scripts/export_ad2_submission.py --recipe configs/recipes/candidate-v4-fusion.yaml
+
+submission:
+  components:
+    - configs/recipes/candidate-v5-component-dinov3hplus.yaml
+    - configs/recipes/candidate-v3-patchcore-1280.yaml
+  fusion: max
+  threshold: p95
+  gain: 1.3
+  mask: morph
+  mask_rule:
+    lower: 0.8
+    closing_radius: 26
+    closing_angles: 16
+    erosion: 1
+    work_downscale: 4
+    fill: true
+    mark: 0.9

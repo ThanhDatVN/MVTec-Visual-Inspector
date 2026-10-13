@@ -21,7 +21,7 @@ from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
-from mask_rule_study import evaluate_rules, focus_args
+from mask_rule_study import evaluate_rules, focus_args, gains_args
 
 from inspector.evaluate import SplitPredictions
 from inspector.postproc.binarize import validation_thresholds
@@ -46,14 +46,15 @@ def p95(split: SplitPredictions, sigma: float) -> float:
     return validation_thresholds(split.native_maps(sigma), lo, hi, gains=(1.0,))["p95x1"]
 
 
-def fuse(a: SplitPredictions, b: SplitPredictions, sa: float, sb: float, na: float, nb: float, mode: str):
-    if a.ids != b.ids:
-        raise ValueError("the two runs were not evaluated on the same images")
+def fuse(splits: list[SplitPredictions], sigmas: list[float], norms: list[float], mode: str):
+    """Fused quarter-resolution maps of the same images from several models."""
+    if any(s.ids != splits[0].ids for s in splits):
+        raise ValueError("the runs were not evaluated on the same images")
     maps = []
-    for ma, mb in zip(a.native_maps(sa), b.native_maps(sb)):
-        qa, qb = quarter(ma) / na, quarter(mb) / nb
-        maps.append(np.maximum(qa, qb) if mode == "max" else 0.5 * (qa + qb))
-    return replace(a, raw_maps=maps, input_sizes=list(a.native_sizes),
+    for natives in zip(*(s.native_maps(sg) for s, sg in zip(splits, sigmas))):
+        q = [quarter(m) / n for m, n in zip(natives, norms)]
+        maps.append(np.maximum.reduce(q) if mode == "max" else np.mean(q, axis=0))
+    return replace(splits[0], raw_maps=maps, input_sizes=list(splits[0].native_sizes),
                    scores=np.array([float(m.max()) for m in maps]))
 
 
@@ -63,27 +64,37 @@ def main() -> int:
     ap.add_argument("--registry", default="reports/runs")
     ap.add_argument("--a", nargs="+", required=True, help="run ids of model A, one per category")
     ap.add_argument("--b", nargs="+", required=True, help="run ids of model B, matched by category")
+    ap.add_argument("--c", nargs="+", default=None, help="run ids of an optional model C, matched by category")
     ap.add_argument("--mode", choices=("mean", "max"), default="mean")
     ap.add_argument("--label", required=True)
     ap.add_argument("--out", default="reports/studies/fusion")
     ap.add_argument("--focus", action="store_true", help="the P95 band and variations of the mask rule")
+    ap.add_argument("--gains", action="store_true", help="the morphological rule over P95 gains 1.1-1.6 only")
+    ap.add_argument("--dump", default=None, help="directory for per-image counts (split-half analyses)")
     args = ap.parse_args()
     reg = Path(args.registry)
-    by_cat = {}
-    for rid in args.b:
-        spec = json.loads((reg / rid / "spec.json").read_text(encoding="utf-8"))
-        by_cat[spec["dataset"]["category"]] = rid
+    others = []
+    for ids in (args.b, args.c or []):
+        if not ids:
+            continue
+        by_cat = {}
+        for rid in ids:
+            spec = json.loads((reg / rid / "spec.json").read_text(encoding="utf-8"))
+            by_cat[spec["dataset"]["category"]] = rid
+        others.append(by_cat)
     rows = []
     for rid in args.a:
-        spec_a, val_a, test_a = load(reg / rid, args.data_root)
+        spec_a = json.loads((reg / rid / "spec.json").read_text(encoding="utf-8"))
         cat = spec_a["dataset"]["category"]
-        spec_b, val_b, test_b = load(reg / by_cat[cat], args.data_root)
-        sa, sb = spec_a["evaluation"]["smoothing_sigma"], spec_b["evaluation"]["smoothing_sigma"]
-        na, nb = p95(val_a, sa), p95(val_b, sb)
-        val_f = fuse(val_a, val_b, sa, sb, na, nb, args.mode)
-        test_f = fuse(test_a, test_b, sa, sb, na, nb, args.mode)
+        run_ids = [rid, *(o[cat] for o in others)]
+        loaded = [load(reg / r, args.data_root) for r in run_ids]
+        sigmas = [sp["evaluation"]["smoothing_sigma"] for sp, _, _ in loaded]
+        norms = [p95(val, sg) for (_, val, _), sg in zip(loaded, sigmas)]
+        val_f = fuse([v for _, v, _ in loaded], sigmas, norms, args.mode)
+        test_f = fuse([t for _, _, t in loaded], sigmas, norms, args.mode)
         ev = {**spec_a["evaluation"], "smoothing_sigma": 0.0}
-        got = evaluate_rules(val_f, test_f, ev, f"{rid}+{by_cat[cat]}", cat, **(focus_args() if args.focus else {}))
+        got = evaluate_rules(val_f, test_f, ev, "+".join(run_ids), cat, **(focus_args() if args.focus else gains_args() if args.gains else {}),
+                             dump=Path(args.dump) if args.dump else None)
         rows += [{"label": args.label, **r} for r in got]
         best = max((r for r in got if r["subset"] == "all"), key=lambda r: r["segf1"])
         print(f"{cat:<12} AU-PRO all {best['aupro_005']:.3f}  best {best['threshold']}/{best['post']} "

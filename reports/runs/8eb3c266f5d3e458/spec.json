@@ -1,0 +1,75 @@
+{
+  "dataset": {
+    "layout": "mvtec_ad2",
+    "category": "wallplugs",
+    "test_split": "test_public",
+    "val_carve_fraction": 0.15,
+    "val_carve_seed": 0,
+    "split_listing": {
+      "test_private": "2a031533b2276236",
+      "test_private_mixed": "042646f267fa8044",
+      "test_public": "881bb68b396982a0",
+      "train": "53775e771f806027",
+      "validation": "f3761a5d2d970861"
+    }
+  },
+  "model": {
+    "name": "tiled_knn",
+    "class": "TiledKNN",
+    "hparams": {
+      "backbone": "vit_huge_plus_patch16_dinov3",
+      "weights": "lvd1689m",
+      "layers": [
+        7,
+        15,
+        23,
+        31
+      ],
+      "scale": 0.625,
+      "tile": 640,
+      "overlap": 128,
+      "brightness": [
+        0.8,
+        1.2
+      ],
+      "candidate_fraction": 0.1,
+      "bank_size": 100000,
+      "density_neighbors": 100,
+      "subset_size": 4096,
+      "image_score": "max",
+      "compute": "bf16",
+      "dtype": "float16",
+      "seed": 0
+    }
+  },
+  "transform": {
+    "mode": "none",
+    "long_side": null,
+    "short_side": null,
+    "interpolation_down": "area",
+    "interpolation_up": "linear",
+    "normalize": "imagenet"
+  },
+  "evaluation": {
+    "smoothing_sigma": 4.0,
+    "smoothing_units": "input_px",
+    "target_fpr": 0.01,
+    "threshold_policy": "relax",
+    "sigma_n": 3.0,
+    "pixel_fpr": 0.001,
+    "aupro_limits": [
+      0.05,
+      0.3
+    ],
+    "aupro_num_thresholds": 512,
+    "max_negative_samples": 2000000,
+    "sampling_seed": 0,
+    "pixel_auroc_bins": 65536,
+    "report_oracle": true,
+    "metrics_version": "2"
+  },
+  "seed": 0,
+  "role": "development",
+  "protocol_version": "2",
+  "implementation_id": "3873474b7f85daa9d1a7ba63e385ef47a61d0535235b7b84643e0b890f62bcde"
+}

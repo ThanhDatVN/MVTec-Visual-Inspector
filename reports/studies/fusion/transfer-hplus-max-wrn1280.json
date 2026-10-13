@@ -1,0 +1,82 @@
+{
+ "global": {
+  "mean": 0.5357576839130932,
+  "sd": 0.05992176975323056
+ },
+ "per_category": {
+  "mean": 0.5112813440282746,
+  "sd": 0.06180087969891301
+ },
+ "reference": {
+  "mean": 0.5486110238290243,
+  "sd": 0.05928162001096237
+ },
+ "global_classf1": {
+  "mean": 0.795667416476739,
+  "sd": 0.02227037712892684
+ },
+ "per_category_classf1": {
+  "mean": 0.7777337321265542,
+  "sd": 0.028714110591555157
+ },
+ "per_category_minus_global": {
+  "mean": -0.0244763398848185,
+  "sd": 0.044883254062460784,
+  "share_positive": 0.325
+ },
+ "global_choices": {
+  "p95x1.25|morph|0.9": 1,
+  "p95x1.35|morph|0.9": 10,
+  "p95x1.3|morph|0.9": 29
+ },
+ "per_category_choices": {
+  "can": {
+   "p95x1.15|morph|0.9": 4,
+   "p95x1.1|morph|0.9": 16,
+   "p95x1.25|morph|0.9": 18,
+   "p95x1.3|morph|0.9": 2
+  },
+  "fabric": {
+   "p95x1.3|morph|0.9": 31,
+   "p95x1.6|morph|0.9": 9
+  },
+  "fruit_jelly": {
+   "p95x1.25|morph|0.9": 9,
+   "p95x1.35|morph|0.9": 17,
+   "p95x1.3|morph|0.9": 1,
+   "p95x1.4|morph|0.9": 13
+  },
+  "rice": {
+   "p95x1.15|morph|0.9": 3,
+   "p95x1.2|morph|0.9": 1,
+   "p95x1.35|morph|0.9": 1,
+   "p95x1.45|morph|0.9": 29,
+   "p95x1.4|morph|0.9": 6
+  },
+  "sheet_metal": {
+   "p95x1.35|morph|0.9": 28,
+   "p95x1.45|morph|0.9": 6,
+   "p95x1.4|morph|0.9": 3,
+   "p95x1.55|morph|0.9": 2,
+   "p95x1.5|morph|0.9": 1
+  },
+  "vial": {
+   "p95x1.35|morph|0.9": 4,
+   "p95x1.3|morph|0.9": 27,
+   "p95x1.4|morph|0.9": 3,
+   "p95x1.55|morph|0.9": 2,
+   "p95x1.5|morph|0.9": 1,
+   "p95x1.6|morph|0.9": 3
+  },
+  "wallplugs": {
+   "p95x1.25|morph|0.9": 4,
+   "p95x1.2|morph|0.9": 1,
+   "p95x1.35|morph|0.9": 24,
+   "p95x1.3|morph|0.9": 11
+  },
+  "walnuts": {
+   "p95x1.35|morph|0.9": 2,
+   "p95x1.3|morph|0.9": 38
+  }
+ }
+}

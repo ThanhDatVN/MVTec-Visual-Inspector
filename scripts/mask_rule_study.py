@@ -65,15 +65,22 @@ def focus_args() -> dict:
     return {"posts": FOCUS_POSTS, "keep": FOCUS_KEEP}
 
 
+def gains_args() -> dict:
+    """The morphological rule only, over the P95 gains 1.10 .. 1.60 (threshold choice alone)."""
+    return {"posts": {"morph": MORPH}, "keep": {f"p95x{g:g}" for g in GAINS if 1.1 <= g <= 1.6}}
+
+
 def evaluate_rules(val: SplitPredictions, test: SplitPredictions, ev: dict, name: str, category: str,
-                   posts: dict[str, MaskRule] | None = None, keep: set[str] | None = None) -> list[dict]:
+                   posts: dict[str, MaskRule] | None = None, keep: set[str] | None = None,
+                   dump: Path | None = None) -> list[dict]:
     """One row per (rule, subset): `all` images (the mixed-lighting proxy) and `regular` only (the
     `test_private` proxy: the private split holds the training lighting only).
 
     Each threshold/mask pair is also scored with `MaskRule.mark` at the factors in MARKS: an image
     whose mask is empty but whose (work-resolution) map exceeds c * tau anywhere gets a single
     work pixel at its maximum. The variants are derived from the unmarked mask, exactly as
-    `MaskRule.apply` would produce them.
+    `MaskRule.apply` would produce them. With `dump`, per-image counts (tp, fp, fn pixels and the
+    rejection) of every rule are saved there, for split-half analyses of threshold choices.
     """
     sigma = ev["smoothing_sigma"]
     taus = thresholds(val, sigma, ev["sigma_n"])
@@ -86,7 +93,10 @@ def evaluate_rules(val: SplitPredictions, test: SplitPredictions, ev: dict, name
     normals = dict.fromkeys(subsets, 0)
     rate = min(1.0, ev["max_negative_samples"] / max(1.0, float(sum(w * h for w, h in test.native_sizes))))
     pro = {sub: PROAccumulator(negative_rate=rate, seed=ev["sampling_seed"]) for sub in subsets}
-    for native, mask, label, image_id in zip(test.native_maps(sigma), test.masks(), test.labels, test.ids):
+    per_image = np.zeros((len(test.ids), len(keys), 4), dtype=np.int64) if dump else None
+    key_index = {k: i for i, k in enumerate(keys)}
+    for n_img, (native, mask, label, image_id) in enumerate(
+            zip(test.native_maps(sigma), test.masks(), test.labels, test.ids)):
         member = ("all", "regular") if image_id.endswith("_regular.png") else ("all",)
         if label == 1:
             member = (*member, "defective")
@@ -119,6 +129,12 @@ def evaluate_rules(val: SplitPredictions, test: SplitPredictions, ev: dict, name
                 for sub in member:
                     pix[((t, kind, c), sub)] += p_c
                     img[((t, kind, c), sub)] += im
+                if per_image is not None:
+                    per_image[n_img, key_index[(t, kind, c)]] = (*p_c, int(rej))
+    if dump is not None:
+        dump.mkdir(parents=True, exist_ok=True)
+        np.savez_compressed(dump / f"{category}.npz", counts=per_image, labels=np.asarray(test.labels),
+                            ids=np.asarray(test.ids), keys=np.asarray([f"{t}|{k}|{c:g}" for t, k, c in keys]))
     aupro = {sub: pro[sub].curves((0.05,), num_thresholds=ev["aupro_num_thresholds"])[0.05].au_pro
              for sub in subsets}
     rows = []

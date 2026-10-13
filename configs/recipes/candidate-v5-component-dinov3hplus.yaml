@@ -1,0 +1,29 @@
+# FROZEN component of candidate v5 (ADR-16): the tiled DINOv3 ViT-H+/16 nearest-neighbour model
+# (src/inspector/models/tiled_knn.py, after SuperAD/SuperADD, arXiv:2505.19750 / 2605.14808,
+# reimplemented). Replaces ViT-L of candidate v4 (ADR-15, never exported): with tuned masks and
+# fused with WRN50, SegF1 0.571 -> 0.609 on test_public (development). Do not edit.
+
+experiment:
+  tier: T3
+  owner: own
+
+preprocess:
+  resize_mode: none   # the model scales and tiles internally
+  long_side: null
+
+model:
+  name: tiled_knn
+  backbone: vit_huge_plus_patch16_dinov3
+  weights: lvd1689m
+  layers: [7, 15, 23, 31]
+  scale: 0.625
+  tile: 640
+  overlap: 128
+  brightness: [0.8, 1.2]
+  candidate_fraction: 0.1
+  bank_size: 100000
+  density_neighbors: 100
+  subset_size: 4096
+  image_score: max
+  compute: bf16   # fp32 weights (3.4 GB) do not fit a 4 GB card
+  tile_batch: 2

@@ -46,9 +46,10 @@ tile (`sheet_metal`, 41 tokens high) was covered by two nearly identical windows
 the axis fits in tile + 2 × overlap halved the cost. Final cost: ~2 s per image, 2.7 GB VRAM peak.
 
 ViT-L against ViT-H+ (SuperADD's backbone) on `sheet_metal`, `vial`, `fruit_jelly`, `wallplugs`:
-AU-PRO 0.595 vs 0.581, SegF1 at 3σ 0.463 vs 0.493 (registry, all captures); with tuned masks
-see `reports/studies/mask-rules/rules_dinov3hplus-4cat.csv`. H+ costs twice the time; ViT-L was
-kept for the higher AU-PRO.
+AU-PRO 0.595 vs 0.581, SegF1 at 3σ 0.463 vs 0.493 (registry, all captures). ADR-15 kept ViT-L on
+those numbers — before the tuned-mask study of H+ had finished, which was a mistake: with tuned
+masks H+ is better on SegF1 in all four (`vial` 0.519 → 0.610, `fruit_jelly` 0.509 → 0.550). §8
+reports the eight-category comparison and the switch to H+ (ADR-16).
 
 ## 4. Masks and the image decision (`src/inspector/postproc/binarize.py`)
 
@@ -101,6 +102,26 @@ Frozen in [`candidate-v4-fusion.yaml`](../configs/recipes/candidate-v4-fusion.ya
 committed and pushed (`7401c9d`) before the export; one global setting, no per-category choice.
 Pre-registered (H5): AU-PRO ≥ v1 + 10 and SegF1 ≥ v1 + 20 on both private splits, ClassF1 not below
 v1. Server result: **pending the owner's upload**.
+
+## 8. E21b — the remaining weaknesses, attacked one by one
+
+After v4 was frozen, each open point was tested before the export, on `test_public`:
+
+| question | test | result | decision |
+|---|---|---|---|
+| ViT-H+ instead of ViT-L? | all eight categories, fused with WRN50, tuned masks | SegF1 0.595 / 0.571 → **0.620 / 0.609**; AU-PRO 0.581 / 0.564 → 0.567 / 0.555 | **H+** (ADR-16): SegF1 is the weaker and the ranked metric |
+| one threshold or one per category? | split-half over objects, 20 splits, per-image counts | per-category **−0.024** SegF1 out of sample, better in 32% of splits; global gain 1.3 chosen in 29/40 halves | **one global threshold** (SuperAD's per-category tuning on `test_public` would overfit) |
+| shape of the mask? | connected-component filter (4/16/64 px), closing radius 13/40, lower 0.7/0.9, no erosion | all within ±0.01 SegF1 of the default | default `MaskRule` |
+| fuse all three (H+, L, WRN50)? | max of three normalized maps | AU-PRO +1, SegF1 *unstable* (`regular` 0.540 at gain 1.3) | not adopted (+50% cost) |
+| native resolution for thin defects? | H+ at scale 1.0 on `sheet_metal`, `can` | `sheet_metal` AU-PRO 0.594 → 0.634 alone but 0.573 → 0.583 fused, SegF1 0.551 → 0.533; `can` AU-PRO 0.000, pixel AUROC 0.48 | scale 0.625 kept (2.5× the cost for nothing after fusion) |
+| `can`? | DINOv3 at two scales and two sizes | below chance at pixel level in every variant; only WRN50 carries it (0.14) | unresolved |
+
+Published context: VAND 4.0 (arXiv:2610.04392) ranks SuperADD first (57.42 / 54.35) and ISVL++
+second (58.31 / 53.75; INP-Former on DINOv3 with a segmentation head trained on synthetic
+anomalies, which also set its thresholds); DL-SubspaceAD (DINOv3 ViT-7B at full resolution) fifth.
+The common elements are DINOv3, tiling or high resolution, and morphological post-processing —
+what v5 has. What it lacks is training: ISVL++'s synthetic-anomaly head is the one documented
+lever left, beyond a 4 GB card for eight categories.
 
 ## 7. What remains weak
 

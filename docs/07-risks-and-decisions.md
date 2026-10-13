@@ -502,8 +502,8 @@ not displayed). ([report](../reports/E14-E15-ad2-development.md), S1.)
 
 ### ADR-15 — Candidate v4 for MVTec's server: tiled DINOv3 fused with WRN50, masks per server metric
 
-**Status:** Accepted, 2026-10-13. Committed and pushed before the v4 export and before any server
-result for it. The last submission the protocol allows (two; S1 was the first).
+**Status:** Superseded by ADR-16 on 2026-10-13, before any v4 submission: its export was stopped
+during the first category, the partial output deleted, nothing uploaded. Kept as written.
 
 **Context.** S1 put recipe v1 at AU-PRO@0.05 37.64 / 35.11 and SegF1 26.42 / 23.01 on
 `test_private` / `test_private_mixed` — above every baseline of the AD 2 paper and about half of
@@ -552,6 +552,36 @@ on the RTX 3050 and two models per category; v1 stays the recipe where an image-
 calibrated false-alarm rate is what matters (VisA, MPDD, E12). (−) DINOv3 weights are Meta's
 (DINOv3 License); SuperAD/SuperADD are reimplemented from their papers, no code copied (theirs is
 CC BY-NC 4.0).
+
+---
+
+### ADR-16 — Candidate v5: ViT-H+ in place of ViT-L (supersedes ADR-15 before any export)
+
+**Status:** Accepted, 2026-10-13. Committed and pushed before the v5 export and before any server
+result for v4 or v5. The last submission the protocol allows.
+
+**Context.** ADR-15 chose ViT-L over ViT-H+ on SegF1 at the 3σ rule, before the H+ runs had been
+scored with tuned masks. Scored as v4 is (fusion with WRN50 at 1280 px, P95 × gain masks), H+ is
+the better component on SegF1 in every category screened, and the full eight-category study
+(E21b, `test_public`) confirms it.
+
+**Decision.**
+
+1. v5 = v4 with [`candidate-v5-component-dinov3hplus.yaml`](../configs/recipes/candidate-v5-component-dinov3hplus.yaml)
+   (DINOv3 ViT-H+/16, blocks 7, 15, 23, 31, bf16) in place of ViT-L, and the P95 gain re-chosen
+   for the fused maps, 1.3: [`candidate-v5-fusion.yaml`](../configs/recipes/candidate-v5-fusion.yaml).
+   Everything else is ADR-15's: max fusion with WRN50 at 1280 px, `MaskRule` defaults, mark 0.9,
+   one global setting.
+2. Evidence (E21b, development): AU-PRO 0.567 / 0.555 (v4: 0.581 / 0.564), SegF1 0.620 / 0.609
+   (v4: 0.595 / 0.571), ClassF1 0.802 (v4: 0.806), private / mixed proxies. A split-half test over
+   objects (20 splits) found per-category thresholds *worse* out of sample than the one global
+   threshold (−0.024 SegF1, better in 32% of splits), and the global choice stable (1.3 in 29 of
+   40 halves): the rule stays global.
+3. Export, check and upload as ADR-15 §5. H5 is unchanged and applies to v5: AU-PRO@0.05 at
+   least 10 points above v1 on both splits, SegF1 at least 20 points above, ClassF1 not below.
+
+**Consequences.** (+) The best SegF1 the 4 GB card produced in development. (−) About 1 point of
+AU-PRO given up against v4; ViT-H+ doubles the time per image (~9.5 h for the export).
 
 ---
 
