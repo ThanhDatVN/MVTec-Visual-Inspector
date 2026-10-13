@@ -489,6 +489,11 @@ was designed for. (+) The `test_private` vs `test_private_mixed` comparison meas
 change on data that shaped nothing. (−) Two of the owner's evaluation budget. (−) 1280 px doubles
 fit time and host memory; still within the laptop.
 
+**Outcome (2026-10-13, [E14–E20](../reports/E14-E15-ad2-development.md) §2):** the gate **fails**:
+`vial` is significantly worse (−0.142, Holm p 0.028) although macro image AUROC rises 0.676 →
+0.731 and macro AU-PRO@0.05 0.351 → 0.473 (higher on all eight categories). v3 is not exported,
+H4 is not tested, and v1 remains the recipe; S1 is the only submission.
+
 ---
 
 ### Open decisions (resolve before the stated gate)

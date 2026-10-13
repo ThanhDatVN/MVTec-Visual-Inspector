@@ -1,0 +1,16 @@
+{
+ "categories": 8,
+ "significant_losses": [
+  "vial"
+ ],
+ "significant_gains": [
+  "sheet_metal"
+ ],
+ "macro_auroc_ref": 0.676326616505188,
+ "macro_auroc_v3": 0.7308546204677157,
+ "macro_aupro_ref": 0.35139261498491736,
+ "macro_aupro_v3": 0.47310915393983266,
+ "false_alarms_ref": 47,
+ "false_alarms_v3": 54,
+ "submit_v3": false
+}

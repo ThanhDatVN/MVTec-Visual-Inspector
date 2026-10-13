@@ -184,6 +184,9 @@ pre-registered rules and none carried; a moved specular highlight is not a gain 
 Real normals halve the changed-lighting false alarms at the old threshold (E16, 41 → 19 of 187),
 but at a threshold recalibrated on new-lighting normals they buy no recall (E17): on `can` the
 changed-lighting normals and the defects are simply not separable with these features.
+Resolution is the one lever that works on AD 2 (E19): v1 at 1280 px lifts `sheet_metal` from
+0.63 to 0.86 image AUROC (3 seeds) and `fabric`'s AU-PRO from 0.15 to 0.52 — but applied to every
+category it costs `vial` 0.14, so the pre-registered gate kept it off the server (ADR-14, E20).
 The image-score failure is separate: it persists under the training lighting. The captures of one
 object are one sample, so AD 2 intervals are computed over objects from here on.
 [Report](reports/E14-E15-ad2-development.md).

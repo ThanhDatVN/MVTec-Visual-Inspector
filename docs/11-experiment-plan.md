@@ -480,6 +480,12 @@ effect sizes are reported either way. 5 runs.
 (p 0.040), AU-PRO 0.18 → 0.35 / 0.50: both carried to seeds 1–2; 1920 px +0.276 (p 0.17).
 `fabric` 1280 px +0.072 (n.s.), AU-PRO 0.15 → 0.52; `rice` 1280 px +0.134 (n.s.), AU-PRO
 0.26 → 0.33. Next: candidate v3 and its server test, ADR-14 (E20, S2).
+Seeds 1–2 (with the 640 px reference rerun): `sheet_metal` 1280 px +0.230 [+0.066, +0.392],
+2816 px +0.210 [+0.021, +0.413] over seeds 0–2.
+
+*E20 outcome (ADR-14 gate).* v3 on all eight categories, seed 0: `vial` significantly worse
+(−0.142, Holm p 0.028), `sheet_metal` better (+0.292); macro AUROC 0.676 → 0.731, macro AU-PRO
+0.351 → 0.473. The gate fails; S2 is not exported.
 
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 

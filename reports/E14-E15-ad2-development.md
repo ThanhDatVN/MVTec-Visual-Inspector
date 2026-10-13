@@ -1,4 +1,4 @@
-# E14–E18 — Development on MVTec AD 2 after E13: what fails, and why
+# E14–E20 — Development on MVTec AD 2 after E13: what fails, why, and what works
 
 E13 left recipe v1 with near-chance image AUROC on four AD 2 categories and 5–7× its false-alarm
 bound. This report takes the two failures apart on `test_public`, which is development data from
@@ -42,12 +42,19 @@ MVTec's server). Dataset: MVTec AD 2 © MVTec Software GmbH, CC BY-NC-SA 4.0 —
 6. **DINOv2 features do not replace WRN50 here (E18).** In the same PatchCore pipeline, ViT-S/14
    and ViT-B/14 lift `rice` from 0.52 to 0.85 / 0.78 and lose 0.17 on `vial`; under changed
    lighting they are *more* fragile — `shift` false alarms 41 → 95 of 187. Not carried.
-7. **The image score is a separate problem.** It fails under the training lighting too (v1 on
+7. **Resolution is the lever for thin defects (E19).** v1 at a 1280 px long side lifts
+   `sheet_metal` image AUROC from 0.63 to 0.86 over seeds 0–2 (+0.23 [+0.07, +0.39], object
+   bootstrap) and AU-PRO@0.05 from 0.18 to 0.35 (0.50 at 2816 px); `fabric`'s AU-PRO goes from
+   0.15 to 0.52. This is the first AD 2 change that survives the object bootstrap. As a recipe
+   for all eight categories (candidate v3, ADR-14) it **fails its gate** (E20): macro AU-PRO
+   0.35 → 0.47 and macro image AUROC 0.68 → 0.73, but `vial` −0.14 (significant), so it is not
+   submitted. Resolution is a per-part choice, not a global one.
+8. **The image score is a separate problem.** It fails under the training lighting too (v1 on
    `regular` captures: `can` 0.57, `rice` 0.53, `sheet_metal` 0.53, `wallplugs` 0.46). No
    aggregation rule, object region or location normalization fixes it in general (E14a, R2); an
    image-level branch helps under the training lighting (`rice` 0.53 → 0.78) and fails under
    changed lighting (R4).
-8. **Two defects found and fixed:** the 3σ pixel threshold (SegF1 0 on `fruit_jelly` v2 → 0.22
+9. **Two defects found and fixed:** the 3σ pixel threshold (SegF1 0 on `fruit_jelly` v2 → 0.22
    at the validation quantile), and a regression that made the frozen E13 analysis match no run.
 
 ## 1. What `test_public` contains
@@ -279,6 +286,59 @@ WRN50's features do: `wallplugs` 27–28 and `walnuts` 24 of 30 `shift` normals 
 before). The 14 px token grid also costs AU-PRO on the small-defect categories (`can`
 0.09 → 0.01). DINOv2 is a per-category option for `rice`-like parts, not a replacement.
 
+### E19 — resolution for the thin-defect categories (R1, pre-registered, `scripts/e19_analysis.py`)
+
+On these images the 4 GB card embeds the whole image at batch size 1, so R1 was run as the
+resolution itself, recipe v1 otherwise unchanged. Host memory for the candidate pool bounded the
+levels (`fabric` and `rice` at 1920 px would need ~11 GB). Against E18-ref (640 px), seed 0,
+object bootstrap, Holm over the five comparisons:
+
+| category | long side | image AUROC | Holm p | `regular` AUROC | AU-PRO@0.05 | pixel AUROC | false alarms | fit time |
+|---|---|---|---|---|---|---|---|---|
+| `sheet_metal` | 640 → 1280 | 0.580 → **0.871** | **0.003** | 0.517 → 0.933 | 0.183 → 0.347 | 0.921 → 0.842 | 0 → 0 / 24 | 15 → 28 s |
+| `sheet_metal` | 640 → 1920 | 0.580 → 0.856 | 0.170 | 0.517 → 0.883 | 0.183 → 0.410 | 0.921 → 0.792 | 0 → 0 | 15 → 46 s |
+| `sheet_metal` | 640 → 2816 | 0.580 → **0.863** | **0.040** | 0.517 → 0.867 | 0.183 → **0.497** | 0.921 → 0.714 | 0 → 0 | 15 → 86 s |
+| `fabric` | 640 → 1280 | 0.664 → 0.736 | 0.547 | 0.679 → 0.758 | 0.146 → **0.525** | 0.680 → 0.615 | 5 → 8 / 66 | 100 → 213 s |
+| `rice` | 640 → 1280 | 0.515 → 0.649 | 0.366 | 0.476 → 0.695 | 0.265 → 0.334 | 0.822 → 0.854 | 0 → 0 / 42 | 79 → 174 s |
+
+The two significant `sheet_metal` levels went to seeds 1–2 (with the 640 px reference rerun at the
+same implementation): over seeds 0–2, 1280 px +0.230 [+0.066, +0.392] (p 0.006) and 2816 px
++0.210 [+0.021, +0.413], AU-PRO 0.181 → 0.348 and 0.499. On a 4224×1056 sheet a 640 px long side
+leaves 160 px of height for scratches a few pixels wide; doubling it is what the image score
+needed, and further doubling buys localization (AU-PRO) but not detection. Pixel AUROC falls as
+the resolution rises — more fine texture lights up across the whole map — while the region-based
+AU-PRO, which the benchmark ranks on, rises. `fabric`'s localization more than triples. Four
+normal objects make `sheet_metal`'s intervals wide, and this is development data: the held-out
+test is ADR-14's.
+
+### E20 — ADR-14's gate for candidate v3 (v1 at 1280 px, all eight categories)
+
+Pre-registered in [ADR-14](../docs/07-risks-and-decisions.md) with its analysis
+(`scripts/e19_analysis.py --gate`): v3 goes to the server if no category is significantly worse in
+image AUROC (object bootstrap, Holm over 8) and macro AU-PRO@0.05 is higher. Seed 0 against
+E18-ref; the three E19 categories reused, five new runs:
+
+| category | image AUROC 640 → 1280 | Holm p | `regular` | AU-PRO@0.05 | false alarms |
+|---|---|---|---|---|---|
+| `can` | 0.505 → 0.503 | 1.00 | 0.572 → 0.556 | 0.093 → 0.145 | 38 → 32 / 72 |
+| `fabric` | 0.664 → 0.736 | 1.00 | 0.679 → 0.758 | 0.146 → 0.525 | 5 → 8 / 66 |
+| `fruit_jelly` | 0.871 → 0.914 | 1.00 | 0.880 → 0.947 | 0.488 → 0.555 | 0 → 0 / 20 |
+| `rice` | 0.515 → 0.649 | 1.00 | 0.476 → 0.695 | 0.265 → 0.334 | 0 → 0 / 42 |
+| `sheet_metal` | 0.580 → **0.871** | **0.003** | 0.517 → 0.933 | 0.183 → 0.347 | 0 → 0 / 24 |
+| `vial` | 0.908 → **0.766** | **0.028** | 0.933 → 0.960 | 0.755 → 0.794 | 0 → 2 / 35 |
+| `wallplugs` | 0.509 → 0.577 | 1.00 | 0.453 → 0.607 | 0.270 → 0.421 | 4 → 12 / 60 |
+| `walnuts` | 0.859 → 0.830 | 1.00 | 0.880 → 0.820 | 0.612 → 0.664 | 0 → 0 / 60 |
+| **macro** | **0.676 → 0.731** | | | **0.351 → 0.473** | 47 → 54 |
+
+**The gate fails on `vial`**, so v3 is not exported and H4 is not tested — exactly the regression
+the gate exists to keep off the server. AU-PRO rises on all eight categories, and `vial` itself
+is better under the training lighting (0.933 → 0.960): its loss is in the changed-lighting
+captures, the same pattern as v2 at 960 px in E13 (a hypothesis, untested: finer resolution
+resolves more of the highlights that move in the transparent vial). Resolution should follow the part — elongated sheets with
+thin scratches need it, a backlit vial under changing light is hurt by it — and a per-part rule
+would be a new recipe for a new held-out test, not a revision of this one. Recipe v1 remains
+the recommended recipe, and S1 (v1) is the only submission.
+
 ## 4. Localization: the pixel threshold (docs/14 B3, fixed)
 
 The evaluator now reports SegF1 at a second threshold, the validation pixel quantile at a 0.1%
@@ -321,8 +381,10 @@ similar arrangements, not copies.
   For deployment: re-collect *many* normal parts (tens, not a handful) under each lighting before
   trusting the false-alarm figure, or fix the lighting. DINOv2 features (E18) are more
   lighting-sensitive, not less.
-- **Image score** (A1, A3). Under the training lighting the failures persist. R8 helps `rice`
-  only (E18); resolution for the thin-defect categories is E19.
-- **Held-out.** No variant earned a server submission beyond v1; submitting v1 to MVTec's server
-  (`test_private`, `test_private_mixed`) measures the private lighting shift once (owner action).
+- **Image score** (A1, A2, A3). Resolution fixes the thin-defect case (E19, `sheet_metal`), but
+  as a global setting it costs `vial` (E20), so v3 did not pass ADR-14's gate. A per-part
+  resolution rule fixed from image geometry (e.g. a minimum short side), stated before data and
+  tested on a new held-out set, is the next recipe candidate. `can` and `wallplugs` stay near
+  chance; R8 helps `rice` only (E18).
+- **Held-out.** S1 (v1) is exported and checked; its upload is the owner's.
 - **Statistics.** On AD 2 the object is the resampling unit from here on.
