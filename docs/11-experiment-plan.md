@@ -487,6 +487,14 @@ Seeds 1–2 (with the 640 px reference rerun): `sheet_metal` 1280 px +0.230 [+0.
 (−0.142, Holm p 0.028), `sheet_metal` better (+0.292); macro AUROC 0.676 → 0.731, macro AU-PRO
 0.351 → 0.473. The gate fails; S2 is not exported.
 
+### Stage K — Localization for MVTec's server (E21, S2; laptop)
+
+After S1 (2026-10-13). E21 is development exploration on `test_public`, not a pre-registered
+screen: a tiled DINOv3 nearest-neighbour model after SuperADD, mask rules measured per server
+metric with a proxy calibrated on S1, a ViT-H+ screen on four categories, and map fusion with
+WRN50 at 1280 px. Its output is one frozen candidate, v4, whose held-out test was written down
+before its export: ADR-15 (H5). Report: [E21](../reports/E21-ad2-localization.md).
+
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 
 | # | Deliverable | Spec |

@@ -193,6 +193,12 @@ category it costs `vial` 0.14, so the pre-registered gate kept it off the server
 21.8 SegF1, all at 256×256) and with the smallest lighting drop, but about half of the VAND 2025
 challenge system RoBiS (67.3 / 51.0). ClassF1 (73.9 / 76.2) sits near the trivial reject-all floor,
 as RoBiS's does. [Report](reports/E14-E15-ad2-development.md).
+
+**Candidate v4 for the server (E21, ADR-15):** a tiled DINOv3-L nearest-neighbour model (after the
+training-free VAND 4.0 system SuperADD, reimplemented) fused with WRN50 at 1280 px, masks tuned per
+server metric. On `test_public` (development, server-style scoring): AU-PRO 0.351 → 0.564, SegF1
+0.205 → 0.571, ClassF1 0.776 → 0.806. Frozen and pre-registered before its export; the server
+result is pending. [Report](reports/E21-ad2-localization.md).
 The image-score failure is separate: it persists under the training lighting. The captures of one
 object are one sample, so AD 2 intervals are computed over objects from here on.
 [Report](reports/E14-E15-ad2-development.md).
