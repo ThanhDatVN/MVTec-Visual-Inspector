@@ -1,0 +1,31 @@
+# CANDIDATE recipe v3 (ADR-14) — recipe v1 at a 1280 px long side; nothing else changes.
+# Selected on MVTec AD 2 test_public (development since E13) by E19: at 1280 px `sheet_metal`
+# image AUROC 0.580 -> 0.871 (significant, object bootstrap) and AU-PRO@0.05 0.18 -> 0.35;
+# `fabric` AU-PRO 0.15 -> 0.52, `rice` +0.13 image AUROC. Frozen by ADR-14 before E20 and before
+# any server submission; its held-out test is MVTec's server (test_private, test_private_mixed).
+# batch_size 1 keeps the 4 GB card safe at this resolution; it does not change what is computed.
+
+experiment:
+  tier: T3
+  owner: own
+
+model:
+  name: patchcore
+  backbone: wide_resnet50_2
+  weights: IMAGENET1K_V1
+  layers: [layer2, layer3]
+  patch_pool: 3
+  projection_dim: 1024
+  candidate_fraction: 0.1
+  bank_ratio: null
+  bank_size: 10000
+  coreset_projection_dim: 128
+  patch_neighbors: 1
+  patch_reduction: nearest
+  reweight: true
+  reweight_neighbors: 9
+  batch_size: 1
+  feature_dtype: float16
+
+preprocess:
+  long_side: 1280

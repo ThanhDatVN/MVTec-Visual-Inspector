@@ -476,6 +476,11 @@ resolution goes to seeds 1–2 for its category if image AUROC is significantly 
 not lower. `sheet_metal` has four normal objects, so only a large effect can reach significance;
 effect sizes are reported either way. 5 runs.
 
+*E19 outcome (2026-10-13).* `sheet_metal` 1280 px +0.292 (Holm p 0.003) and 2816 px +0.283
+(p 0.040), AU-PRO 0.18 → 0.35 / 0.50: both carried to seeds 1–2; 1920 px +0.276 (p 0.17).
+`fabric` 1280 px +0.072 (n.s.), AU-PRO 0.15 → 0.52; `rice` 1280 px +0.134 (n.s.), AU-PRO
+0.26 → 0.33. Next: candidate v3 and its server test, ADR-14 (E20, S2).
+
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 
 | # | Deliverable | Spec |

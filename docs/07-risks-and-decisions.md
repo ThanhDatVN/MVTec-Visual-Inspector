@@ -447,6 +447,50 @@ is from now on development data.
 
 ---
 
+### ADR-14 — Candidate v3 (v1 at 1280 px): development gate on `test_public`, held-out test on MVTec's server
+
+**Status:** Accepted, 2026-10-13. Committed and pushed before E20 runs and before any server
+result exists for either recipe.
+
+**Context.** On AD 2 `test_public` (development since E13), E19 found that recipe v1 at a 1280 px
+long side instead of 640 lifts `sheet_metal` image AUROC 0.580 → 0.871 (object bootstrap, Holm
+p 0.003; seeds 1–2 in progress) and AU-PRO@0.05 0.18 → 0.35, and `fabric` AU-PRO 0.15 → 0.52.
+AD 2's headline metric is pixel-level (AU-PRO@0.05, SegF1), which MVTec's server computes on the
+private splits that nothing here has seen. v1 has been exported for that server (S1) and awaits
+the owner's upload.
+
+**Decision.**
+
+1. **Recipe v3,** frozen as
+   [`candidate-v3-patchcore-1280.yaml`](../configs/recipes/candidate-v3-patchcore-1280.yaml): v1
+   with `long_side: 1280` (and `batch_size: 1`, which changes no computed value).
+2. **E20, development gate.** v3, seed 0, on the five categories E19 did not run (`can`,
+   `fruit_jelly`, `vial`, `wallplugs`, `walnuts`); with E19's three, all eight against E18-ref
+   (v1, 640 px) at the same implementation (`5ab1a8956c23`), analysed by `scripts/e19_analysis.py`
+   extended to the eight categories. v3 goes to the server if **no category is significantly
+   worse in image AUROC** (object bootstrap, Holm over 8) **and macro AU-PRO@0.05 is higher** than
+   v1's. Development evidence only; its purpose is to keep a regression off the server.
+3. **S2, export.** If the gate passes: v3, seed 0, exported exactly as S1 (ADR-13 §6: float16
+   maps at native resolution, masks at the validation mean + 3σ), checked with MVTec's
+   `check_and_prepare_data_for_upload.py`. The owner uploads both S1 (v1) and S2 (v3), one
+   submission each.
+4. **H4, held-out.** From the server's per-category numbers, transcribed into
+   `reports/studies/ad2-server/server_results.csv` and analysed by
+   [`scripts/ad2_server_analysis.py`](../scripts/ad2_server_analysis.py) (committed with this ADR):
+   v3's AU-PRO@0.05 on `test_private` exceeds v1's on **at least 7 of 8** categories (one-sided
+   exact sign test, p = 0.035). *Confirmed* if it holds: v3 then replaces v1 for AD 2-like parts
+   (large images, thin defects); *not confirmed* otherwise, and v1 stays. SegF1, the
+   `test_private_mixed` split and each recipe's private → mixed drop are descriptive; if the
+   server reports only means, H4 is not evaluable and the means are reported as received.
+5. **No retuning** between the gate and the server, and no second submission of either recipe.
+
+**Consequences.** (+) The first held-out test of a localization claim on the dataset the project
+was designed for. (+) The `test_private` vs `test_private_mixed` comparison measures real lighting
+change on data that shaped nothing. (−) Two of the owner's evaluation budget. (−) 1280 px doubles
+fit time and host memory; still within the laptop.
+
+---
+
 ### Open decisions (resolve before the stated gate)
 
 | # | Question | Resolve by |
@@ -455,5 +499,5 @@ is from now on development data.
 | OD-2 | Which classic-AD categories and which published PatchCore numbers form the G5 reproduction target, and at what tolerance? | G2 |
 | OD-3 | Which AU-PRO FPR-normalization convention does the reference implementation use (normal images only, vs all normal pixels)? Pin it in a docstring. | G2 |
 | OD-4 | Resolve the AD 2 "below 60% AU-PRO" vs ~31% AU-PRO@0.05 discrepancy — different integration limit, or different split? | G2 |
-| OD-5 | DINOv2/DINOv3 ViT backbones in the PatchCore ablation: worth the patch-token plumbing, or cut for time? | G5 |
-| OD-6 | Do we make a leaderboard submission at all? | G8 |
+| OD-5 | DINOv2/DINOv3 ViT backbones in the PatchCore ablation: worth the patch-token plumbing, or cut for time? | **Resolved (E18):** built and screened; not carried (`rice` +0.33, `vial` −0.17, more lighting-sensitive). |
+| OD-6 | Do we make a leaderboard submission at all? | **Resolved (ADR-13 §6, ADR-14):** v1 exported and checked (S1); v3 after its gate (S2); uploads are the owner's. |

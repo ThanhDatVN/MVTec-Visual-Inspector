@@ -1,0 +1,34 @@
+[
+ {
+  "category": "sheet_metal",
+  "long_side": 1280,
+  "estimate": 0.23009259259259252,
+  "objects_normal": 4,
+  "objects_anomalous": 15,
+  "seeds": 3,
+  "ci_low_image": 0.1354899691358025,
+  "ci_high_image": 0.3277777777777777,
+  "p_image": 0.00019998000199980003,
+  "ci_low_object": 0.06618827160493823,
+  "ci_high_object": 0.391820987654321,
+  "p_object": 0.0059994000599940004,
+  "aupro_ref_mean": 0.18051292497096885,
+  "aupro_variant_mean": 0.34766440919735214
+ },
+ {
+  "category": "sheet_metal",
+  "long_side": 2816,
+  "estimate": 0.2100308641975308,
+  "objects_normal": 4,
+  "objects_anomalous": 15,
+  "seeds": 3,
+  "ci_low_image": 0.11049382716049383,
+  "ci_high_image": 0.31234567901234567,
+  "p_image": 0.00019998000199980003,
+  "ci_low_object": 0.02098765432098781,
+  "ci_high_object": 0.4134297839506172,
+  "p_object": 0.028997100289971003,
+  "aupro_ref_mean": 0.18051292497096885,
+  "aupro_variant_mean": 0.4993392825064224
+ }
+]
