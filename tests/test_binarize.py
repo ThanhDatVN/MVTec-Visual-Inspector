@@ -58,3 +58,27 @@ def test_rule_returns_native_shape_and_empty_masks_for_clean_maps():
 def test_plain_rule_is_a_bare_threshold():
     m = np.random.default_rng(1).random((64, 48))
     assert np.array_equal(PLAIN.apply(m, 0.7), m > 0.7)
+
+
+def test_validation_thresholds_match_direct_computation():
+    from inspector.postproc.binarize import validation_thresholds
+
+    rng = np.random.default_rng(3)
+    maps = [rng.gamma(2.0, 1.0, size=(60, 80)) for _ in range(5)]
+    flat = np.concatenate([m.ravel() for m in maps])
+    out = validation_thresholds(iter(maps), float(flat.min()), float(flat.max()), gains=(1.4,), rates=(1e-3,))
+    assert out["3sigma"] == pytest.approx(flat.mean() + 3 * flat.std())
+    assert out["p95x1.4"] / 1.4 == pytest.approx(np.percentile(flat, 95), rel=2e-3)
+    assert np.mean(flat > out["q0.001"]) <= 1e-3
+
+
+def test_mark_rejects_an_image_whose_mask_came_out_empty():
+    m = np.zeros((64, 64), dtype=np.float32)
+    m[28:32, 40:44] = 0.85  # one 4 x 4 work pixel, below tau = 1.0 and above 0.8 * tau
+    plain = MaskRule(mark=0.0).apply(m, 1.0)
+    marked = MaskRule(mark=0.8).apply(m, 1.0)
+    assert not plain.any()
+    assert marked.any() and marked.sum() <= 16  # one work pixel: a 4 x 4 block
+    ys, xs = np.nonzero(marked)
+    assert 28 <= ys.mean() <= 32 and 40 <= xs.mean() <= 44
+    assert not MaskRule(mark=0.9).apply(m, 1.0).any()  # the map never reaches 0.9 * tau

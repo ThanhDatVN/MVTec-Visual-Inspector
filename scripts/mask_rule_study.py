@@ -26,32 +26,18 @@ from pathlib import Path
 import numpy as np
 
 from inspector.evaluate import SplitPredictions
-from inspector.metrics.pixel_level import PixelHistogram
-from inspector.postproc.binarize import PLAIN, MaskRule
-from inspector.postproc.thresholds import pixel_quantile_from_histogram, sigma_from_stats
+from inspector.metrics.aupro import PROAccumulator
+from inspector.postproc.binarize import PLAIN, MaskRule, validation_thresholds
 
 GAINS = tuple(round(1.0 + 0.05 * i, 2) for i in range(21))  # 1.00 .. 2.00
 RATES = (1e-2, 5e-3, 2e-3, 1e-3, 5e-4, 2e-4, 1e-4)
 MORPH = MaskRule()
+MARKS = (0.9, 0.8, 0.7, 0.6, 0.5, 0.4)
 
 
 def thresholds(val: SplitPredictions, sigma: float, n_sigma: float) -> dict[str, float]:
-    total = total_sq = count = 0.0
     lo, hi = val.raw_range()
-    hist = PixelHistogram(lo, hi, bins=1 << 16)
-    for native in val.native_maps(sigma):
-        flat = native.ravel()
-        total += float(flat.sum())
-        total_sq += float(np.square(flat).sum())
-        count += flat.size
-        hist.add(flat, np.zeros(flat.size, dtype=bool))
-    mean = total / count
-    std = float(np.sqrt(max(0.0, total_sq / count - mean**2)))
-    p95 = pixel_quantile_from_histogram(hist.neg, hist.edges, pixel_fpr=0.05).value
-    out = {"3sigma": sigma_from_stats(mean, std, n_sigma=n_sigma).value}
-    out.update({f"q{r:g}": pixel_quantile_from_histogram(hist.neg, hist.edges, pixel_fpr=r).value for r in RATES})
-    out.update({f"p95x{g:g}": p95 * g for g in GAINS})
-    return out
+    return validation_thresholds(val.native_maps(sigma), lo, hi, n_sigma=n_sigma, gains=GAINS, rates=RATES)
 
 
 def f1(tp: int, fp: int, fn: int) -> float:
@@ -60,25 +46,67 @@ def f1(tp: int, fp: int, fn: int) -> float:
 
 def study(run_dir: Path, data_root: str) -> list[dict]:
     spec = json.loads((run_dir / "spec.json").read_text(encoding="utf-8"))
-    sigma = spec["evaluation"]["smoothing_sigma"]
     val = SplitPredictions.load(run_dir, "validation", root=data_root)
     test = SplitPredictions.load(run_dir, spec["dataset"]["test_split"], root=data_root)
-    taus = thresholds(val, sigma, spec["evaluation"]["sigma_n"])
-    rules = {(t, kind): (taus[t], rule) for t in taus for kind, rule in (("plain", PLAIN), ("morph", MORPH))}
-    pix = {k: np.zeros(3, dtype=np.int64) for k in rules}
-    img = {k: np.zeros(3, dtype=np.int64) for k in rules}
-    for native, mask, label in zip(test.native_maps(sigma), test.masks(), test.labels):
-        for key, (tau, rule) in rules.items():
+    return evaluate_rules(val, test, spec["evaluation"], run_dir.name, spec["dataset"]["category"])
+
+
+def evaluate_rules(val: SplitPredictions, test: SplitPredictions, ev: dict, name: str, category: str) -> list[dict]:
+    """One row per (rule, subset): `all` images (the mixed-lighting proxy) and `regular` only (the
+    `test_private` proxy: the private split holds the training lighting only).
+
+    Each threshold/mask pair is also scored with `MaskRule.mark` at the factors in MARKS: an image
+    whose mask is empty but whose (work-resolution) map exceeds c * tau anywhere gets a single
+    work pixel at its maximum. The variants are derived from the unmarked mask, exactly as
+    `MaskRule.apply` would produce them.
+    """
+    sigma = ev["smoothing_sigma"]
+    taus = thresholds(val, sigma, ev["sigma_n"])
+    base = {(t, kind): (taus[t], rule) for t in taus for kind, rule in (("plain", PLAIN), ("morph", MORPH))}
+    keys = [(t, kind, c) for (t, kind) in base for c in (0.0, *MARKS)]
+    subsets = ("all", "regular")
+    pix = {(k, s): np.zeros(3, dtype=np.int64) for k in keys for s in subsets}
+    img = {(k, s): np.zeros(3, dtype=np.int64) for k in keys for s in subsets}
+    normals = dict.fromkeys(subsets, 0)
+    rate = min(1.0, ev["max_negative_samples"] / max(1.0, float(sum(w * h for w, h in test.native_sizes))))
+    pro = {sub: PROAccumulator(negative_rate=rate, seed=ev["sampling_seed"]) for sub in subsets}
+    for native, mask, label, image_id in zip(test.native_maps(sigma), test.masks(), test.labels, test.ids):
+        member = ("all", "regular") if image_id.endswith("_regular.png") else ("all",)
+        for sub in member:
+            normals[sub] += int(label == 0)
+            pro[sub].add(native, mask)
+        # the single-pixel mark of each mask kind, and the maximum it is compared with
+        marks = {}
+        for kind, rule in (("plain", PLAIN), ("morph", MORPH)):
+            work = rule.work_map(native)
+            one = np.zeros(work.shape, dtype=bool)
+            one[np.unravel_index(int(np.argmax(work)), work.shape)] = True
+            block = rule.to_native(one, native.shape)
+            marks[kind] = (float(work.max()), int(np.count_nonzero(block & mask)), int(np.count_nonzero(block & ~mask)))
+        for (t, kind), (tau, rule) in base.items():
             pred = rule.apply(native, tau)
-            pix[key] += (np.count_nonzero(pred & mask), np.count_nonzero(pred & ~mask), np.count_nonzero(~pred & mask))
-            rej = bool(pred.any())
-            img[key] += (rej and label == 1, rej and label == 0, (not rej) and label == 1)
+            px = np.array((np.count_nonzero(pred & mask), np.count_nonzero(pred & ~mask),
+                           np.count_nonzero(~pred & mask)), dtype=np.int64)
+            empty = not pred.any()
+            peak, btp, bfp = marks[kind]
+            for c in (0.0, *MARKS):
+                marked = c > 0 and empty and peak > c * tau
+                p_c = px + np.array((btp, bfp, -btp), dtype=np.int64) if marked else px
+                rej = (not empty) or marked
+                im = (rej and label == 1, rej and label == 0, (not rej) and label == 1)
+                for sub in member:
+                    pix[((t, kind, c), sub)] += p_c
+                    img[((t, kind, c), sub)] += im
+    aupro = {sub: pro[sub].curves((0.05,), num_thresholds=ev["aupro_num_thresholds"])[0.05].au_pro
+             for sub in subsets}
     rows = []
-    for (t, kind), (tau, _) in rules.items():
-        tp, fp, fn = (int(x) for x in img[(t, kind)])
-        rows.append({"run_id": run_dir.name, "category": spec["dataset"]["category"], "threshold": t, "post": kind,
-                     "tau": tau, "segf1": f1(*(int(x) for x in pix[(t, kind)])), "classf1": f1(tp, fp, fn),
-                     "normals_rejected": fp / max(1, int(np.sum(test.labels == 0)))})
+    for t, kind, c in keys:
+        for sub in subsets:
+            tp, fp, fn = (int(x) for x in img[((t, kind, c), sub)])
+            rows.append({"run_id": name, "category": category, "subset": sub, "threshold": t,
+                         "post": kind if c == 0 else f"{kind}+mark{c:g}", "tau": base[(t, kind)][0],
+                         "segf1": f1(*(int(x) for x in pix[((t, kind, c), sub)])), "classf1": f1(tp, fp, fn),
+                         "normals_rejected": fp / max(1, normals[sub]), "aupro_005": aupro[sub]})
     return rows
 
 
@@ -94,6 +122,7 @@ def main() -> int:
     for run_id in args.runs:
         got = study(Path(args.registry) / run_id, args.data_root)
         rows += [{"label": args.label, **r} for r in got]
+        got = [r for r in got if r["subset"] == "all"]
         best = max(got, key=lambda r: r["segf1"])
         print(f"{got[0]['category']:<12} best {best['threshold']}/{best['post']} SegF1 {best['segf1']:.3f}  "
               f"3sigma/plain {next(r['segf1'] for r in got if r['threshold'] == '3sigma' and r['post'] == 'plain'):.3f}",
@@ -105,11 +134,17 @@ def main() -> int:
         w.writeheader()
         w.writerows(rows)
     keys = sorted({(r["threshold"], r["post"]) for r in rows})
-    print(f"\n{args.label}: macro over {len(args.runs)} categories")
-    for t, kind in sorted(keys, key=lambda k: -np.mean([r["segf1"] for r in rows if (r["threshold"], r["post"]) == k])):
-        sel = [r for r in rows if (r["threshold"], r["post"]) == (t, kind)]
-        print(f"  {t:<9} {kind:<6} SegF1 {np.mean([r['segf1'] for r in sel]):.4f}  ClassF1 "
-              f"{np.mean([r['classf1'] for r in sel]):.4f}  normals rejected {np.mean([r['normals_rejected'] for r in sel]):.2f}")
+
+    def macro(key, sub, metric):
+        return float(np.mean([r[metric] for r in rows if (r["threshold"], r["post"]) == key and r["subset"] == sub]))
+
+    print(f"\n{args.label}: macro over {len(args.runs)} categories (regular = test_private proxy, all = mixed proxy)")
+    first = keys[0]
+    print(f"  AU-PRO@0.05 regular {macro(first, 'regular', 'aupro_005'):.4f} all {macro(first, 'all', 'aupro_005'):.4f}")
+    for key in sorted(keys, key=lambda k: -macro(k, "all", "segf1"))[:15]:
+        print(f"  {key[0]:<9} {key[1]:<6} SegF1 regular {macro(key, 'regular', 'segf1'):.4f} "
+              f"all {macro(key, 'all', 'segf1'):.4f}  ClassF1 regular {macro(key, 'regular', 'classf1'):.4f} "
+              f"all {macro(key, 'all', 'classf1'):.4f}  normals rejected {macro(key, 'all', 'normals_rejected'):.2f}")
     return 0
 
 
