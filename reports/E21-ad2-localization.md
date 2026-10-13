@@ -123,6 +123,45 @@ The common elements are DINOv3, tiling or high resolution, and morphological pos
 what v5 has. What it lacks is training: ISVL++'s synthetic-anomaly head is the one documented
 lever left, beyond a 4 GB card for eight categories.
 
+## 9. E22 — three post-processing ideas of our own, tested on v5's maps
+
+Proposed for the failure mechanisms measured in E14–E21 and tested on the stored maps of the v5
+components (`scripts/fusion_study.py`, all eight categories, `test_public`). AU-PRO is the
+threshold-free test: a post-processing step that does not raise it does not separate defects
+from normal surface any better.
+
+| idea | rationale | AU-PRO `regular` / all | SegF1 all (best gain) | verdict |
+|---|---|---|---|---|
+| v5 as frozen | — | **0.567 / 0.555** | **0.609** | — |
+| per-image background normalization (map − median, map / median) | a changed light raises the whole map of a normal image | 0.563 / 0.557, 0.562 / 0.554 | — / 0.595 | no gain: the fused maps already carry the lighting change locally, not as an offset |
+| specular-highlight attenuation (white top-hat peaks, scores × 0.5 or × 0) | `can`'s false alarms sit on moving highlights | 0.506 / 0.497, 0.501 / 0.491 | 0.58 | **harmful:** on metal the defects *are* highlights — a scratch catches the light (`can` 0.109 → 0.054, `sheet_metal` 0.573 → 0.411) |
+| robust z-score per component instead of P95 scaling | a noisy component (DINOv3 on `can`) should weigh less in the maximum | 0.541 / 0.526 | — | worse: the P95 scale balances the two components better |
+
+All three are recorded as negative results (37–39). Together with E21b they leave the post-hoc
+space largely explored for these maps: what remains is a better map, which in the published
+record means training (§10).
+
+## 10. Literature for what remains, and the one lever left
+
+| weakness | what the literature does | applicable here? |
+|---|---|---|
+| `can`, thin defects on reflective metal | multi-light capture (photometric stereo; M2AD, arXiv:2505.10996), paired well-lit/low-light images | needs acquisition changes, not a model change |
+| AU-PRO below trained systems | INP-Former reconstruction (RoBiS, ISVL), ISVL++'s segmentation head trained on synthetic anomalies over DINOv3 features (VAND 4.0, 58.31 SegF1) | yes, in a light form (below) |
+| threshold choice | MEBin per-image binarization (AnomalyNCD), synthetic anomalies for thresholds (ISVL++, anomalib), TTT4AS per-image SVM | TTT4AS assumes every image is anomalous (its gains are on anomalous images only); per-category thresholds lost out of sample here (E21b) |
+| transductive scoring | MuSc (mutual scoring among test images), test-time adaptation | outside this protocol (fit on training normals only) |
+| bigger features | DINOv3 ViT-7B at full resolution (DL-SubspaceAD) | beyond a 4 GB card |
+
+**Proposed (not run): a learned fusion head trained on synthetic anomalies.** The v5 map is a fixed
+rule — mean of four block distances, maximum with WRN50, all equally weighted. A head of a few
+hundred parameters (logistic regression or a two-layer MLP on the five per-token distances, the
+four DINOv3 blocks and WRN50, plus their local 3×3 maxima) trained per category on synthetic
+defects (Perlin-shaped regions filled with displaced texture from the same image, and thin
+strokes) pasted on normal images held out of the bank would learn which blocks see which defects,
+output a probability with a natural 0.5 threshold, and keep one procedure for all categories. It
+is ISVL++'s idea without its reconstruction network. Cost on the RTX 3050: per-block maps for
+held-out and synthetic images (~3 h with ViT-H+), then seconds to train; it is a new candidate and
+would need its own development round before a submission.
+
 ## 7. What remains weak
 
 - **`can`** — every system is near zero (SuperADD 11.6 / 0.4 SegF1, RoBiS 1.9 / 0.8); v4 0.001.

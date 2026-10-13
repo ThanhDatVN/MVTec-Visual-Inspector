@@ -42,3 +42,6 @@ the project learned. All entries are development evidence unless marked otherwis
 | 34 | **Mask shape variants** (E21b: component filter, closing radius, lower threshold, erosion) | 8 categories, fused maps | all within ±0.01 SegF1 | Default kept; the threshold is the lever, not the shape |
 | 35 | **Three-model fusion** (H+, L, WRN50; E21b) | 8 categories | AU-PRO +1, SegF1 unstable across subsets | Not adopted |
 | 36 | **Native resolution for DINOv3** (scale 1.0; E21b) | `sheet_metal`, `can` | `sheet_metal` +0.01 AU-PRO after fusion, −0.02 SegF1; `can` still below chance | Not adopted: 2.5× the cost |
+| 37 | **Per-image background normalization of the fused map** (E22, own idea) | v5 maps, 8 categories | AU-PRO 0.567 / 0.555 → 0.563 / 0.557 (median subtracted), SegF1 0.609 → 0.595 (divided) | No gain; the lighting change is not an offset of the whole map |
+| 38 | **Attenuating scores on specular highlights** (E22, own idea for `can`) | v5 maps, white top-hat peaks | AU-PRO 0.555 → 0.497; `can` 0.109 → 0.054, `sheet_metal` 0.573 → 0.411 | Harmful: on metal, scratches are highlights |
+| 39 | **Robust z-score instead of P95 scaling for fusion** (E22, own idea) | v5 maps | AU-PRO 0.555 → 0.526 | P95 scaling kept |

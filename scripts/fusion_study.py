@@ -46,6 +46,22 @@ def p95(split: SplitPredictions, sigma: float) -> float:
     return validation_thresholds(split.native_maps(sigma), lo, hi, gains=(1.0,))["p95x1"]
 
 
+def component_norm(split: SplitPredictions, sigma: float, kind: str) -> tuple[float, float]:
+    """(offset, scale) that put one model's map on the common scale before fusion (E22):
+    `p95` divides by the validation 95th percentile (v4/v5); `p99` by the 99th; `z` subtracts the
+    validation median and divides by the robust spread (IQR / 1.349), so a model whose normal
+    pixels scatter widely (DINOv3 on `can`) weighs less in the maximum."""
+    if kind == "p95":
+        return 0.0, p95(split, sigma)
+    lo, hi = split.raw_range()
+    q = validation_thresholds(split.native_maps(sigma), lo, hi, rates=(0.01, 0.25, 0.5, 0.75))
+    if kind == "p99":
+        return 0.0, q["q0.01"]
+    if kind == "z":
+        return q["q0.5"], max((q["q0.25"] - q["q0.75"]) / 1.349, 1e-9)
+    raise ValueError(f"unknown component normalization {kind!r}")
+
+
 def image_norm(m: np.ndarray, kind: str) -> np.ndarray:
     """Per-image background normalization (E22): a changed light raises the whole map of a normal
     image, so each map is referred to its own robust background level before thresholding."""
@@ -84,7 +100,7 @@ def fuse(splits: list[SplitPredictions], sigmas: list[float], norms: list[float]
         raise ValueError("the runs were not evaluated on the same images")
     maps = []
     for natives in zip(*(s.native_maps(sg) for s, sg in zip(splits, sigmas))):
-        q = [quarter(m) / n for m, n in zip(natives, norms)]
+        q = [(quarter(m) - off) / sc for m, (off, sc) in zip(natives, norms)]
         m = np.maximum.reduce(q) if mode == "max" else np.mean(q, axis=0)
         if specular > 0:
             m = np.where(highlights(str(Path(root) / paths[len(maps)]), m.shape), m * (1.0 - specular), m)
@@ -102,6 +118,7 @@ def main() -> int:
     ap.add_argument("--c", nargs="+", default=None, help="run ids of an optional model C, matched by category")
     ap.add_argument("--mode", choices=("mean", "max"), default="mean")
     ap.add_argument("--image-norm", choices=("none", "sub-median", "sub-q75", "div-median"), default="none")
+    ap.add_argument("--component-norm", choices=("p95", "p99", "z"), default="p95")
     ap.add_argument("--specular", type=float, default=0.0, help="attenuation of scores on specular highlights")
     ap.add_argument("--label", required=True)
     ap.add_argument("--out", default="reports/studies/fusion")
@@ -126,7 +143,7 @@ def main() -> int:
         run_ids = [rid, *(o[cat] for o in others)]
         loaded = [load(reg / r, args.data_root) for r in run_ids]
         sigmas = [sp["evaluation"]["smoothing_sigma"] for sp, _, _ in loaded]
-        norms = [p95(val, sg) for (_, val, _), sg in zip(loaded, sigmas)]
+        norms = [component_norm(val, sg, args.component_norm) for (_, val, _), sg in zip(loaded, sigmas)]
         val_s, test_s = [v for _, v, _ in loaded], [t for _, _, t in loaded]
         val_f = fuse(val_s, sigmas, norms, args.mode, args.image_norm, args.specular, args.data_root, val_s[0].ids)
         test_f = fuse(test_s, sigmas, norms, args.mode, args.image_norm, args.specular, args.data_root, test_s[0].ids)
