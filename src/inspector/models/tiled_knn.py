@@ -57,6 +57,13 @@ def tile_plan(length: int, tile: int, overlap: int) -> list[tuple[int, int, int,
     return [(s, s + tile, cuts[i], cuts[i + 1]) for i, s in enumerate(starts)]
 
 
+#: Backbone arithmetic. `autocast`: fp32 weights, bf16 matrix products (DINOv3-L: 150 ms per 640 px
+#: tile on an RTX 3050, 0.4-1.5% feature error against fp32); `bf16`: bf16 weights too (123 ms,
+#: 0.8-2.5%; the only option for ViT-H+ on a 4 GB card); `tf32`: fp32 with TF32 products (322 ms,
+#: <0.1%). fp16 is not offered: DINOv3's activations overflow it.
+COMPUTE = ("autocast", "bf16", "tf32")
+
+
 def load_vit(backbone: str, weights: str):
     """timm's pretrained `<backbone>.<weights>` at any input size (downloaded on first use)."""
     import timm
@@ -86,6 +93,7 @@ class TiledKNN(AnomalyModel):
         density_neighbors: int = 100,
         subset_size: int = 4096,
         image_score: str = "max",
+        compute: str = "autocast",
         tile_batch: int = 2,
         query_chunk: int = 4096,
         bank_chunk: int = 32768,
@@ -98,13 +106,15 @@ class TiledKNN(AnomalyModel):
             raise ValueError(f"candidate_fraction must be in (0, 1], got {candidate_fraction}")
         if image_score not in ("max",):
             raise ValueError(f"unknown image_score {image_score!r}")
+        if compute not in COMPUTE:
+            raise ValueError(f"compute must be one of {COMPUTE}, got {compute!r}")
         self.backbone, self.weights = backbone, weights
         self.layers = tuple(int(i) for i in layers)
         self.scale, self.tile, self.overlap = float(scale), int(tile), int(overlap)
         self.brightness = (float(brightness[0]), float(brightness[1]))
         self.candidate_fraction, self.bank_size = float(candidate_fraction), int(bank_size)
         self.density_neighbors, self.subset_size = int(density_neighbors), int(subset_size)
-        self.image_score = image_score
+        self.image_score, self.compute = image_score, compute
         self.tile_batch, self.query_chunk, self.bank_chunk = int(tile_batch), int(query_chunk), int(bank_chunk)
         self.device_request, self.seed = device, int(seed)
         self._net = None
@@ -135,7 +145,9 @@ class TiledKNN(AnomalyModel):
             depth = len(net.blocks)
             if any(not 0 <= i < depth for i in self.layers):
                 raise ValueError(f"layers {self.layers} outside the {depth} blocks of {self.backbone}")
-            self._net = net.to(self.device, dtype=torch.float16 if self.device != "cpu" else torch.float32)
+            # fp16 overflows inside DINOv3 (NaN from the first block on); bf16 keeps fp32's range
+            dtype = torch.bfloat16 if self.compute == "bf16" and self.device != "cpu" else torch.float32
+            self._net = net.to(self.device, dtype=dtype)
         return self._net
 
     @property
@@ -149,6 +161,7 @@ class TiledKNN(AnomalyModel):
 
         net, p = self.net, self.patch
         dtype = next(net.parameters()).dtype
+        cuda = self.device != "cpu"
         x = torch.as_tensor(image, device=self.device)[None]
         h, w = x.shape[-2:]
         th, tw = max(p, round(h * self.scale / p) * p), max(p, round(w * self.scale / p) * p)
@@ -158,19 +171,34 @@ class TiledKNN(AnomalyModel):
         tx = tile_plan(wt, self.tile // p, self.overlap // p)
         windows = [(a, b) for a in ty for b in tx]
         grids: list[Any] = [None] * len(self.layers)
-        with torch.inference_mode():
-            for i in range(0, len(windows), self.tile_batch):
-                batch = windows[i:i + self.tile_batch]
-                crops = torch.stack([x[0, :, ys * p:ye * p, xs * p:xe * p] for (ys, ye, _, _), (xs, xe, _, _) in batch])
-                feats = net.forward_intermediates(crops, indices=list(self.layers), norm=False,
-                                                  output_fmt="NCHW", intermediates_only=True)
-                for li, f in enumerate(feats):
-                    if grids[li] is None:
-                        grids[li] = torch.empty((f.shape[1], ht, wt), device=self.device, dtype=torch.float16)
-                    for bi, ((ys, _, ky0, ky1), (xs, _, kx0, kx1)) in enumerate(batch):
-                        grids[li][:, ky0:ky1, kx0:kx1] = f[bi, :, ky0 - ys:ky1 - ys, kx0 - xs:kx1 - xs].half()
+        tf32 = torch.backends.cuda.matmul.allow_tf32
+        torch.backends.cuda.matmul.allow_tf32 = self.compute == "tf32"
+        try:
+            with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16,
+                                                        enabled=cuda and self.compute == "autocast"):
+                for i in range(0, len(windows), self.tile_batch):
+                    self._embed_windows(net, x, windows[i:i + self.tile_batch], grids, ht, wt)
+        finally:
+            torch.backends.cuda.matmul.allow_tf32 = tf32
         self._stats.setdefault("tiles_per_image", len(windows))
         return grids
+
+    def _embed_windows(self, net, x, batch, grids, ht, wt) -> None:
+        """Embed one batch of windows and write each one's kept tokens into the per-layer grids."""
+        import torch
+
+        p = self.patch
+        crops = torch.stack([x[0, :, ys * p:ye * p, xs * p:xe * p] for (ys, ye, _, _), (xs, xe, _, _) in batch])
+        feats = net.forward_intermediates(crops, indices=list(self.layers), norm=False,
+                                          output_fmt="NCHW", intermediates_only=True)
+        for li, f in enumerate(feats):
+            if not torch.isfinite(f).all() or f.abs().max() > 6e4:  # grids and banks are stored in fp16
+                raise FloatingPointError(f"block {self.layers[li]} features overflow fp16 storage "
+                                         f"(max {float(f.float().abs().max()):.3g})")
+            if grids[li] is None:
+                grids[li] = torch.empty((f.shape[1], ht, wt), device=self.device, dtype=torch.float16)
+            for bi, ((ys, _, ky0, ky1), (xs, _, kx0, kx1)) in enumerate(batch):
+                grids[li][:, ky0:ky1, kx0:kx1] = f[bi, :, ky0 - ys:ky1 - ys, kx0 - xs:kx1 - xs].half()
 
     # -- fitting ----------------------------------------------------------
     def _iter_preprocessed(self, index) -> Iterator[np.ndarray]:
@@ -259,7 +287,7 @@ class TiledKNN(AnomalyModel):
             "scale": self.scale, "tile": self.tile, "overlap": self.overlap, "brightness": list(self.brightness),
             "candidate_fraction": self.candidate_fraction, "bank_size": self.bank_size,
             "density_neighbors": self.density_neighbors, "subset_size": self.subset_size,
-            "image_score": self.image_score, "dtype": "float16", "seed": self.seed,
+            "image_score": self.image_score, "compute": self.compute, "dtype": "float16", "seed": self.seed,
         }
 
     def fit_extra(self) -> dict[str, Any]:

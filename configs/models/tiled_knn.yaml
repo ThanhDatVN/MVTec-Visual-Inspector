@@ -27,4 +27,5 @@ model:
   density_neighbors: 100
   subset_size: 4096
   image_score: max
+  compute: autocast
   tile_batch: 2
