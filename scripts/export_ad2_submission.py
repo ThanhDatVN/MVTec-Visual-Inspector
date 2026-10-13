@@ -94,18 +94,81 @@ def main() -> int:
         if cat in done:  # resumable: a category is logged only after all its files are written
             print(f"{cat}: already exported", flush=True)
             continue
-        cfg = deep_merge(load_config(DATA_CONFIG), load_config(args.recipe))
-        if args.train_limit:
-            cfg = deep_merge(cfg, {"data": {"train_limit": args.train_limit}})
-        ev = eval_config_from_config(cfg)
-        name, gains, rule = mask_policy(cfg)
-        spec, model, idx = prepare(cfg, method=cfg["model"]["name"], category=cat, seed=args.seed,
-                                   data_root=args.data_root, role="confirmation")
+        recipe = load_config(args.recipe)
+        name, gains, rule = mask_policy(recipe)
+        components = (recipe.get("submission") or {}).get("components")
         t0 = time.perf_counter()
-        model.fit(idx["train"])
-        val = SplitPredictions.from_model(model, idx["validation"])
-        lo, hi = val.raw_range()
-        tau = validation_thresholds(val.native_maps(ev.smoothing_sigma), lo, hi, n_sigma=ev.sigma_n, gains=gains)[name]
+
+        def fitted(recipe_cfg, cat=cat):
+            cfg = deep_merge(load_config(DATA_CONFIG), recipe_cfg)
+            if args.train_limit:
+                cfg = deep_merge(cfg, {"data": {"train_limit": args.train_limit}})
+            spec, model, idx = prepare(cfg, method=cfg["model"]["name"], category=cat, seed=args.seed,
+                                       data_root=args.data_root, role="confirmation")
+            model.fit(idx["train"])
+            return cfg, spec, model, idx
+
+        def native_map(model, sample, sigma):
+            raw = model.predict_raw(load_image(sample.image_path))
+            return postprocess_map(raw.raw_map, input_size=raw.input_size, native_size=raw.native_size, sigma=sigma)
+
+        if not components:  # one model: its own maps, as S1
+            cfg, spec, model, idx = fitted(recipe)
+            ev = eval_config_from_config(cfg)
+            val = SplitPredictions.from_model(model, idx["validation"])
+            lo, hi = val.raw_range()
+            tau = validation_thresholds(val.native_maps(ev.smoothing_sigma), lo, hi, n_sigma=ev.sigma_n,
+                                        gains=gains)[name]
+
+            def test_maps(split, model=model, idx=idx, sigma=ev.smoothing_sigma):
+                for sample in idx[split]:
+                    yield sample, native_map(model, sample, sigma)
+
+            provenance = {"run_spec_id": spec.run_id, "method": cfg["model"]["name"]}
+        else:  # fusion (scripts/fusion_study.py): each component's map / its validation P95, at 1/4 res
+            from fusion_study import p95, quarter
+
+            store = out / "_components" / cat
+            norms, ids = [], []
+            for k, path in enumerate(components):
+                cfg, spec, model, idx = fitted(load_config(path))
+                sigma = eval_config_from_config(cfg).smoothing_sigma
+                val = SplitPredictions.from_model(model, idx["validation"])
+                norms.append(p95(val, sigma))
+                ids.append(spec.run_id)
+                for split in ("validation", *SPLITS):
+                    (store / str(k) / split).mkdir(parents=True, exist_ok=True)
+                    for sample in idx[split]:
+                        np.save(store / str(k) / split / f"{Path(sample.image_path).stem}.npy",
+                                quarter(native_map(model, sample, sigma)) / norms[-1])
+                del model, val
+            ev = eval_config_from_config(deep_merge(load_config(DATA_CONFIG), load_config(components[0])))
+
+            def fused(split, stem, store=store, components=components, recipe=recipe):
+                maps = [np.load(store / str(k) / split / f"{stem}.npy") for k in range(len(components))]
+                mode = recipe["submission"].get("fusion", "max")
+                return np.maximum.reduce(maps) if mode == "max" else np.mean(maps, axis=0)
+
+            val_maps, val_sizes = [], []
+            for sample in idx["validation"]:
+                val_maps.append(fused("validation", Path(sample.image_path).stem))
+                with Image.open(sample.image_path) as im:
+                    val_sizes.append(im.size)
+            lo, hi = min(float(m.min()) for m in val_maps), max(float(m.max()) for m in val_maps)
+            tau = validation_thresholds(
+                (postprocess_map(m, input_size=s, native_size=s, sigma=0.0) for m, s in zip(val_maps, val_sizes)),
+                lo, hi, n_sigma=ev.sigma_n, gains=gains)[name]
+
+            def test_maps(split, idx=idx):
+                for sample in idx[split]:
+                    with Image.open(sample.image_path) as im:
+                        size = im.size
+                    m = fused(split, Path(sample.image_path).stem)
+                    yield sample, postprocess_map(m, input_size=size, native_size=size, sigma=0.0)
+
+            provenance = {"component_run_spec_ids": ids, "components": components,
+                          "fusion": recipe["submission"].get("fusion", "max"), "component_p95": norms}
+
         counts, rejected = {}, {}
         for split in SPLITS:
             if split not in idx:
@@ -116,24 +179,23 @@ def main() -> int:
             maps_dir.mkdir(parents=True, exist_ok=True)
             masks_dir.mkdir(parents=True, exist_ok=True)
             n_rejected = 0
-            for sample in idx[split]:
-                raw = model.predict_raw(load_image(sample.image_path))
-                native = postprocess_map(raw.raw_map, input_size=raw.input_size,
-                                         native_size=raw.native_size, sigma=ev.smoothing_sigma)
+            for sample, native in test_maps(split):
                 stem = Path(sample.image_path).stem
                 tifffile.imwrite(maps_dir / f"{stem}.tiff", native.astype(np.float16), compression="zlib")
                 mask = rule.apply(native, tau)
                 n_rejected += bool(mask.any())
                 Image.fromarray(np.where(mask, 255, 0).astype(np.uint8)).save(masks_dir / f"{stem}.png")
             counts[split], rejected[split] = len(idx[split]), n_rejected
-        log.append({"category": cat, "run_spec_id": spec.run_id, "method": cfg["model"]["name"], "seed": args.seed,
-                    "threshold_rule": name, "pixel_threshold": tau, "mask_rule": rule.as_dict(),
-                    "counts": counts, "images_with_mask": rejected, "seconds": time.perf_counter() - t0,
-                    "train_limit": args.train_limit})
+        log.append({"category": cat, **provenance, "seed": args.seed, "threshold_rule": name, "pixel_threshold": tau,
+                    "mask_rule": rule.as_dict(), "counts": counts, "images_with_mask": rejected,
+                    "seconds": time.perf_counter() - t0, "train_limit": args.train_limit})
         print(log[-1], flush=True)
         log_path.parent.mkdir(parents=True, exist_ok=True)
         log_path.write_text(json.dumps({"recipe": args.recipe, "categories": log}, indent=1), encoding="utf-8")
-        del model
+        if components:
+            import shutil
+
+            shutil.rmtree(out / "_components" / cat, ignore_errors=True)
     return 0
 
 

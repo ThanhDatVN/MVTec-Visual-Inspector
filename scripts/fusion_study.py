@@ -101,7 +101,7 @@ def main() -> int:
     print(f"\n{args.label}: macro over {len(args.a)} categories; AU-PRO@0.05 regular "
           f"{macro(keys[0], 'regular', 'aupro_005'):.4f} all {macro(keys[0], 'all', 'aupro_005'):.4f}")
     for key in sorted(keys, key=lambda k: -macro(k, "all", "segf1"))[:10]:
-        print(f"  {key[0]:<9} {key[1]:<6} SegF1 regular {macro(key, 'regular', 'segf1'):.4f} "
+        print(f"  {key[0]:<9} {key[1]:<14} SegF1 defective-only {macro(key, 'defective', 'segf1'):.4f} regular {macro(key, 'regular', 'segf1'):.4f} "
               f"all {macro(key, 'all', 'segf1'):.4f}  ClassF1 all {macro(key, 'all', 'classf1'):.4f}")
     return 0
 

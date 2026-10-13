@@ -64,7 +64,7 @@ def evaluate_rules(val: SplitPredictions, test: SplitPredictions, ev: dict, name
     taus = thresholds(val, sigma, ev["sigma_n"])
     base = {(t, kind): (taus[t], rule) for t in taus for kind, rule in (("plain", PLAIN), ("morph", MORPH))}
     keys = [(t, kind, c) for (t, kind) in base for c in (0.0, *MARKS)]
-    subsets = ("all", "regular")
+    subsets = ("all", "regular", "defective")  # defective: anomalous images only (SuperADD's TEST_pub F1)
     pix = {(k, s): np.zeros(3, dtype=np.int64) for k in keys for s in subsets}
     img = {(k, s): np.zeros(3, dtype=np.int64) for k in keys for s in subsets}
     normals = dict.fromkeys(subsets, 0)
@@ -72,6 +72,8 @@ def evaluate_rules(val: SplitPredictions, test: SplitPredictions, ev: dict, name
     pro = {sub: PROAccumulator(negative_rate=rate, seed=ev["sampling_seed"]) for sub in subsets}
     for native, mask, label, image_id in zip(test.native_maps(sigma), test.masks(), test.labels, test.ids):
         member = ("all", "regular") if image_id.endswith("_regular.png") else ("all",)
+        if label == 1:
+            member = (*member, "defective")
         for sub in member:
             normals[sub] += int(label == 0)
             pro[sub].add(native, mask)
@@ -142,7 +144,7 @@ def main() -> int:
     first = keys[0]
     print(f"  AU-PRO@0.05 regular {macro(first, 'regular', 'aupro_005'):.4f} all {macro(first, 'all', 'aupro_005'):.4f}")
     for key in sorted(keys, key=lambda k: -macro(k, "all", "segf1"))[:15]:
-        print(f"  {key[0]:<9} {key[1]:<6} SegF1 regular {macro(key, 'regular', 'segf1'):.4f} "
+        print(f"  {key[0]:<9} {key[1]:<14} SegF1 defective-only {macro(key, 'defective', 'segf1'):.4f} regular {macro(key, 'regular', 'segf1'):.4f} "
               f"all {macro(key, 'all', 'segf1'):.4f}  ClassF1 regular {macro(key, 'regular', 'classf1'):.4f} "
               f"all {macro(key, 'all', 'classf1'):.4f}  normals rejected {macro(key, 'all', 'normals_rejected'):.2f}")
     return 0
