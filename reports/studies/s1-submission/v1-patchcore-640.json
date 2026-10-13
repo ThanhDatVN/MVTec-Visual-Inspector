@@ -109,5 +109,11 @@
   "sha256": "f98eb8ba66983592085436a6e53a8d1dda923ae869071fc930e07362c3f024aa",
   "files": 8180
  },
- "upload": "pending (owner)"
+ "upload": {
+  "date": "2026-10-13",
+  "server_model_name": "PatchCore WRN50-2",
+  "submission_id": "5356bc03-3bd5-4e41-9c50-9c8f30936852",
+  "state_at_record": "SUBMITTING",
+  "quota_after": "1 of 2 per 7 days"
+ }
 }
