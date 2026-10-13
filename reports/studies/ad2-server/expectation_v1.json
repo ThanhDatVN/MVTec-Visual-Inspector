@@ -1,0 +1,999 @@
+{
+ "rows": [
+  {
+   "category": "rice",
+   "seed": 0,
+   "split": "private_estimate",
+   "images": 22,
+   "aupro_005": 0.26959561381805885,
+   "segf1_3sigma": 0.09637617633810731,
+   "segf1_valq": 0.14936696939910651,
+   "pixel_auroc": 0.8233118871954737,
+   "image_auroc": 0.47619047619047616
+  },
+  {
+   "category": "rice",
+   "seed": 0,
+   "split": "mixed_estimate",
+   "images": 110,
+   "aupro_005": 0.26685237015099794,
+   "segf1_3sigma": 0.059302708540763374,
+   "segf1_valq": 0.12312183673759412,
+   "pixel_auroc": 0.8263059201067422,
+   "image_auroc": 0.5276190476190477
+  },
+  {
+   "category": "rice",
+   "seed": 0,
+   "split": "all",
+   "images": 132,
+   "aupro_005": 0.2648078616681715,
+   "segf1_3sigma": 0.06150009965048052,
+   "segf1_valq": 0.12520529882397358,
+   "pixel_auroc": 0.8216591926283893,
+   "image_auroc": 0.5153439153439153
+  },
+  {
+   "category": "walnuts",
+   "seed": 2,
+   "split": "private_estimate",
+   "images": 25,
+   "aupro_005": 0.6585170842032811,
+   "segf1_3sigma": 0.5675784813271537,
+   "segf1_valq": 0.5911437619810237,
+   "pixel_auroc": 0.9656491099034299,
+   "image_auroc": 0.8933333333333333
+  },
+  {
+   "category": "walnuts",
+   "seed": 2,
+   "split": "mixed_estimate",
+   "images": 125,
+   "aupro_005": 0.6031733906816495,
+   "segf1_3sigma": 0.4352640482957349,
+   "segf1_valq": 0.4910786527733236,
+   "pixel_auroc": 0.9567214756198599,
+   "image_auroc": 0.8544
+  },
+  {
+   "category": "walnuts",
+   "seed": 2,
+   "split": "all",
+   "images": 150,
+   "aupro_005": 0.6119927379654211,
+   "segf1_3sigma": 0.453103450777156,
+   "segf1_valq": 0.5055248746806905,
+   "pixel_auroc": 0.9582029968683006,
+   "image_auroc": 0.8609259259259259
+  },
+  {
+   "category": "sheet_metal",
+   "seed": 1,
+   "split": "private_estimate",
+   "images": 19,
+   "aupro_005": 0.19477291280850853,
+   "segf1_3sigma": 0.3938210962747603,
+   "segf1_valq": 0.34537554353272004,
+   "pixel_auroc": 0.9263713939054908,
+   "image_auroc": 0.6166666666666667
+  },
+  {
+   "category": "sheet_metal",
+   "seed": 1,
+   "split": "mixed_estimate",
+   "images": 95,
+   "aupro_005": 0.17893039553518522,
+   "segf1_3sigma": 0.3714094969028254,
+   "segf1_valq": 0.29752396999237773,
+   "pixel_auroc": 0.9194868394237885,
+   "image_auroc": 0.694
+  },
+  {
+   "category": "sheet_metal",
+   "seed": 1,
+   "split": "all",
+   "images": 114,
+   "aupro_005": 0.1812206973202094,
+   "segf1_3sigma": 0.3750162131619274,
+   "segf1_valq": 0.3044586457748628,
+   "pixel_auroc": 0.9200711014037024,
+   "image_auroc": 0.6805555555555556
+  },
+  {
+   "category": "fabric",
+   "seed": 0,
+   "split": "private_estimate",
+   "images": 26,
+   "aupro_005": 0.1401722451106331,
+   "segf1_3sigma": 0.03413004895458248,
+   "segf1_valq": 0.04372054503522526,
+   "pixel_auroc": 0.6755133172801447,
+   "image_auroc": 0.6787878787878788
+  },
+  {
+   "category": "fabric",
+   "seed": 0,
+   "split": "mixed_estimate",
+   "images": 130,
+   "aupro_005": 0.14705258032000432,
+   "segf1_3sigma": 0.06098941372022328,
+   "segf1_valq": 0.06731820705191145,
+   "pixel_auroc": 0.6810349802558969,
+   "image_auroc": 0.6606060606060606
+  },
+  {
+   "category": "fabric",
+   "seed": 0,
+   "split": "all",
+   "images": 156,
+   "aupro_005": 0.14577894514807654,
+   "segf1_3sigma": 0.05678333760740981,
+   "segf1_valq": 0.06368069232219122,
+   "pixel_auroc": 0.6797702691633408,
+   "image_auroc": 0.6636363636363637
+  },
+  {
+   "category": "wallplugs",
+   "seed": 1,
+   "split": "private_estimate",
+   "images": 25,
+   "aupro_005": 0.29556428558578196,
+   "segf1_3sigma": 0.18460723668952436,
+   "segf1_valq": 0.1920434226653155,
+   "pixel_auroc": 0.9341411715741128,
+   "image_auroc": 0.42
+  },
+  {
+   "category": "wallplugs",
+   "seed": 1,
+   "split": "mixed_estimate",
+   "images": 125,
+   "aupro_005": 0.28131512130930153,
+   "segf1_3sigma": 0.07221490401708822,
+   "segf1_valq": 0.09390108226221289,
+   "pixel_auroc": 0.9044899132507578,
+   "image_auroc": 0.45093333333333335
+  },
+  {
+   "category": "wallplugs",
+   "seed": 1,
+   "split": "all",
+   "images": 150,
+   "aupro_005": 0.2818876348480277,
+   "segf1_3sigma": 0.07872334795828041,
+   "segf1_valq": 0.10091101299081255,
+   "pixel_auroc": 0.907247142013554,
+   "image_auroc": 0.4425925925925926
+  },
+  {
+   "category": "vial",
+   "seed": 2,
+   "split": "private_estimate",
+   "images": 20,
+   "aupro_005": 0.7700682330957526,
+   "segf1_3sigma": 0.3129759634243666,
+   "segf1_valq": 0.3040416314693433,
+   "pixel_auroc": 0.9434750093057498,
+   "image_auroc": 0.8933333333333333
+  },
+  {
+   "category": "vial",
+   "seed": 2,
+   "split": "mixed_estimate",
+   "images": 120,
+   "aupro_005": 0.7540262482137592,
+   "segf1_3sigma": 0.32823731610165097,
+   "segf1_valq": 0.3196807512525294,
+   "pixel_auroc": 0.9383037292575347,
+   "image_auroc": 0.8974074074074074
+  },
+  {
+   "category": "vial",
+   "seed": 2,
+   "split": "all",
+   "images": 140,
+   "aupro_005": 0.7565087427828812,
+   "segf1_3sigma": 0.3261856588529192,
+   "segf1_valq": 0.3175395364741037,
+   "pixel_auroc": 0.9387588899302803,
+   "image_auroc": 0.8968707482993197
+  },
+  {
+   "category": "rice",
+   "seed": 2,
+   "split": "private_estimate",
+   "images": 22,
+   "aupro_005": 0.26780086042412815,
+   "segf1_3sigma": 0.0871349836545998,
+   "segf1_valq": 0.11281675350025164,
+   "pixel_auroc": 0.8247410799688635,
+   "image_auroc": 0.5333333333333333
+  },
+  {
+   "category": "rice",
+   "seed": 2,
+   "split": "mixed_estimate",
+   "images": 110,
+   "aupro_005": 0.2554303589541489,
+   "segf1_3sigma": 0.05643152458350728,
+   "segf1_valq": 0.11751030457462897,
+   "pixel_auroc": 0.8357997968610467,
+   "image_auroc": 0.5516190476190476
+  },
+  {
+   "category": "rice",
+   "seed": 2,
+   "split": "all",
+   "images": 132,
+   "aupro_005": 0.25503089926757444,
+   "segf1_3sigma": 0.05828728170221837,
+   "segf1_valq": 0.11714736884725953,
+   "pixel_auroc": 0.8302577665544107,
+   "image_auroc": 0.5529100529100529
+  },
+  {
+   "category": "fruit_jelly",
+   "seed": 1,
+   "split": "private_estimate",
+   "images": 20,
+   "aupro_005": 0.5069163083273157,
+   "segf1_3sigma": 0.3606305230013204,
+   "segf1_valq": 0.3165945165945166,
+   "pixel_auroc": 0.9556926257467809,
+   "image_auroc": 1.0
+  },
+  {
+   "category": "fruit_jelly",
+   "seed": 1,
+   "split": "mixed_estimate",
+   "images": 60,
+   "aupro_005": 0.5032994095458744,
+   "segf1_3sigma": 0.36131320207754564,
+   "segf1_valq": 0.3190164717601557,
+   "pixel_auroc": 0.9534128571666327,
+   "image_auroc": 0.9051851851851852
+  },
+  {
+   "category": "fruit_jelly",
+   "seed": 1,
+   "split": "all",
+   "images": 80,
+   "aupro_005": 0.5041309493153724,
+   "segf1_3sigma": 0.3611426721148665,
+   "segf1_valq": 0.31841269477905737,
+   "pixel_auroc": 0.9539876720083893,
+   "image_auroc": 0.9266666666666666
+  },
+  {
+   "category": "walnuts",
+   "seed": 0,
+   "split": "private_estimate",
+   "images": 25,
+   "aupro_005": 0.6568238325917666,
+   "segf1_3sigma": 0.5618580096326752,
+   "segf1_valq": 0.5797295088429801,
+   "pixel_auroc": 0.967088066988247,
+   "image_auroc": 0.88
+  },
+  {
+   "category": "walnuts",
+   "seed": 0,
+   "split": "mixed_estimate",
+   "images": 125,
+   "aupro_005": 0.6033624781388633,
+   "segf1_3sigma": 0.43158355907416435,
+   "segf1_valq": 0.47980145349602393,
+   "pixel_auroc": 0.958498935669406,
+   "image_auroc": 0.8546666666666667
+  },
+  {
+   "category": "walnuts",
+   "seed": 0,
+   "split": "all",
+   "images": 150,
+   "aupro_005": 0.6117966303019978,
+   "segf1_3sigma": 0.44912195057924514,
+   "segf1_valq": 0.49412599083658093,
+   "pixel_auroc": 0.9599053991558688,
+   "image_auroc": 0.8585185185185186
+  },
+  {
+   "category": "wallplugs",
+   "seed": 0,
+   "split": "private_estimate",
+   "images": 25,
+   "aupro_005": 0.2697089867392008,
+   "segf1_3sigma": 0.15426500435826004,
+   "segf1_valq": 0.19448760062596046,
+   "pixel_auroc": 0.9156392050315617,
+   "image_auroc": 0.4533333333333333
+  },
+  {
+   "category": "wallplugs",
+   "seed": 0,
+   "split": "mixed_estimate",
+   "images": 125,
+   "aupro_005": 0.2705522479078159,
+   "segf1_3sigma": 0.061903648660852975,
+   "segf1_valq": 0.09762750591698727,
+   "pixel_auroc": 0.8882366398209041,
+   "image_auroc": 0.5210666666666667
+  },
+  {
+   "category": "wallplugs",
+   "seed": 0,
+   "split": "all",
+   "images": 150,
+   "aupro_005": 0.2695307120760983,
+   "segf1_3sigma": 0.06697812802815895,
+   "segf1_valq": 0.10458941613605752,
+   "pixel_auroc": 0.8906193343697645,
+   "image_auroc": 0.5092592592592593
+  },
+  {
+   "category": "fabric",
+   "seed": 2,
+   "split": "private_estimate",
+   "images": 26,
+   "aupro_005": 0.16593594574905549,
+   "segf1_3sigma": 0.03262133259952791,
+   "segf1_valq": 0.036518946178972264,
+   "pixel_auroc": 0.627759902957566,
+   "image_auroc": 0.6484848484848484
+  },
+  {
+   "category": "fabric",
+   "seed": 2,
+   "split": "mixed_estimate",
+   "images": 130,
+   "aupro_005": 0.1690978992373425,
+   "segf1_3sigma": 0.05031123287827368,
+   "segf1_valq": 0.055072998646757035,
+   "pixel_auroc": 0.6273715771922521,
+   "image_auroc": 0.6244848484848485
+  },
+  {
+   "category": "fabric",
+   "seed": 2,
+   "split": "all",
+   "images": 156,
+   "aupro_005": 0.16803828003259963,
+   "segf1_3sigma": 0.047523892697741044,
+   "segf1_valq": 0.05220255848438075,
+   "pixel_auroc": 0.6271177787840929,
+   "image_auroc": 0.6292929292929293
+  },
+  {
+   "category": "vial",
+   "seed": 0,
+   "split": "private_estimate",
+   "images": 20,
+   "aupro_005": 0.7739944492933883,
+   "segf1_3sigma": 0.3118529325802381,
+   "segf1_valq": 0.2983737780243755,
+   "pixel_auroc": 0.9403024411855347,
+   "image_auroc": 0.9333333333333333
+  },
+  {
+   "category": "vial",
+   "seed": 0,
+   "split": "mixed_estimate",
+   "images": 120,
+   "aupro_005": 0.7520977905148687,
+   "segf1_3sigma": 0.3230323114164277,
+   "segf1_valq": 0.31251525259329,
+   "pixel_auroc": 0.9324234199420038,
+   "image_auroc": 0.9037037037037037
+  },
+  {
+   "category": "vial",
+   "seed": 0,
+   "split": "all",
+   "images": 140,
+   "aupro_005": 0.7553718871922174,
+   "segf1_3sigma": 0.3215247719120154,
+   "segf1_valq": 0.31057477510220677,
+   "pixel_auroc": 0.9331206011344302,
+   "image_auroc": 0.9082993197278911
+  },
+  {
+   "category": "fruit_jelly",
+   "seed": 2,
+   "split": "private_estimate",
+   "images": 20,
+   "aupro_005": 0.5061958400356412,
+   "segf1_3sigma": 0.3780420598826631,
+   "segf1_valq": 0.31516199367102893,
+   "pixel_auroc": 0.9564245460713995,
+   "image_auroc": 0.92
+  },
+  {
+   "category": "fruit_jelly",
+   "seed": 2,
+   "split": "mixed_estimate",
+   "images": 60,
+   "aupro_005": 0.5017329723076244,
+   "segf1_3sigma": 0.37418333754237765,
+   "segf1_valq": 0.30775159627597404,
+   "pixel_auroc": 0.9543015940673893,
+   "image_auroc": 0.8933333333333333
+  },
+  {
+   "category": "fruit_jelly",
+   "seed": 2,
+   "split": "all",
+   "images": 80,
+   "aupro_005": 0.5030160356377625,
+   "segf1_3sigma": 0.375147687717778,
+   "segf1_valq": 0.3095980124880315,
+   "pixel_auroc": 0.954843145803937,
+   "image_auroc": 0.9008333333333334
+  },
+  {
+   "category": "walnuts",
+   "seed": 1,
+   "split": "private_estimate",
+   "images": 25,
+   "aupro_005": 0.6678759389090542,
+   "segf1_3sigma": 0.5700543523847283,
+   "segf1_valq": 0.5917374237541753,
+   "pixel_auroc": 0.9647653903148703,
+   "image_auroc": 0.8733333333333333
+  },
+  {
+   "category": "walnuts",
+   "seed": 1,
+   "split": "mixed_estimate",
+   "images": 125,
+   "aupro_005": 0.6109612501517522,
+   "segf1_3sigma": 0.43818652727490626,
+   "segf1_valq": 0.48895127631047497,
+   "pixel_auroc": 0.955643370018604,
+   "image_auroc": 0.8346666666666667
+  },
+  {
+   "category": "walnuts",
+   "seed": 1,
+   "split": "all",
+   "images": 150,
+   "aupro_005": 0.6196529615569066,
+   "segf1_3sigma": 0.45586811395513416,
+   "segf1_valq": 0.5037960542308753,
+   "pixel_auroc": 0.9571422979463351,
+   "image_auroc": 0.8398148148148148
+  },
+  {
+   "category": "vial",
+   "seed": 1,
+   "split": "private_estimate",
+   "images": 20,
+   "aupro_005": 0.7868682059081457,
+   "segf1_3sigma": 0.30988402769552154,
+   "segf1_valq": 0.30513887063033907,
+   "pixel_auroc": 0.9356675544965883,
+   "image_auroc": 0.8933333333333333
+  },
+  {
+   "category": "vial",
+   "seed": 1,
+   "split": "mixed_estimate",
+   "images": 120,
+   "aupro_005": 0.7737260537930409,
+   "segf1_3sigma": 0.3247897626019692,
+   "segf1_valq": 0.32200981056088784,
+   "pixel_auroc": 0.9298287705455199,
+   "image_auroc": 0.8840740740740741
+  },
+  {
+   "category": "vial",
+   "seed": 1,
+   "split": "all",
+   "images": 140,
+   "aupro_005": 0.7755126238151779,
+   "segf1_3sigma": 0.3227989120129494,
+   "segf1_valq": 0.3196925962944001,
+   "pixel_auroc": 0.9302047162153071,
+   "image_auroc": 0.8848979591836734
+  },
+  {
+   "category": "sheet_metal",
+   "seed": 0,
+   "split": "private_estimate",
+   "images": 19,
+   "aupro_005": 0.1931683195461449,
+   "segf1_3sigma": 0.4012038181707639,
+   "segf1_valq": 0.338904772719495,
+   "pixel_auroc": 0.9261498746132573,
+   "image_auroc": 0.5166666666666667
+  },
+  {
+   "category": "sheet_metal",
+   "seed": 0,
+   "split": "mixed_estimate",
+   "images": 95,
+   "aupro_005": 0.18078204527736863,
+   "segf1_3sigma": 0.388642407154343,
+   "segf1_valq": 0.2999043823289092,
+   "pixel_auroc": 0.9201964212739715,
+   "image_auroc": 0.5913333333333334
+  },
+  {
+   "category": "sheet_metal",
+   "seed": 0,
+   "split": "all",
+   "images": 114,
+   "aupro_005": 0.18287488506424898,
+   "segf1_3sigma": 0.390697861052566,
+   "segf1_valq": 0.30564550273879343,
+   "pixel_auroc": 0.9206625700135636,
+   "image_auroc": 0.5796296296296296
+  },
+  {
+   "category": "can",
+   "seed": 1,
+   "split": "private_estimate",
+   "images": 27,
+   "aupro_005": 0.12959658317861872,
+   "segf1_3sigma": 0.0016035570815261118,
+   "segf1_valq": 0.00624263382160573,
+   "pixel_auroc": 0.8167844569847452,
+   "image_auroc": 0.5555555555555556
+  },
+  {
+   "category": "can",
+   "seed": 1,
+   "split": "mixed_estimate",
+   "images": 135,
+   "aupro_005": 0.09433784611161823,
+   "segf1_3sigma": 0.0004665427049583934,
+   "segf1_valq": 0.0009192652937949416,
+   "pixel_auroc": 0.7766539096691483,
+   "image_auroc": 0.506
+  },
+  {
+   "category": "can",
+   "seed": 1,
+   "split": "all",
+   "images": 162,
+   "aupro_005": 0.09924882632264136,
+   "segf1_3sigma": 0.0005290657186586044,
+   "segf1_valq": 0.0010619010214550854,
+   "pixel_auroc": 0.7814268944432096,
+   "image_auroc": 0.5131172839506173
+  },
+  {
+   "category": "can",
+   "seed": 0,
+   "split": "private_estimate",
+   "images": 27,
+   "aupro_005": 0.11816824852512949,
+   "segf1_3sigma": 0.0014201663623453036,
+   "segf1_valq": 0.004103387524809884,
+   "pixel_auroc": 0.790898322575266,
+   "image_auroc": 0.5722222222222222
+  },
+  {
+   "category": "can",
+   "seed": 0,
+   "split": "mixed_estimate",
+   "images": 135,
+   "aupro_005": 0.0888803564405273,
+   "segf1_3sigma": 0.00043521976671464916,
+   "segf1_valq": 0.0007721136184573923,
+   "pixel_auroc": 0.7580062621116593,
+   "image_auroc": 0.4971111111111111
+  },
+  {
+   "category": "can",
+   "seed": 0,
+   "split": "all",
+   "images": 162,
+   "aupro_005": 0.09315976036437769,
+   "segf1_3sigma": 0.0004925671250795298,
+   "segf1_valq": 0.0008769533398710048,
+   "pixel_auroc": 0.7618644786274537,
+   "image_auroc": 0.5050925925925925
+  },
+  {
+   "category": "fabric",
+   "seed": 1,
+   "split": "private_estimate",
+   "images": 26,
+   "aupro_005": 0.17570705602654113,
+   "segf1_3sigma": 0.04129727673580922,
+   "segf1_valq": 0.04683519117490549,
+   "pixel_auroc": 0.7030507304430711,
+   "image_auroc": 0.6848484848484848
+  },
+  {
+   "category": "fabric",
+   "seed": 1,
+   "split": "mixed_estimate",
+   "images": 130,
+   "aupro_005": 0.18758758044452498,
+   "segf1_3sigma": 0.05798333472243791,
+   "segf1_valq": 0.06500267701780217,
+   "pixel_auroc": 0.7086146604703711,
+   "image_auroc": 0.6312727272727273
+  },
+  {
+   "category": "fabric",
+   "seed": 1,
+   "split": "all",
+   "images": 156,
+   "aupro_005": 0.18639716066557846,
+   "segf1_3sigma": 0.055362743838495966,
+   "segf1_valq": 0.062221044569814046,
+   "pixel_auroc": 0.7072821957779697,
+   "image_auroc": 0.642087542087542
+  },
+  {
+   "category": "can",
+   "seed": 2,
+   "split": "private_estimate",
+   "images": 27,
+   "aupro_005": 0.11989893968199074,
+   "segf1_3sigma": 0.0014798871617878362,
+   "segf1_valq": 0.003970581599963904,
+   "pixel_auroc": 0.7971898009572955,
+   "image_auroc": 0.5833333333333334
+  },
+  {
+   "category": "can",
+   "seed": 2,
+   "split": "mixed_estimate",
+   "images": 135,
+   "aupro_005": 0.09109187892237805,
+   "segf1_3sigma": 0.00047431351324817673,
+   "segf1_valq": 0.000707184198530582,
+   "pixel_auroc": 0.7711149556210011,
+   "image_auroc": 0.5271111111111111
+  },
+  {
+   "category": "can",
+   "seed": 2,
+   "split": "all",
+   "images": 162,
+   "aupro_005": 0.09725164878333876,
+   "segf1_3sigma": 0.0005294815657198907,
+   "segf1_valq": 0.0007874789368812318,
+   "pixel_auroc": 0.7741776410739396,
+   "image_auroc": 0.5311728395061729
+  },
+  {
+   "category": "sheet_metal",
+   "seed": 2,
+   "split": "private_estimate",
+   "images": 19,
+   "aupro_005": 0.1841187324989989,
+   "segf1_3sigma": 0.4036334191765143,
+   "segf1_valq": 0.3542801393059493,
+   "pixel_auroc": 0.9203517182560443,
+   "image_auroc": 0.45
+  },
+  {
+   "category": "sheet_metal",
+   "seed": 2,
+   "split": "mixed_estimate",
+   "images": 95,
+   "aupro_005": 0.17745596124431912,
+   "segf1_3sigma": 0.3891611219768986,
+   "segf1_valq": 0.3135647082026595,
+   "pixel_auroc": 0.9162476740924226,
+   "image_auroc": 0.6506666666666666
+  },
+  {
+   "category": "sheet_metal",
+   "seed": 2,
+   "split": "all",
+   "images": 114,
+   "aupro_005": 0.1785262004413589,
+   "segf1_3sigma": 0.39150538535754736,
+   "segf1_valq": 0.3195897918960705,
+   "pixel_auroc": 0.9164455167687691,
+   "image_auroc": 0.6157407407407407
+  },
+  {
+   "category": "fruit_jelly",
+   "seed": 0,
+   "split": "private_estimate",
+   "images": 20,
+   "aupro_005": 0.4927859878823168,
+   "segf1_3sigma": 0.29643968135072835,
+   "segf1_valq": 0.326922090354101,
+   "pixel_auroc": 0.956810635664097,
+   "image_auroc": 0.88
+  },
+  {
+   "category": "fruit_jelly",
+   "seed": 0,
+   "split": "mixed_estimate",
+   "images": 60,
+   "aupro_005": 0.48672150858542734,
+   "segf1_3sigma": 0.2946025003560913,
+   "segf1_valq": 0.3284138297327411,
+   "pixel_auroc": 0.9540845926553073,
+   "image_auroc": 0.8651851851851852
+  },
+  {
+   "category": "fruit_jelly",
+   "seed": 0,
+   "split": "all",
+   "images": 80,
+   "aupro_005": 0.48777146581194986,
+   "segf1_3sigma": 0.29506002698619554,
+   "segf1_valq": 0.328041321412996,
+   "pixel_auroc": 0.9547729073454875,
+   "image_auroc": 0.8708333333333333
+  },
+  {
+   "category": "wallplugs",
+   "seed": 2,
+   "split": "private_estimate",
+   "images": 25,
+   "aupro_005": 0.26179837066431105,
+   "segf1_3sigma": 0.16883562479632372,
+   "segf1_valq": 0.20040562580117113,
+   "pixel_auroc": 0.9161773162933402,
+   "image_auroc": 0.52
+  },
+  {
+   "category": "wallplugs",
+   "seed": 2,
+   "split": "mixed_estimate",
+   "images": 125,
+   "aupro_005": 0.26456215929603,
+   "segf1_3sigma": 0.06243373832981147,
+   "segf1_valq": 0.10314252024833485,
+   "pixel_auroc": 0.8809294437165224,
+   "image_auroc": 0.49866666666666665
+  },
+  {
+   "category": "wallplugs",
+   "seed": 2,
+   "split": "all",
+   "images": 150,
+   "aupro_005": 0.26340389721718027,
+   "segf1_3sigma": 0.06791887472674771,
+   "segf1_valq": 0.10982802786881346,
+   "pixel_auroc": 0.8843684714752253,
+   "image_auroc": 0.5
+  },
+  {
+   "category": "rice",
+   "seed": 1,
+   "split": "private_estimate",
+   "images": 22,
+   "aupro_005": 0.2730355312515124,
+   "segf1_3sigma": 0.08550491544755048,
+   "segf1_valq": 0.11840498624045488,
+   "pixel_auroc": 0.842761432643583,
+   "image_auroc": 0.580952380952381
+  },
+  {
+   "category": "rice",
+   "seed": 1,
+   "split": "mixed_estimate",
+   "images": 110,
+   "aupro_005": 0.2653508814032745,
+   "segf1_3sigma": 0.05628426709065157,
+   "segf1_valq": 0.1119150164811825,
+   "pixel_auroc": 0.8417397380915324,
+   "image_auroc": 0.64
+  },
+  {
+   "category": "rice",
+   "seed": 1,
+   "split": "all",
+   "images": 132,
+   "aupro_005": 0.2646987366153049,
+   "segf1_3sigma": 0.05799883414594116,
+   "segf1_valq": 0.11241901353550454,
+   "pixel_auroc": 0.8381911007628654,
+   "image_auroc": 0.6277777777777778
+  }
+ ],
+ "summary": {
+  "private_estimate": {
+   "per_category": {
+    "can": {
+     "aupro_005": 0.12255459046191298,
+     "segf1_3sigma": 0.0015012035352197505,
+     "segf1_valq": 0.004772200982126506,
+     "pixel_auroc": 0.801624193505769,
+     "image_auroc": 0.5703703703703704
+    },
+    "fabric": {
+     "aupro_005": 0.1606050822954099,
+     "segf1_3sigma": 0.036016219429973205,
+     "segf1_valq": 0.04235822746303434,
+     "pixel_auroc": 0.6687746502269273,
+     "image_auroc": 0.6707070707070707
+    },
+    "fruit_jelly": {
+     "aupro_005": 0.5019660454150913,
+     "segf1_3sigma": 0.3450374214115706,
+     "segf1_valq": 0.3195595335398822,
+     "pixel_auroc": 0.9563092691607591,
+     "image_auroc": 0.9333333333333333
+    },
+    "rice": {
+     "aupro_005": 0.27014400183123316,
+     "segf1_3sigma": 0.08967202514675253,
+     "segf1_valq": 0.12686290304660436,
+     "pixel_auroc": 0.8302714666026401,
+     "image_auroc": 0.5301587301587302
+    },
+    "sheet_metal": {
+     "aupro_005": 0.19068665495121745,
+     "segf1_3sigma": 0.39955277787401283,
+     "segf1_valq": 0.3461868185193881,
+     "pixel_auroc": 0.9242909955915974,
+     "image_auroc": 0.5277777777777778
+    },
+    "vial": {
+     "aupro_005": 0.7769769627657622,
+     "segf1_3sigma": 0.31157097456670874,
+     "segf1_valq": 0.30251809337468594,
+     "pixel_auroc": 0.9398150016626243,
+     "image_auroc": 0.9066666666666666
+    },
+    "wallplugs": {
+     "aupro_005": 0.2756905476630979,
+     "segf1_3sigma": 0.16923595528136937,
+     "segf1_valq": 0.19564554969748235,
+     "pixel_auroc": 0.9219858976330049,
+     "image_auroc": 0.46444444444444444
+    },
+    "walnuts": {
+     "aupro_005": 0.6610722852347006,
+     "segf1_3sigma": 0.566496947781519,
+     "segf1_valq": 0.5875368981927264,
+     "pixel_auroc": 0.9658341890688491,
+     "image_auroc": 0.8822222222222222
+    }
+   },
+   "macro": {
+    "aupro_005": 0.3699620213273032,
+    "segf1_3sigma": 0.23988544062839076,
+    "segf1_valq": 0.24068002810199127,
+    "pixel_auroc": 0.8761132079315214,
+    "image_auroc": 0.685710076960077
+   }
+  },
+  "mixed_estimate": {
+   "per_category": {
+    "can": {
+     "aupro_005": 0.0914366938248412,
+     "segf1_3sigma": 0.00045869199497373974,
+     "segf1_valq": 0.0007995210369276387,
+     "pixel_auroc": 0.7685917091339363,
+     "image_auroc": 0.5100740740740741
+    },
+    "fabric": {
+     "aupro_005": 0.1679126866672906,
+     "segf1_3sigma": 0.056427993773644956,
+     "segf1_valq": 0.062464627572156886,
+     "pixel_auroc": 0.6723404059728401,
+     "image_auroc": 0.6387878787878788
+    },
+    "fruit_jelly": {
+     "aupro_005": 0.49725129681297536,
+     "segf1_3sigma": 0.34336634665867155,
+     "segf1_valq": 0.31839396592295693,
+     "pixel_auroc": 0.9539330146297764,
+     "image_auroc": 0.8879012345679013
+    },
+    "rice": {
+     "aupro_005": 0.26254453683614043,
+     "segf1_3sigma": 0.057339500071640744,
+     "segf1_valq": 0.11751571926446853,
+     "pixel_auroc": 0.8346151516864404,
+     "image_auroc": 0.5730793650793651
+    },
+    "sheet_metal": {
+     "aupro_005": 0.17905613401895765,
+     "segf1_3sigma": 0.38307100867802235,
+     "segf1_valq": 0.30366435350798215,
+     "pixel_auroc": 0.9186436449300609,
+     "image_auroc": 0.6453333333333333
+    },
+    "vial": {
+     "aupro_005": 0.7599500308405562,
+     "segf1_3sigma": 0.3253531300400159,
+     "segf1_valq": 0.31806860480223575,
+     "pixel_auroc": 0.9335186399150195,
+     "image_auroc": 0.8950617283950617
+    },
+    "wallplugs": {
+     "aupro_005": 0.27214317617104916,
+     "segf1_3sigma": 0.06551743033591756,
+     "segf1_valq": 0.09822370280917833,
+     "pixel_auroc": 0.8912186655960614,
+     "image_auroc": 0.4902222222222222
+    },
+    "walnuts": {
+     "aupro_005": 0.605832372990755,
+     "segf1_3sigma": 0.4350113782149352,
+     "segf1_valq": 0.4866104608599408,
+     "pixel_auroc": 0.9569545937692899,
+     "image_auroc": 0.8479111111111112
+    }
+   },
+   "macro": {
+    "aupro_005": 0.3545158660203207,
+    "segf1_3sigma": 0.20831818497097776,
+    "segf1_valq": 0.21321761947198087,
+    "pixel_auroc": 0.8662269782041782,
+    "image_auroc": 0.6860463684463685
+   }
+  },
+  "all": {
+   "per_category": {
+    "can": {
+     "aupro_005": 0.0965534118234526,
+     "segf1_3sigma": 0.0005170381364860083,
+     "segf1_valq": 0.0009087777660691073,
+     "pixel_auroc": 0.7724896713815342,
+     "image_auroc": 0.5164609053497943
+    },
+    "fabric": {
+     "aupro_005": 0.1667381286154182,
+     "segf1_3sigma": 0.05322332471454894,
+     "segf1_valq": 0.059368098458795336,
+     "pixel_auroc": 0.6713900812418011,
+     "image_auroc": 0.6450056116722783
+    },
+    "fruit_jelly": {
+     "aupro_005": 0.4983061502550283,
+     "segf1_3sigma": 0.3437834622729467,
+     "segf1_valq": 0.3186840095600283,
+     "pixel_auroc": 0.9545345750526046,
+     "image_auroc": 0.8994444444444445
+    },
+    "rice": {
+     "aupro_005": 0.26151249918368363,
+     "segf1_3sigma": 0.059262071832880014,
+     "segf1_valq": 0.11825722706891255,
+     "pixel_auroc": 0.8300360199818885,
+     "image_auroc": 0.5653439153439154
+    },
+    "sheet_metal": {
+     "aupro_005": 0.18087392760860577,
+     "segf1_3sigma": 0.3857398198573469,
+     "segf1_valq": 0.3098979801365756,
+     "pixel_auroc": 0.919059729395345,
+     "image_auroc": 0.6253086419753087
+    },
+    "vial": {
+     "aupro_005": 0.7624644179300921,
+     "segf1_3sigma": 0.3235031142592947,
+     "segf1_valq": 0.31593563595690355,
+     "pixel_auroc": 0.9340280690933392,
+     "image_auroc": 0.8966893424036281
+    },
+    "wallplugs": {
+     "aupro_005": 0.27160741471376876,
+     "segf1_3sigma": 0.07120678357106236,
+     "segf1_valq": 0.10510948566522785,
+     "pixel_auroc": 0.8940783159528479,
+     "image_auroc": 0.4839506172839506
+    },
+    "walnuts": {
+     "aupro_005": 0.6144807766081085,
+     "segf1_3sigma": 0.4526978384371784,
+     "segf1_valq": 0.5011489732493822,
+     "pixel_auroc": 0.9584168979901682,
+     "image_auroc": 0.8530864197530864
+    }
+   },
+   "macro": {
+    "aupro_005": 0.35656709084226973,
+    "segf1_3sigma": 0.211241681635218,
+    "segf1_valq": 0.21616377348273683,
+    "pixel_auroc": 0.8667541700111911,
+    "image_auroc": 0.6856612372783008
+   }
+  }
+ }
+}
