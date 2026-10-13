@@ -26,7 +26,7 @@ __all__ = [
 ]
 
 #: Models that require torch, imported on demand.
-TORCH_MODELS = ("patchcore", "cae", "anomalib_patchcore")
+TORCH_MODELS = ("patchcore", "cae", "anomalib_patchcore", "tiled_knn")
 
 
 def build_model(name: str, transform=None, **kwargs) -> AnomalyModel:
@@ -44,6 +44,10 @@ def build_model(name: str, transform=None, **kwargs) -> AnomalyModel:
         from .autoencoder import ConvAutoencoder
 
         return ConvAutoencoder(transform, **kwargs)
+    if name == "tiled_knn":
+        from .tiled_knn import TiledKNN
+
+        return TiledKNN(transform, **kwargs)
     if name == "anomalib_patchcore":
         from .anomalib_ref import AnomalibPatchCore
 

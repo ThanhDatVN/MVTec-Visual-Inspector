@@ -1,0 +1,30 @@
+# Tiled foundation-feature kNN (src/inspector/models/tiled_knn.py), after SuperADD
+# (arXiv:2605.14808): DINOv3 blocks, 640 px tiles over the image scaled by 0.625, a density-
+# subsampled bank per block, brightness augmentation of the training images. A development
+# configuration; a frozen recipe for a held-out test is a separate file under configs/recipes/.
+# Compose after a data config:
+#   inspector run -c configs/data/mvtec_ad2.yaml -c configs/models/tiled_knn.yaml --categories ...
+
+experiment:
+  tier: T3
+  owner: own
+
+preprocess:
+  resize_mode: none   # the model scales and tiles internally
+  long_side: null
+
+model:
+  name: tiled_knn
+  backbone: vit_large_patch16_dinov3
+  weights: lvd1689m
+  layers: [5, 11, 17, 23]
+  scale: 0.625
+  tile: 640
+  overlap: 128
+  brightness: [0.8, 1.2]
+  candidate_fraction: 0.1
+  bank_size: 100000
+  density_neighbors: 100
+  subset_size: 4096
+  image_score: max
+  tile_batch: 2
