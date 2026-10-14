@@ -558,7 +558,7 @@ CC BY-NC 4.0).
 ### ADR-16 — Candidate v5: ViT-H+ in place of ViT-L (supersedes ADR-15 before any export)
 
 **Status:** Accepted, 2026-10-13. Committed and pushed before the v5 export and before any server
-result for v4 or v5. The last submission the protocol allows.
+result for v4 or v5. v5 was exported and checked but **not uploaded**: ADR-17 replaces its maps.
 
 **Context.** ADR-15 chose ViT-L over ViT-H+ on SegF1 at the 3σ rule, before the H+ runs had been
 scored with tuned masks. Scored as v4 is (fusion with WRN50 at 1280 px, P95 × gain masks), H+ is
@@ -582,6 +582,47 @@ the better component on SegF1 in every category screened, and the full eight-cat
 
 **Consequences.** (+) The best SegF1 the 4 GB card produced in development. (−) About 1 point of
 AU-PRO given up against v4; ViT-H+ doubles the time per image (~9.5 h for the export).
+
+---
+
+### ADR-17 — Candidate v6: learned-head maps for AU-PRO, v5's masks for SegF1 and ClassF1
+
+**Status:** Accepted, 2026-10-14. Committed and pushed before the v6 build and before any server
+result for v5 or v6. The last submission the protocol allows; v5 is not uploaded.
+
+**Context.** E23 trained a small fusion head on synthetic defects painted on held-out training
+images (docs/11, Stage K′, with its decision rule and two amendments, all written before the full
+result). Over all eight categories, on `test_public`:
+
+| maps | AU-PRO@0.05 `regular` / all |
+|---|---|
+| v5's rule, full banks (what v5 submits) | 0.567 / 0.555 |
+| five-input head, seven-eighths banks | 0.647 / 0.624 |
+| two-input head on the full-bank maps, built as the v6 build builds them (`scripts/hybrid_maps_check.py`) | **0.607 / 0.587** |
+
+The five-input hybrid misses its bar on the per-category guard (`vial` −0.055 on all captures
+against −0.05 allowed); the two-input hybrid meets its rule (higher macro AU-PRO on both
+proxies). The heads' own masks are worse than v5's (SegF1 0.37 vs 0.61), which is why the hybrid
+keeps v5's masks.
+
+**Decision.**
+
+1. v6 = v5's submission with `anomaly_images` replaced: per category, the two-input logistic
+   head (`fusion_head_study.category_heads`, kind `lr2`, seed 0, trained on the E23 features of
+   held-out training images and three synthetic defects each) applied to the two component maps
+   the v5 export kept (each `quarter(native map) / its validation P95`), the probability written
+   at native resolution. `anomaly_images_thresholded` is copied from v5 unchanged, so SegF1 and
+   ClassF1 are v5's (development proxies 0.620 / 0.609 and 0.802).
+2. Built by `scripts/export_hybrid_from_components.py` from a clean worktree at this commit,
+   checked with MVTec's `check_and_prepare_data_for_upload.py`, uploaded once by the owner.
+3. H5 applies unchanged (AU-PRO ≥ v1 + 10, SegF1 ≥ v1 + 20, ClassF1 not below v1, both splits).
+   Expected from development: AU-PRO about 4 points above what v5's maps would score.
+
+**Consequences.** (+) The AU-PRO gain of E23 without a GPU re-run: the build reuses v5's stored
+component maps. (−) `fruit_jelly` loses AU-PRO (0.557 → 0.458) while six categories gain;
+the head was trained on synthetic defects, so its gain is the least transferable part of v6.
+(−) The map and the mask of an image now come from different rules; the server scores them
+separately, which is what this exploits.
 
 ---
 

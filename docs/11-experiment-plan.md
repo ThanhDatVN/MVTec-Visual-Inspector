@@ -532,6 +532,12 @@ both v5's rule on the seven-eighths banks and v5's rule on the full banks (the m
 and no category loses more than **0.05** against the full-bank rule. If both hybrids qualify,
 the one with the higher macro AU-PRO is taken. The extra export costs about ten GPU hours.
 
+*Outcome (2026-10-14).* Five-input head: macro AU-PRO 0.647 / 0.624 (+0.062 / +0.061 over the
+seven-eighths rule, +0.080 / +0.069 over the full-bank rule) but `vial` −0.055 on all captures
+— the guard fails. Two-input head on the full-bank maps: 0.607 / 0.587 against 0.567 / 0.555 —
+qualifies; reproduced by the exact build pipeline (`scripts/hybrid_maps_check.py`). Heads' own
+masks: SegF1 0.37 against the rule's 0.61. Decision: ADR-17 (v6 = two-input hybrid).
+
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 
 | # | Deliverable | Spec |
