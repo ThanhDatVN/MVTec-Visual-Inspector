@@ -5,7 +5,9 @@ S1 put recipe v1 on MVTec's server at AU-PRO@0.05 37.64 / 35.11, SegF1 26.42 / 2
 half of the challenge systems. This report takes each server metric apart, surveys what the
 published systems do, rebuilds the pipeline where the evidence says the loss is, and freezes the
 result as candidate v4 for the project's second and last submission
-([ADR-15](../docs/07-risks-and-decisions.md)).
+([ADR-15](../docs/07-risks-and-decisions.md)). v4 was superseded before any upload by v5
+(ViT-H+, ADR-16, §8) and v5's maps by the learned fusion head of E23 (v6, ADR-17, §11), which is
+what was submitted.
 
 Everything below is development evidence on `test_public`, seed 0, scored as the server scores
 (all pixels of a category pooled, normal images included; ClassF1 from mask emptiness), with
@@ -151,7 +153,7 @@ record means training (§10).
 | transductive scoring | MuSc (mutual scoring among test images), test-time adaptation | outside this protocol (fit on training normals only) |
 | bigger features | DINOv3 ViT-7B at full resolution (DL-SubspaceAD) | beyond a 4 GB card |
 
-**Proposed (not run): a learned fusion head trained on synthetic anomalies.** The v5 map is a fixed
+**Proposed here, run as E23 (§11): a learned fusion head trained on synthetic anomalies.** The v5 map is a fixed
 rule — mean of four block distances, maximum with WRN50, all equally weighted. A head of a few
 hundred parameters (logistic regression or a two-layer MLP on the five per-token distances, the
 four DINOv3 blocks and WRN50, plus their local 3×3 maxima) trained per category on synthetic
@@ -161,6 +163,45 @@ output a probability with a natural 0.5 threshold, and keep one procedure for al
 is ISVL++'s idea without its reconstruction network. Cost on the RTX 3050: per-block maps for
 held-out and synthetic images (~3 h with ViT-H+), then seconds to train; it is a new candidate and
 would need its own development round before a submission.
+
+## 11. E23 — the learned fusion head, and candidate v6 (ADR-17)
+
+Run as proposed in §10, under the rule and two amendments of docs/11 Stage K′, all committed
+before the full result. Per category: both v5 components fitted on seven eighths of `train/good`
+(`scripts/head_features.py`); the held-out eighth, each image also with three synthetic defects
+(`src/inspector/data/synthetic_defects.py`: value-noise blobs filled with displaced texture of
+the same image, and thin strokes), gives the head's training pixels; a logistic head per category
+(`scripts/fusion_head_study.py`). Scored on `test_public` as the server scores.
+
+| maps | inputs per pixel | AU-PRO `regular` / all | SegF1 all (own masks) |
+|---|---|---|---|
+| v5's rule on full banks (maximum of the two P95-scaled maps) | — | 0.567 / 0.555 | **0.609** |
+| five-input head, seven-eighths banks | 4 DINOv3 blocks + WRN50, their 3×3 maxima | **0.647 / 0.624** | 0.37 |
+| two-input head on the full-bank maps (`scripts/hybrid_maps_check.py`) | DINOv3 mean + WRN50, their 3×3 maxima | 0.607 / 0.587 | 0.23 |
+
+The heads rank pixels better (AU-PRO) and threshold worse: a probability trained on synthetic
+defects does not put real ones on the same side of one threshold, so their own masks lose to v5's
+rule by half. The server scores the maps (AU-PRO) and the masks (SegF1, ClassF1) from separate
+files, so the amendment pre-registered a **hybrid**: the head's maps with v5's masks. The
+five-input hybrid fails its per-category guard (`vial` −0.055 on all captures against −0.05
+allowed) and would also need ten GPU hours to refit the per-block banks; the two-input hybrid
+meets its rule and is built on CPU from the component maps the v5 export kept.
+
+| category | v5 rule `regular` / all | two-input hybrid `regular` / all |
+|---|---|---|
+| `can` | 0.133 / 0.109 | 0.158 / 0.120 |
+| `fabric` | 0.484 / 0.493 | **0.635 / 0.614** |
+| `fruit_jelly` | **0.553 / 0.557** | 0.458 / 0.458 |
+| `rice` | 0.652 / 0.654 | 0.700 / 0.691 |
+| `sheet_metal` | 0.586 / 0.573 | 0.602 / 0.582 |
+| `vial` | 0.861 / 0.857 | 0.869 / 0.868 |
+| `wallplugs` | 0.575 / 0.549 | 0.646 / 0.608 |
+| `walnuts` | 0.695 / 0.647 | **0.785 / 0.754** |
+| macro | 0.567 / 0.555 | **0.607 / 0.587** |
+
+Seven categories gain, `fruit_jelly` loses ten points: its synthetic defects (texture moved
+inside a translucent jelly) are probably unlike its real ones. Candidate v6 (ADR-17) is v5's
+submission with these maps; its masks, and so its SegF1 and ClassF1, are v5's.
 
 ## 7. What remains weak
 

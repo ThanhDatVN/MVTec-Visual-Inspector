@@ -619,7 +619,7 @@ keeps v5's masks.
    Expected from development: AU-PRO about 4 points above what v5's maps would score.
 
 **Consequences.** (+) The AU-PRO gain of E23 without a GPU re-run: the build reuses v5's stored
-component maps. (−) `fruit_jelly` loses AU-PRO (0.557 → 0.458) while six categories gain;
+component maps. (−) `fruit_jelly` loses AU-PRO (0.557 → 0.458) while the seven others gain;
 the head was trained on synthetic defects, so its gain is the least transferable part of v6.
 (−) The map and the mask of an image now come from different rules; the server scores them
 separately, which is what this exploits.
