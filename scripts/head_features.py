@@ -39,6 +39,38 @@ def quarter_mask(mask: np.ndarray) -> np.ndarray:
     return cv2.resize(mask.astype(np.float32), (max(1, w // 4), max(1, h // 4)), interpolation=cv2.INTER_AREA) > 0.25
 
 
+def fit_components(cat: str, data_root: str, *, seed: int = 0, dino_recipe: str = DINO, wrn_recipe: str = WRN,
+                   device: str | None = None, limit: int | None = None):
+    """Both v5 components fitted on seven eighths of `train/good` (indices not a multiple of 8).
+    Returns ({"dino", "wrn"}: model, the category's indices, the training list)."""
+    from inspector.config import deep_merge, load_config
+    from inspector.data.core import DatasetIndex
+    from inspector.runner import prepare
+
+    models = {}
+    for name, recipe in (("dino", dino_recipe), ("wrn", wrn_recipe)):
+        cfg = deep_merge(load_config(DATA_CONFIG), load_config(recipe))
+        if device:
+            cfg = deep_merge(cfg, {"model": {"device": device}})
+        _, model, idx = prepare(cfg, method=cfg["model"]["name"], category=cat, seed=seed,
+                                data_root=data_root, role="development")
+        train = list(idx["train"])[: (8 * limit if limit else None)]
+        bank = DatasetIndex([s for i, s in enumerate(train) if i % 8], root=idx["train"].root, category=cat,
+                            split_name="train", layout=idx["train"].layout)
+        model.fit(bank)
+        models[name] = model
+    return models, idx, train
+
+
+def component_maps(models: dict, image: np.ndarray) -> dict:
+    """What `head_features` stores for one image (float16, as stored)."""
+    dino, wrn = models["dino"], models["wrn"]
+    layers = dino.layer_maps(dino.transform.normalize_image(dino.transform.resize_image(image)))
+    raw = wrn.predict_raw(image)
+    return {"layers": layers.astype(np.float16), "wrn": raw.raw_map.astype(np.float16),
+            "wrn_input": np.array(raw.input_size), "native": np.array(image.shape[1::-1])}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--data-root", required=True)
@@ -52,11 +84,8 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=None, help="smoke tests: first N images of every set")
     args = ap.parse_args()
 
-    from inspector.config import deep_merge, load_config
-    from inspector.data.core import DatasetIndex
     from inspector.data.synthetic_defects import synthetic_defect
     from inspector.data.transforms import load_image
-    from inspector.runner import prepare
 
     out = Path(args.out)
     for ci, cat in enumerate(args.categories):
@@ -65,31 +94,16 @@ def main() -> int:
             print(f"{cat}: done", flush=True)
             continue
         t0 = time.perf_counter()
-        models = {}
-        for name, recipe in (("dino", args.dino_recipe), ("wrn", args.wrn_recipe)):
-            cfg = deep_merge(load_config(DATA_CONFIG), load_config(recipe))
-            if args.device:
-                cfg = deep_merge(cfg, {"model": {"device": args.device}})
-            _, model, idx = prepare(cfg, method=cfg["model"]["name"], category=cat, seed=args.seed,
-                                    data_root=args.data_root, role="development")
-            train = list(idx["train"])[: (8 * args.limit if args.limit else None)]
-            bank = DatasetIndex([s for i, s in enumerate(train) if i % 8], root=idx["train"].root, category=cat,
-                                split_name="train", layout=idx["train"].layout)
-            model.fit(bank)
-            models[name] = model
+        models, idx, train = fit_components(cat, args.data_root, seed=args.seed, dino_recipe=args.dino_recipe,
+                                            wrn_recipe=args.wrn_recipe, device=args.device, limit=args.limit)
         held_out = [s for i, s in enumerate(train) if i % 8 == 0]
         if args.limit:
             idx = {k: list(v)[: args.limit] if k in ("validation", "test_public") else v for k, v in idx.items()}
             idx["validation_root"] = idx["train"].root
 
         def save(group: str, stem: str, image: np.ndarray, extra: dict, models=models, cat=cat) -> None:
-            dino, wrn = models["dino"], models["wrn"]
-            layers = dino.layer_maps(dino.transform.normalize_image(dino.transform.resize_image(image)))
-            raw = wrn.predict_raw(image)
             (out / cat / group).mkdir(parents=True, exist_ok=True)
-            np.savez_compressed(out / cat / group / f"{stem}.npz", layers=layers.astype(np.float16),
-                                wrn=raw.raw_map.astype(np.float16), wrn_input=np.array(raw.input_size),
-                                native=np.array(image.shape[1::-1]), **extra)
+            np.savez_compressed(out / cat / group / f"{stem}.npz", **component_maps(models, image), **extra)
 
         for i, sample in enumerate(held_out):
             image = load_image(sample.image_path)
