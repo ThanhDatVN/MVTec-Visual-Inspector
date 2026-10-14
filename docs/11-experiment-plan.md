@@ -522,6 +522,16 @@ categories, the two-input head applied to the **full-bank** development maps (th
 v5's components were selected on) raises macro AU-PRO@0.05 on both proxies; SegF1 and ClassF1
 are v5's by construction.
 
+*Second amendment (2026-10-14), after the same preview and before the full result:* the preview
+put the gain in the per-block information (five-input head 0.467 vs two-input 0.389 AU-PRO), so a
+**five-input hybrid** is also defined: the five-input logistic head's maps, from both components
+refitted on the same seven-eighths banks at export (`scripts/export_head_maps.py`, which checks
+that the refit reproduces the stored features), with v5's masks unchanged. It replaces v5 if,
+over all eight categories, its macro AU-PRO@0.05 exceeds by at least **0.02** on both proxies
+both v5's rule on the seven-eighths banks and v5's rule on the full banks (the maps v5 submits),
+and no category loses more than **0.05** against the full-bank rule. If both hybrids qualify,
+the one with the higher macro AU-PRO is taken. The extra export costs about ten GPU hours.
+
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 
 | # | Deliverable | Spec |
