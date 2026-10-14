@@ -39,36 +39,48 @@ def quarter_mask(mask: np.ndarray) -> np.ndarray:
     return cv2.resize(mask.astype(np.float32), (max(1, w // 4), max(1, h // 4)), interpolation=cv2.INTER_AREA) > 0.25
 
 
-def fit_components(cat: str, data_root: str, *, seed: int = 0, dino_recipe: str = DINO, wrn_recipe: str = WRN,
-                   device: str | None = None, limit: int | None = None):
-    """Both v5 components fitted on seven eighths of `train/good` (indices not a multiple of 8).
-    Returns ({"dino", "wrn"}: model, the category's indices, the training list)."""
+def fit_component(name: str, cat: str, data_root: str, *, seed: int = 0, recipe: str, device: str | None = None,
+                  limit: int | None = None):
+    """One v5 component fitted on seven eighths of `train/good` (indices not a multiple of 8).
+    The components are fitted and run one after the other: ViT-H+ with its four 100k banks and
+    WRN50 together exceed the 4 GB card, and the spill to shared memory made E23's first pass
+    four to five times slower. Returns (model, the category's indices, the training list)."""
     from inspector.config import deep_merge, load_config
     from inspector.data.core import DatasetIndex
     from inspector.runner import prepare
 
-    models = {}
-    for name, recipe in (("dino", dino_recipe), ("wrn", wrn_recipe)):
-        cfg = deep_merge(load_config(DATA_CONFIG), load_config(recipe))
-        if device:
-            cfg = deep_merge(cfg, {"model": {"device": device}})
-        _, model, idx = prepare(cfg, method=cfg["model"]["name"], category=cat, seed=seed,
-                                data_root=data_root, role="development")
-        train = list(idx["train"])[: (8 * limit if limit else None)]
-        bank = DatasetIndex([s for i, s in enumerate(train) if i % 8], root=idx["train"].root, category=cat,
-                            split_name="train", layout=idx["train"].layout)
-        model.fit(bank)
-        models[name] = model
-    return models, idx, train
+    cfg = deep_merge(load_config(DATA_CONFIG), load_config(recipe))
+    if device:
+        cfg = deep_merge(cfg, {"model": {"device": device}})
+    _, model, idx = prepare(cfg, method=cfg["model"]["name"], category=cat, seed=seed,
+                            data_root=data_root, role="development")
+    train = list(idx["train"])[: (8 * limit if limit else None)]
+    bank = DatasetIndex([s for i, s in enumerate(train) if i % 8], root=idx["train"].root, category=cat,
+                        split_name="train", layout=idx["train"].layout)
+    model.fit(bank)
+    return model, idx, train
 
 
-def component_maps(models: dict, image: np.ndarray) -> dict:
-    """What `head_features` stores for one image (float16, as stored)."""
-    dino, wrn = models["dino"], models["wrn"]
-    layers = dino.layer_maps(dino.transform.normalize_image(dino.transform.resize_image(image)))
-    raw = wrn.predict_raw(image)
-    return {"layers": layers.astype(np.float16), "wrn": raw.raw_map.astype(np.float16),
-            "wrn_input": np.array(raw.input_size), "native": np.array(image.shape[1::-1])}
+def dino_maps(model, image: np.ndarray) -> dict:
+    layers = model.layer_maps(model.transform.normalize_image(model.transform.resize_image(image)))
+    return {"layers": layers.astype(np.float16)}
+
+
+def wrn_maps(model, image: np.ndarray) -> dict:
+    raw = model.predict_raw(image)
+    return {"wrn": raw.raw_map.astype(np.float16), "wrn_input": np.array(raw.input_size),
+            "native": np.array(image.shape[1::-1])}
+
+
+def release(model) -> None:
+    import gc
+
+    import torch
+
+    del model
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
 
 
 def main() -> int:
@@ -94,33 +106,40 @@ def main() -> int:
             print(f"{cat}: done", flush=True)
             continue
         t0 = time.perf_counter()
-        models, idx, train = fit_components(cat, args.data_root, seed=args.seed, dino_recipe=args.dino_recipe,
-                                            wrn_recipe=args.wrn_recipe, device=args.device, limit=args.limit)
-        held_out = [s for i, s in enumerate(train) if i % 8 == 0]
-        if args.limit:
-            idx = {k: list(v)[: args.limit] if k in ("validation", "test_public") else v for k, v in idx.items()}
-            idx["validation_root"] = idx["train"].root
 
-        def save(group: str, stem: str, image: np.ndarray, extra: dict, models=models, cat=cat) -> None:
-            (out / cat / group).mkdir(parents=True, exist_ok=True)
-            np.savez_compressed(out / cat / group / f"{stem}.npz", **component_maps(models, image), **extra)
+        def items(idx, train, ci=ci):
+            """(group, stem, image, extra) for every image to score; synthetic defects are redrawn
+            from their seeds, so both passes see the same pixels."""
+            held_out = [s for i, s in enumerate(train) if i % 8 == 0]
+            for i, sample in enumerate(held_out):
+                image = load_image(sample.image_path)
+                yield "head", sample.image_path.stem, image, {}
+                for k in range(args.variants):
+                    defective, mask = synthetic_defect(image, np.random.default_rng((args.seed, ci, i, k)))
+                    yield "synthetic", f"{sample.image_path.stem}_{k}", defective, {"mask": quarter_mask(mask)}
+            for split in ("validation", "test_public"):
+                samples = list(idx[split])[: args.limit] if args.limit else list(idx[split])
+                for sample in samples:
+                    yield (split, f"{sample.image_path.stem}_{sample.label}_{sample.image_path.parent.name}",
+                           load_image(sample.image_path),
+                           {"label": np.array(sample.label), "id": np.array(sample.rel_id(idx["train"].root)),
+                            "mask_path": np.array(str(Path(sample.mask_path).resolve()) if sample.mask_path else "")})
 
-        for i, sample in enumerate(held_out):
-            image = load_image(sample.image_path)
-            save("head", sample.image_path.stem, image, {})
-            for k in range(args.variants):
-                defective, mask = synthetic_defect(image, np.random.default_rng((args.seed, ci, i, k)))
-                save("synthetic", f"{sample.image_path.stem}_{k}", defective, {"mask": quarter_mask(mask)})
-        for split in ("validation", "test_public"):
-            for sample in idx[split]:
-                save(split, sample.image_path.stem.replace("/", "_") + f"_{sample.label}_{sample.image_path.parent.name}",
-                     load_image(sample.image_path),
-                     {"label": np.array(sample.label), "id": np.array(sample.rel_id(idx["train"].root)),
-                      "mask_path": np.array(str(Path(sample.mask_path).resolve()) if sample.mask_path else "")})
-        done.write_text(json.dumps({"category": cat, "held_out": len(held_out), "variants": args.variants,
+        model, idx, train = fit_component("dino", cat, args.data_root, seed=args.seed, recipe=args.dino_recipe,
+                                          device=args.device, limit=args.limit)
+        layers = {(g, stem): dino_maps(model, image) for g, stem, image, _ in items(idx, train)}
+        release(model)
+        model, idx, train = fit_component("wrn", cat, args.data_root, seed=args.seed, recipe=args.wrn_recipe,
+                                          device=args.device, limit=args.limit)
+        n_held = 0
+        for g, stem, image, extra in items(idx, train):
+            (out / cat / g).mkdir(parents=True, exist_ok=True)
+            np.savez_compressed(out / cat / g / f"{stem}.npz", **layers[(g, stem)], **wrn_maps(model, image), **extra)
+            n_held += g == "head"
+        release(model)
+        done.write_text(json.dumps({"category": cat, "held_out": n_held, "variants": args.variants,
                                     "seconds": time.perf_counter() - t0}), encoding="utf-8")
-        print(f"{cat}: {len(held_out)} held-out images, {time.perf_counter() - t0:.0f} s", flush=True)
-        models.clear()
+        print(f"{cat}: {n_held} held-out images, {time.perf_counter() - t0:.0f} s", flush=True)
     return 0
 
 

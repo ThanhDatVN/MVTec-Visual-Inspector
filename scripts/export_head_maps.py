@@ -25,7 +25,7 @@ from pathlib import Path
 
 import numpy as np
 from fusion_head_study import Record, category_heads, features, quarter_channels
-from head_features import CATEGORIES, component_maps, fit_components
+from head_features import CATEGORIES, DINO, WRN, dino_maps, fit_component, release, wrn_maps
 
 SPLITS = ("test_private", "test_private_mixed")
 
@@ -60,15 +60,26 @@ def main() -> int:
         fitted = category_heads(Path(args.features) / cat, seed=args.seed, negatives=args.negatives, kinds=("lr",),
                                 groups_to_load=("head", "synthetic", "validation"))
         head, scales = fitted["heads"]["lr"], fitted["scales"]
-        models, idx, _ = fit_components(cat, args.data_root, seed=args.seed, device=args.device, limit=args.limit,
-                                        **({"dino_recipe": args.dino_recipe} if args.dino_recipe else {}))
-        # the refitted banks must reproduce the maps the head was trained against
+        # two passes, one component on the card at a time (see head_features.fit_component)
+        kw = {"seed": args.seed, "device": args.device, "limit": args.limit}
+        model, idx, _ = fit_component("dino", cat, args.data_root, recipe=args.dino_recipe or DINO, **kw)
         first = next(iter(idx["validation"]))
         stored = np.load(Path(args.features) / cat / "validation" /
                          f"{first.image_path.stem}_{first.label}_{first.image_path.parent.name}.npz")
-        again = component_maps(models, load_image(first.image_path))
-        drift = {k: float(np.abs(again[k].astype(np.float32) - stored[k].astype(np.float32)).max()
-                          / max(float(np.abs(stored[k].astype(np.float32)).max()), 1e-9)) for k in ("layers", "wrn")}
+        drift = {}
+
+        def rel(a, b):
+            a, b = a.astype(np.float32), b.astype(np.float32)
+            return float(np.abs(a - b).max() / max(float(np.abs(b).max()), 1e-9))
+
+        drift["layers"] = rel(dino_maps(model, load_image(first.image_path))["layers"], stored["layers"])
+        samples = {split: list(idx[split])[: args.test_images] if args.test_images else list(idx[split])
+                   for split in SPLITS}
+        layers = {(split, s.image_path.stem): dino_maps(model, load_image(s.image_path))
+                  for split in SPLITS for s in samples[split]}
+        release(model)
+        model, idx, _ = fit_component("wrn", cat, args.data_root, recipe=WRN, **kw)
+        drift["wrn"] = rel(wrn_maps(model, load_image(first.image_path))["wrn"], stored["wrn"])
         print(f"{cat}: refit drift against the stored features {drift}", flush=True)
         if max(drift.values()) > 0.05:
             raise RuntimeError(f"{cat}: the refitted components do not reproduce the E23 features: {drift}")
@@ -77,23 +88,21 @@ def main() -> int:
             maps_dir, masks_dir = out / "anomaly_images" / cat / split, out / "anomaly_images_thresholded" / cat / split
             maps_dir.mkdir(parents=True, exist_ok=True)
             masks_dir.mkdir(parents=True, exist_ok=True)
-            samples = list(idx[split])[: args.test_images] if args.test_images else list(idx[split])
-            for sample in samples:
-                image = load_image(sample.image_path)
-                z = component_maps(models, image)
+            for sample in samples[split]:
+                stem = Path(sample.image_path).stem
+                z = {**layers[(split, stem)], **wrn_maps(model, load_image(sample.image_path))}
                 rec = Record(quarter_channels(z), tuple(int(v) for v in z["native"]), None, 0, "", None)
                 prob = head(features(rec, scales)).reshape(rec.channels.shape[1:])
                 native = postprocess_map(prob, input_size=rec.native, native_size=rec.native, sigma=0.0)
-                stem = Path(sample.image_path).stem
                 tifffile.imwrite(maps_dir / f"{stem}.tiff", native.astype(np.float16), compression="zlib")
                 shutil.copyfile(masks / "anomaly_images_thresholded" / cat / split / f"{stem}.png", masks_dir / f"{stem}.png")
-            counts[split] = len(samples)
+            counts[split] = len(samples[split])
+        release(model)
         log.append({"category": cat, "refit_drift": drift, "counts": counts, "head_positives": fitted["positives"],
                     "scales": [float(x) for x in scales], "seconds": time.perf_counter() - t0,
                     "masks_from": str(masks), "test_images": args.test_images})
         log_path.write_text(json.dumps({"categories": log}, indent=1), encoding="utf-8")
         print(log[-1], flush=True)
-        models.clear()
     return 0
 
 
