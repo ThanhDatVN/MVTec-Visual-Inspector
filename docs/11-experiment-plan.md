@@ -510,6 +510,18 @@ AU-PRO@0.05 and macro SegF1, on the `regular` and on the all-captures proxies. T
 candidate v6 under its own ADR (ADR-17), exported and uploaded instead of v5. Otherwise the owner
 uploads v5. Either way exactly one upload is made.
 
+*Amendment (2026-10-14), after a preview on three categories (`can`, `fabric`, `fruit_jelly`) and
+before the full E23 result:* the head raised AU-PRO (0.386 → 0.467) and lowered SegF1
+(0.499 → 0.384; its probabilities saturate and its best threshold sits at the grid's edge). The
+server scores the continuous maps (AU-PRO) and the masks (SegF1, ClassF1) from separate files,
+so a **hybrid** is added as a candidate: the head's map as `anomaly_images` and v5's masks,
+unchanged, as `anomaly_images_thresholded`. For it to be built from what the v5 export kept
+(each component's normalized map at quarter resolution), a two-input head (DINOv3 block mean and
+WRN50, with their local maxima) is also trained. The hybrid replaces v5 if, over all eight
+categories, the two-input head applied to the **full-bank** development maps (the registry runs
+v5's components were selected on) raises macro AU-PRO@0.05 on both proxies; SegF1 and ClassF1
+are v5's by construction.
+
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 
 | # | Deliverable | Spec |
