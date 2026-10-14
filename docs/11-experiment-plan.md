@@ -495,6 +495,21 @@ metric with a proxy calibrated on S1, a ViT-H+ screen on four categories, and ma
 WRN50 at 1280 px. Its output is one frozen candidate, v4, whose held-out test was written down
 before its export: ADR-15 (H5). Report: [E21](../reports/E21-ad2-localization.md).
 
+### Stage K′ — A learned fusion head (E23; before the last upload)
+
+Written down on 2026-10-14, before any E23 feature is computed; v5 is exported and checked
+(ADR-16) and not uploaded. Both v5 components are refitted on seven eighths of `train/good`; the
+held-out eighth, with three synthetic defects painted on each image
+(`inspector.data.synthetic_defects`), trains a per-category head on the five per-pixel distances
+and their local maxima (`scripts/head_features.py`, `scripts/fusion_head_study.py`). No test
+image or label enters training.
+
+*Decision rule.* The head replaces v5's fixed fusion only if, on the same seven-eighths banks and
+scored server-style on `test_public`, its best global threshold beats v5's rule on **both** macro
+AU-PRO@0.05 and macro SegF1, on the `regular` and on the all-captures proxies. Then it becomes
+candidate v6 under its own ADR (ADR-17), exported and uploaded instead of v5. Otherwise the owner
+uploads v5. Either way exactly one upload is made.
+
 ### Stage I — Explainability and reporting (laptop, ~8 h)
 
 | # | Deliverable | Spec |
