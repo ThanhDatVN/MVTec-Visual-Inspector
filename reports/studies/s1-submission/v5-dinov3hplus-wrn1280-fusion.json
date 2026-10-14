@@ -1,0 +1,337 @@
+{
+ "recipe": "configs/recipes/candidate-v5-fusion.yaml",
+ "categories": [
+  {
+   "category": "can",
+   "component_run_spec_ids": [
+    "ce5d3786721f812b",
+    "003bcfb457bec6ec"
+   ],
+   "components": [
+    "configs/recipes/candidate-v5-component-dinov3hplus.yaml",
+    "configs/recipes/candidate-v3-patchcore-1280.yaml"
+   ],
+   "fusion": "max",
+   "component_p95": [
+    0.6744875855874852,
+    1.5120340470610714
+   ],
+   "seed": 0,
+   "threshold_rule": "p95x1.3",
+   "pixel_threshold": 1.3774481753307328,
+   "mask_rule": {
+    "lower": 0.8,
+    "closing_radius": 26,
+    "closing_angles": 16,
+    "erosion": 1,
+    "work_downscale": 4,
+    "fill": true,
+    "mark": 0.9,
+    "min_area": 0
+   },
+   "counts": {
+    "test_private": 321,
+    "test_private_mixed": 321
+   },
+   "images_with_mask": {
+    "test_private": 320,
+    "test_private_mixed": 320
+   },
+   "seconds": 2512.409795700005,
+   "train_limit": null,
+   "test_images": null
+  },
+  {
+   "category": "fabric",
+   "component_run_spec_ids": [
+    "a3bf4df1f07cd1c3",
+    "30e8705e19586b64"
+   ],
+   "components": [
+    "configs/recipes/candidate-v5-component-dinov3hplus.yaml",
+    "configs/recipes/candidate-v3-patchcore-1280.yaml"
+   ],
+   "fusion": "max",
+   "component_p95": [
+    0.7577583473484992,
+    1.6790016628433477
+   ],
+   "seed": 0,
+   "threshold_rule": "p95x1.3",
+   "pixel_threshold": 1.3273684266187047,
+   "mask_rule": {
+    "lower": 0.8,
+    "closing_radius": 26,
+    "closing_angles": 16,
+    "erosion": 1,
+    "work_downscale": 4,
+    "fill": true,
+    "mark": 0.9,
+    "min_area": 0
+   },
+   "counts": {
+    "test_private": 314,
+    "test_private_mixed": 314
+   },
+   "images_with_mask": {
+    "test_private": 118,
+    "test_private_mixed": 134
+   },
+   "seconds": 7359.252463399986,
+   "train_limit": null,
+   "test_images": null
+  },
+  {
+   "category": "fruit_jelly",
+   "component_run_spec_ids": [
+    "749138945a2cfb6b",
+    "c9bdd88ef0dfc421"
+   ],
+   "components": [
+    "configs/recipes/candidate-v5-component-dinov3hplus.yaml",
+    "configs/recipes/candidate-v3-patchcore-1280.yaml"
+   ],
+   "fusion": "max",
+   "component_p95": [
+    0.7539402068007348,
+    1.5057585020258557
+   ],
+   "seed": 0,
+   "threshold_rule": "p95x1.3",
+   "pixel_threshold": 1.3498525245924158,
+   "mask_rule": {
+    "lower": 0.8,
+    "closing_radius": 26,
+    "closing_angles": 16,
+    "erosion": 1,
+    "work_downscale": 4,
+    "fill": true,
+    "mark": 0.9,
+    "min_area": 0
+   },
+   "counts": {
+    "test_private": 255,
+    "test_private_mixed": 255
+   },
+   "images_with_mask": {
+    "test_private": 248,
+    "test_private_mixed": 246
+   },
+   "seconds": 2950.8269957000157,
+   "train_limit": null,
+   "test_images": null
+  },
+  {
+   "category": "rice",
+   "component_run_spec_ids": [
+    "1ffc42bb53a20c64",
+    "f6e76fad737c9fca"
+   ],
+   "components": [
+    "configs/recipes/candidate-v5-component-dinov3hplus.yaml",
+    "configs/recipes/candidate-v3-patchcore-1280.yaml"
+   ],
+   "fusion": "max",
+   "component_p95": [
+    0.6306656384331291,
+    1.4470028953192013
+   ],
+   "seed": 0,
+   "threshold_rule": "p95x1.3",
+   "pixel_threshold": 1.3204769695099459,
+   "mask_rule": {
+    "lower": 0.8,
+    "closing_radius": 26,
+    "closing_angles": 16,
+    "erosion": 1,
+    "work_downscale": 4,
+    "fill": true,
+    "mark": 0.9,
+    "min_area": 0
+   },
+   "counts": {
+    "test_private": 277,
+    "test_private_mixed": 277
+   },
+   "images_with_mask": {
+    "test_private": 162,
+    "test_private_mixed": 170
+   },
+   "seconds": 6100.14620280001,
+   "train_limit": null,
+   "test_images": null
+  },
+  {
+   "category": "sheet_metal",
+   "component_run_spec_ids": [
+    "038b420d33fae5e6",
+    "ed5d91f7eca18402"
+   ],
+   "components": [
+    "configs/recipes/candidate-v5-component-dinov3hplus.yaml",
+    "configs/recipes/candidate-v3-patchcore-1280.yaml"
+   ],
+   "fusion": "max",
+   "component_p95": [
+    0.598600886793065,
+    1.4645047141546002
+   ],
+   "seed": 0,
+   "threshold_rule": "p95x1.3",
+   "pixel_threshold": 1.3367296999177143,
+   "mask_rule": {
+    "lower": 0.8,
+    "closing_radius": 26,
+    "closing_angles": 16,
+    "erosion": 1,
+    "work_downscale": 4,
+    "fill": true,
+    "mark": 0.9,
+    "min_area": 0
+   },
+   "counts": {
+    "test_private": 142,
+    "test_private_mixed": 142
+   },
+   "images_with_mask": {
+    "test_private": 132,
+    "test_private_mixed": 138
+   },
+   "seconds": 1861.3583592000068,
+   "train_limit": null,
+   "test_images": null
+  },
+  {
+   "category": "vial",
+   "component_run_spec_ids": [
+    "f2074379e9afbc3f",
+    "fe349aa27cccbf1c"
+   ],
+   "components": [
+    "configs/recipes/candidate-v5-component-dinov3hplus.yaml",
+    "configs/recipes/candidate-v3-patchcore-1280.yaml"
+   ],
+   "fusion": "max",
+   "component_p95": [
+    0.5577972171472538,
+    1.5496347908811003
+   ],
+   "seed": 0,
+   "threshold_rule": "p95x1.3",
+   "pixel_threshold": 1.345180340676393,
+   "mask_rule": {
+    "lower": 0.8,
+    "closing_radius": 26,
+    "closing_angles": 16,
+    "erosion": 1,
+    "work_downscale": 4,
+    "fill": true,
+    "mark": 0.9,
+    "min_area": 0
+   },
+   "counts": {
+    "test_private": 276,
+    "test_private_mixed": 276
+   },
+   "images_with_mask": {
+    "test_private": 276,
+    "test_private_mixed": 276
+   },
+   "seconds": 2646.087289599993,
+   "train_limit": null,
+   "test_images": null
+  },
+  {
+   "category": "wallplugs",
+   "component_run_spec_ids": [
+    "e4bec0f2f38f9af6",
+    "69787c44142e1534"
+   ],
+   "components": [
+    "configs/recipes/candidate-v5-component-dinov3hplus.yaml",
+    "configs/recipes/candidate-v3-patchcore-1280.yaml"
+   ],
+   "fusion": "max",
+   "component_p95": [
+    0.7757593301105317,
+    1.6167710936333606
+   ],
+   "seed": 0,
+   "threshold_rule": "p95x1.3",
+   "pixel_threshold": 1.3395245161044842,
+   "mask_rule": {
+    "lower": 0.8,
+    "closing_radius": 26,
+    "closing_angles": 16,
+    "erosion": 1,
+    "work_downscale": 4,
+    "fill": true,
+    "mark": 0.9,
+    "min_area": 0
+   },
+   "counts": {
+    "test_private": 232,
+    "test_private_mixed": 232
+   },
+   "images_with_mask": {
+    "test_private": 151,
+    "test_private_mixed": 190
+   },
+   "seconds": 5155.224445400003,
+   "train_limit": null,
+   "test_images": null
+  },
+  {
+   "category": "walnuts",
+   "component_run_spec_ids": [
+    "0cdcdc21dacdae49",
+    "49ece92d78193144"
+   ],
+   "components": [
+    "configs/recipes/candidate-v5-component-dinov3hplus.yaml",
+    "configs/recipes/candidate-v3-patchcore-1280.yaml"
+   ],
+   "fusion": "max",
+   "component_p95": [
+    0.820732369977236,
+    1.5725536474496948
+   ],
+   "seed": 0,
+   "threshold_rule": "p95x1.3",
+   "pixel_threshold": 1.3336305971649836,
+   "mask_rule": {
+    "lower": 0.8,
+    "closing_radius": 26,
+    "closing_angles": 16,
+    "erosion": 1,
+    "work_downscale": 4,
+    "fill": true,
+    "mark": 0.9,
+    "min_area": 0
+   },
+   "counts": {
+    "test_private": 228,
+    "test_private_mixed": 228
+   },
+   "images_with_mask": {
+    "test_private": 133,
+    "test_private_mixed": 166
+   },
+   "seconds": 6077.550500700017,
+   "train_limit": null,
+   "test_images": null
+  }
+ ],
+ "exported_from": {
+  "git_sha": "e44d628",
+  "note": "ADR-16 recipe frozen at 695dc74; e44d628 only adds --keep-components (output unchanged)"
+ },
+ "checker": "MVTecAD2_public_code_utils/check_and_prepare_data_for_upload.py: All checks successful (2026-10-14 09:20)",
+ "archive": {
+  "name": "v5-dinov3hplus-wrn1280-fusion.tar.gz",
+  "bytes": 12842864303,
+  "sha256": "fdeee71d6ea618cdd7f20ae8a32cc8d8fedab14fdd93541a68a120288255be58",
+  "files": 8180
+ },
+ "upload": "pending (owner): after E23, the better of v5 and a learned-head candidate is uploaded once"
+}
