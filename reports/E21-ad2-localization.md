@@ -200,7 +200,14 @@ meets its rule and is built on CPU from the component maps the v5 export kept.
 | macro | 0.567 / 0.555 | **0.607 / 0.587** |
 
 Seven categories gain, `fruit_jelly` loses ten points: its synthetic defects (texture moved
-inside a translucent jelly) are probably unlike its real ones. Candidate v6 (ADR-17) is v5's
+inside a translucent jelly) are probably unlike its real ones. An object bootstrap of the paired difference,
+run after the decision (`scripts/hybrid_bootstrap.py`, 2000 resamples, normal and defective
+objects resampled separately per category, all captures of an object together), puts the macro
+gain at +0.039 [+0.018, +0.063] on `regular` and +0.032 [+0.015, +0.051] on all captures (95%
+intervals); no resample had v6 at or below v5. Per category the interval is above zero for
+`fabric`, `rice`, `wallplugs`, `walnuts`, straddles zero for `can`, `sheet_metal`, `vial`, and is
+below zero for `fruit_jelly` (−0.19 to −0.02). It measures object sampling only: the private
+split's objects are new, and the choice between two heads was made on these same images. Candidate v6 (ADR-17) is v5's
 submission with these maps; its masks, and so its SegF1 and ClassF1, are v5's.
 
 ## 7. What remains weak
