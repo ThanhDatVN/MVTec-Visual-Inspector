@@ -333,5 +333,5 @@
   "sha256": "fdeee71d6ea618cdd7f20ae8a32cc8d8fedab14fdd93541a68a120288255be58",
   "files": 8180
  },
- "upload": "pending (owner): after E23, the better of v5 and a learned-head candidate is uploaded once"
+ "upload": "not uploaded: superseded by v6 (ADR-17), which keeps these masks and replaces the maps"
 }

@@ -1,0 +1,101 @@
+{
+ "decision": "ADR-17 (docs/07): candidate v6 = two-input learned-head maps (AU-PRO) + v5's masks (SegF1, ClassF1)",
+ "exported_from": {
+  "git_sha": "1a45ebd",
+  "script": "scripts/export_hybrid_from_components.py",
+  "components": "C:\\Users\\thanh\\mvi_v5_components",
+  "masks_from": "C:\\Users\\thanh\\mvi_ad2_submission\\v5-dinov3hplus-wrn1280-fusion",
+  "features": "C:/Users/thanh/mvi_head_features",
+  "head": "two-input logistic (fusion_head_study.category_heads, kind lr2)"
+ },
+ "maps": "anomaly_images: per category, the lr2 head (fusion_head_study.category_heads, seed 0) on [quarter(v5 DINOv3 H+ map) / P95, quarter(v5 WRN50-1280 map) / P95], written at native size, float16",
+ "masks": "anomaly_images_thresholded: copied byte for byte from v5 (v5-dinov3hplus-wrn1280-fusion.tar.gz, sha256 fdeee71d6ea618cdd7f20ae8a32cc8d8fedab14fdd93541a68a120288255be58)",
+ "development_proxy_test_public": {
+  "aupro_005": {
+   "regular": 0.607,
+   "all": 0.587
+  },
+  "segf1": {
+   "regular": 0.62,
+   "all": 0.609
+  },
+  "classf1": 0.802,
+  "source": "reports/studies/fusion-head/hybrid_check.json; SegF1/ClassF1 are v5's"
+ },
+ "categories": [
+  {
+   "category": "can",
+   "counts": {
+    "test_private": 321,
+    "test_private_mixed": 321
+   },
+   "seconds": 54.18342760000087
+  },
+  {
+   "category": "fabric",
+   "counts": {
+    "test_private": 314,
+    "test_private_mixed": 314
+   },
+   "seconds": 104.64291009999579
+  },
+  {
+   "category": "fruit_jelly",
+   "counts": {
+    "test_private": 255,
+    "test_private_mixed": 255
+   },
+   "seconds": 53.38446670000121
+  },
+  {
+   "category": "rice",
+   "counts": {
+    "test_private": 277,
+    "test_private_mixed": 277
+   },
+   "seconds": 89.58851019999565
+  },
+  {
+   "category": "sheet_metal",
+   "counts": {
+    "test_private": 142,
+    "test_private_mixed": 142
+   },
+   "seconds": 39.23948260000179
+  },
+  {
+   "category": "vial",
+   "counts": {
+    "test_private": 276,
+    "test_private_mixed": 276
+   },
+   "seconds": 52.16482800000085
+  },
+  {
+   "category": "wallplugs",
+   "counts": {
+    "test_private": 232,
+    "test_private_mixed": 232
+   },
+   "seconds": 75.39862439999706
+  },
+  {
+   "category": "walnuts",
+   "counts": {
+    "test_private": 228,
+    "test_private_mixed": 228
+   },
+   "seconds": 77.35930379999627
+  }
+ ],
+ "checker": "MVTecAD2_public_code_utils/check_and_prepare_data_for_upload.py: All checks successful",
+ "archive": {
+  "name": "v6-hybrid-head-maps-v5-masks.tar.gz",
+  "bytes": 25246814645,
+  "sha256": "b7bd942587e7b3454a6d3fc6fedc850f862963fd3554beed130d128ab7714d41",
+  "files": 8180,
+  "maps": 4090,
+  "masks": 4090
+ },
+ "upload": "pending (owner): the last submission the protocol allows; v5 is not uploaded"
+}
