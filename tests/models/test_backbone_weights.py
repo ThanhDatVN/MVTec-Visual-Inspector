@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from inspector.models import features
-from inspector.models.features import FeatureExtractor, FeatureSpec
+from inspector.models import backbone as features
+from inspector.models.backbone import FeatureExtractor, FeatureSpec
 
 torch = pytest.importorskip("torch")
 

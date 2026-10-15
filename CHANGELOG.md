@@ -1,0 +1,38 @@
+# Changelog
+
+## 1.0.0 — 2026-10-15
+
+Final release after the second and last MVTec AD 2 server submission (S2).
+
+**Results**
+
+- v6 on MVTec's server: AU-PRO@0.05 62.97 / 60.73, SegF1 53.76 / 51.67, ClassF1 79.28 / 79.45
+  (`test_private` / `test_private_mixed`). It meets the pre-registered H5 bar on both splits
+  (ADR-17).
+- `reports/00-final-report.md`: one technical report covering the whole project, with eight
+  figures generated from committed result files (`scripts/report_figures.py`).
+
+**Layout**
+
+- Reports are numbered in reading order (`reports/00-final-report.md` …
+  `reports/14-negative-results.md`). `reports/README.md` is the experiment register.
+- Scripts are named `<stage>_<experiment>_<topic>.py`, with stages `data`, `visa`, `ad2`,
+  `server`, `deploy` and `report`. `scripts/README.md` gives the index and each script's former
+  name.
+- Package modules were renamed to say what they do: `analysis` → `studies`,
+  `report` → `eda_report`, `models.features` → `models.backbone`,
+  `models.anomalib_ref` → `models.anomalib_patchcore`. The empty `features` package was removed.
+- `docs/` keeps the research documents. The notebook how-to and the Vietnamese guides stay local.
+
+**Fixes**
+
+- The CI lint job failed from 2026-10-12 on a mypy error in `evaluate.py`; fixed.
+
+Renaming package files changes the implementation id (a hash of the package source) of any *new*
+run. Stored runs keep the ids they were made with, and the frozen analyses select runs by those
+stored ids.
+
+## 0.x — 2026-09-22 … 2026-10-14
+
+Protocol v1 and v2, VisA development and confirmation, MPDD, MVTec AD 2 development and the first
+server submission (S1). See the experiment register in `reports/README.md`.

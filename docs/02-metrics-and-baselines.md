@@ -151,7 +151,7 @@ category and loses on another, that is the finding — report it as such rather 
 ### DR-3 — Stopping an experiment line
 
 Abandon a line if, after its budgeted GPU-hours, it has not met DR-1 on any category. Write the
-negative result into `reports/negative-results.md` with the configurations tried. A documented
+negative result into `reports/14-negative-results.md` with the configurations tried. A documented
 dead end is a deliverable.
 
 ### DR-4 — What goes in the headline table

@@ -23,7 +23,7 @@ NOTEBOOKS = sorted((REPO / "notebooks").glob("*.ipynb"))
 
 
 def test_notebooks_exist():
-    assert NOTEBOOKS, "no notebooks found; run scripts/build_notebooks.py"
+    assert NOTEBOOKS, "no notebooks found; run scripts/report_build_notebooks.py"
     names = {p.name for p in NOTEBOOKS}
     assert "01_laptop_data_and_eda.ipynb" in names
     assert "02_kaggle_experiments.ipynb" in names
@@ -84,7 +84,7 @@ def test_notebooks_are_regenerable():
     what it currently emits."""
     before = {p: p.read_text(encoding="utf-8") for p in NOTEBOOKS}
     result = subprocess.run(
-        [sys.executable, str(REPO / "scripts" / "build_notebooks.py")],
+        [sys.executable, str(REPO / "scripts" / "report_build_notebooks.py")],
         capture_output=True,
         text=True,
         cwd=REPO,
@@ -93,7 +93,7 @@ def test_notebooks_are_regenerable():
     assert result.returncode == 0, result.stderr
     for path, original in before.items():
         assert path.read_text(encoding="utf-8") == original, (
-            f"{path.name} differs from what scripts/build_notebooks.py produces; "
+            f"{path.name} differs from what scripts/report_build_notebooks.py produces; "
             "edit the builder, not the notebook"
         )
 

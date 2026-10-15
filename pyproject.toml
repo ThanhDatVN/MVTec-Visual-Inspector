@@ -4,12 +4,18 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mvtec-visual-inspector"
-version = "0.1.0"
+version = "1.0.0"
 description = "Industrial defect detection and localization from normal-only training data"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "thanh" }]
+keywords = ["anomaly detection", "industrial inspection", "PatchCore", "DINOv3", "MVTec AD 2", "VisA"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+]
 
 # Core dependencies: exactly what `src/inspector` imports on the torch-free path,
 # verified by grep (review F11). The data, metrics, EDA, transforms and fixture
@@ -34,6 +40,10 @@ dependencies = [
     # project's binding constraint, so the measurement belongs to every run.
     "psutil>=5.9",
 ]
+
+[project.urls]
+Repository = "https://github.com/ThanhDatVN/MVTec-Visual-Inspector"
+"Final report" = "https://github.com/ThanhDatVN/MVTec-Visual-Inspector/blob/main/reports/00-final-report.md"
 
 [project.optional-dependencies]
 torch = [

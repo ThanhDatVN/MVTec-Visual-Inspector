@@ -47,14 +47,14 @@ Frozen in each artifact on that category's validation normals; the service never
 Rule: conservative rank `k = floor(α(n+1))`, strict `score > τ` ([ADR-9](docs/07-risks-and-decisions.md)).
 The bound is marginal and assumes calibration and test normals are exchangeable. On these three
 categories they are not quite: capture-session debris sits in the test normals' upper tail
-([development report](reports/E00-E04-development-findings.md) §4). The pixel threshold is the
+([development report](reports/04-visa-development.md) §4). The pixel threshold is the
 validation mean + 3σ of the map (`OP-3SIGMA`).
 
 ## Performance
 
 ### Development categories (shaped the recipe — optimistic)
 
-3 seeds, mean ± SD ([K1](reports/K1-kaggle-development.md), [E8](reports/E8-gate-e-followup.md)):
+3 seeds, mean ± SD ([K1](reports/07-kaggle-studies.md), [E8](reports/08-gate-e-followup.md)):
 
 | category | image AUROC | AU-PRO@0.05 | AU-PRO@0.30 | pixel AUROC | SegF1 (3σ) | FPR@OP1 | recall@OP1 |
 |---|---|---|---|---|---|---|---|
@@ -66,20 +66,20 @@ validation mean + 3σ of the map (`OP-3SIGMA`).
 
 | data | image AUROC | AU-PRO@0.05 | false alarms | report |
 |---|---|---|---|---|
-| 9 VisA confirmation categories, pre-registered (ADR-11) | **0.981** macro (0.971–0.996) | 0.766 | 10 observed / 19.7 expected over 27 runs; bound fails on `pipe_fryum` | [E12](reports/E12-confirmation-v1.md) |
-| MPDD, 6 categories, other camera and factory, pre-registered (ADR-12) | **0.943** macro (≥ 0.88 each) | 0.861 | 31 / 28.4 at relaxed bounds (2.3–11.1%) | [H1](reports/H1-mpdd-transfer.md) |
-| MVTec AD 2 `test_public`, 8 categories, pre-registered (ADR-13) | **0.685** macro (0.48–0.90) | 0.357 | 160 / 29.2 at relaxed bounds (2.0–5.0%) | [E13](reports/E13-confirmation-v2-mvtec-ad2.md) |
-| MVTec AD 2 `test_private` / `test_private_mixed`, MVTec's server, seed 0 | — (server reports localization) | **0.376 / 0.351**; SegF1 0.264 / 0.230 | — | [S1](reports/E14-E15-ad2-development.md) |
+| 9 VisA confirmation categories, pre-registered (ADR-11) | **0.981** macro (0.971–0.996) | 0.766 | 10 observed / 19.7 expected over 27 runs; bound fails on `pipe_fryum` | [E12](reports/09-visa-confirmation.md) |
+| MPDD, 6 categories, other camera and factory, pre-registered (ADR-12) | **0.943** macro (≥ 0.88 each) | 0.861 | 31 / 28.4 at relaxed bounds (2.3–11.1%) | [H1](reports/10-mpdd-transfer.md) |
+| MVTec AD 2 `test_public`, 8 categories, pre-registered (ADR-13) | **0.685** macro (0.48–0.90) | 0.357 | 160 / 29.2 at relaxed bounds (2.0–5.0%) | [E13](reports/11-ad2-confirmation.md) |
+| MVTec AD 2 `test_private` / `test_private_mixed`, MVTec's server, seed 0 | — (server reports localization) | **0.376 / 0.351**; SegF1 0.264 / 0.230 | — | [S1](reports/12-ad2-lighting-and-resolution.md) |
 
 The second and last server submission is a different model, developed on AD 2 `test_public`
 (v6: tiled DINOv3 ViT-H+ fused with WRN50, learned-head maps; ADR-16, ADR-17): AU-PRO@0.05
 **0.630 / 0.607**, SegF1 0.538 / 0.517, ClassF1 0.793 / 0.795 on the same splits
-([E21](reports/E21-ad2-localization.md) §12).
+([E21](reports/13-ad2-localization-and-server.md) §12).
 
 ### Performance across conditions
 
 Synthetic corruptions of the test split, threshold frozen on clean data, seed 0
-([E08](reports/E08-robustness.md)); "refused" is the share of all test images the input guards turn
+([E08](reports/05-robustness.md)); "refused" is the share of all test images the input guards turn
 away:
 
 | condition | `pcb1` AUROC / FPR / refused | `macaroni2` | `capsules` |
@@ -103,12 +103,12 @@ of the VAND 2025 challenge system RoBiS (67.3, 51.0).
 
 **By defect type:** VisA's one-class split labels every defect "anomaly", so no per-type breakdown
 exists. By defect *size*, misses concentrate on small defects whose peaks fall below a threshold
-set by background variation ([development report](reports/E00-E04-development-findings.md) §6,
+set by background variation ([development report](reports/04-visa-development.md) §6,
 measured at 320 px).
 
 ### Systems
 
-Batch 1, 20 warm-up and 200 timed requests through the service path ([E8](reports/E8-gate-e-followup.md) §3):
+Batch 1, 20 warm-up and 200 timed requests through the service path ([E8](reports/08-gate-e-followup.md) §3):
 
 | device | precision | long side | p50 | p95 | p99 | peak VRAM (allocated / reserved) | peak RSS |
 |---|---|---|---|---|---|---|---|
@@ -156,7 +156,7 @@ on its own validation normals and say so.
   parts per lighting, or keep the lighting fixed.
 - **The false-alarm bound is not guaranteed in practice.** It assumes exchangeable normals;
   capture-session debris broke it on `pcb1` (4.3% vs 0.73%) and on held-out `pipe_fryum`, and a
-  larger calibration pool did not fix it ([negative results](reports/negative-results.md) #2).
+  larger calibration pool did not fix it ([negative results](reports/14-negative-results.md) #2).
 - **Recall at the operating point is low** on `macaroni2` (0.39), where the image maximum is set by
   normal variation of the tray and pasta, not by the defects.
 - **The development test sets were used for selection**, so the development numbers carry an
@@ -167,7 +167,7 @@ on its own validation normals and say so.
   The anomalib comparison (C2) ran at 320 px only.
 - **Bounded by the negative results:** the from-scratch autoencoder never approached this model
   (0.17–0.67 image AUROC behind); object-region scoring, larger banks, k-NN averaging and timm
-  weights were tried and not adopted ([negative results](reports/negative-results.md)).
+  weights were tried and not adopted ([negative results](reports/14-negative-results.md)).
 
 ## Attribution
 

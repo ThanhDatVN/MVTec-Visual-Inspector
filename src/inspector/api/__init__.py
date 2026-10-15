@@ -1,1 +1,1 @@
-"""Placeholder package; implemented in a later phase."""
+"""Deployment: exported artifacts, input guards and the HTTP inspection service."""

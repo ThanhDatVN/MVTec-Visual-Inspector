@@ -217,7 +217,7 @@ a sales pitch.
 | L3 | **Anomaly maps are never min-max normalized using test-set statistics** | `test_normalization_stats_from_val_only` — normalizer is fitted once on validation and frozen; asserts identical fitted min/max for two different test subsets |
 | L4 | Thresholds derive from validation normals only (except the labelled oracle) | `test_threshold_provenance` — threshold objects carry `source_split`, asserted `== "validation"` unless `oracle=True` |
 | L5 | No augmentation statistic, normalization statistic, or PCA basis is fitted on test data | `test_transform_fit_provenance` |
-| L6 | Near-duplicate check between train and test | The [A4 audit](../reports/A4-near-duplicates.md) calibrates thumbnail RMSE on within-train neighbors, then checks validation and test; the pHash check remains a diagnostic |
+| L6 | Near-duplicate check between train and test | The [A4 audit](../reports/03-near-duplicate-audit.md) calibrates thumbnail RMSE on within-train neighbors, then checks validation and test; the pHash check remains a diagnostic |
 | L7 | Private splits carry no ground truth and no code path reads labels from them | `test_private_split_has_no_gt` |
 
 > **On L3.** Min-max normalizing an anomaly map over the test set is endemic in public

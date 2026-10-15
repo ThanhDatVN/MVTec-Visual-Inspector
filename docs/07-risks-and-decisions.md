@@ -19,7 +19,7 @@ scheduled work, not an intention.
 | R8 | **Results are uninteresting** (everything scores similarly) | 2 | 3 | 6 | The category choice already guards against this — three distinct failure physics. Null results are reported as results; the calibration question (P5.8) and the robustness-validity question (P7.6) produce findings regardless of the ranking. | — |
 | R9 | **License violation** — dataset images pushed to a public repo | 2 | 5 | 10 | `.gitignore` + a CI license-guard job that fails the build; pre-commit hook; synthetic CI fixtures | The guard job failing is the system working |
 | R10 | **Private-split overfitting** via repeated submissions | 2 | 3 | 6 | Hard cap of 2 submissions; `test_public` evaluation budget tracked in `reports/test_set_budget.md` | Budget tally approaching 40 per category |
-| R11 | **Notebook drift** — real logic ends up living only in a notebook | 3 | 4 | 12 | Notebooks are generated from `scripts/build_notebooks.py` and never hand-edited; a test fails the build on a class definition, an `nn.Module` or a `torch.optim` call in any cell | The regeneration test failing, which means someone edited a notebook directly |
+| R11 | **Notebook drift** — real logic ends up living only in a notebook | 3 | 4 | 12 | Notebooks are generated from `scripts/report_build_notebooks.py` and never hand-edited; a test fails the build on a class definition, an `nn.Module` or a `torch.optim` call in any cell | The regeneration test failing, which means someone edited a notebook directly |
 | R12 | **Sync corrupts cached features or the dataset** | 2 | 4 | 8 | `inspector fetch --verify` re-hashes against the recorded manifest after every sync; content-addressed feature cache so a corrupt entry is detected, not consumed | Hash mismatch |
 | R13 | **Time runs out before serving and documentation** | 3 | 4 | 12 | The 8-week compressed lane in [04](04-roadmap.md) §4; P9/P10 are never the phases that get cut — an unmeasured, undocumented model is not a deliverable | End of P7 with P5 incomplete |
 | R14 | **Published baseline numbers quoted wrongly** | 3 | 3 | 9 | The verification task in [02](02-metrics-and-baselines.md) §2.1, including the unresolved 60%-vs-31% AU-PRO discrepancy | — |
@@ -286,7 +286,7 @@ transfer across VisA's object types, not industrial generality.
 **Status:** Accepted. Committed and pushed **before** any confirmation run, so the git history
 timestamps the plan ahead of the data.
 
-**Context.** Development (E01–E04, [report](../reports/E00-E04-development-findings.md)) selected
+**Context.** Development (E01–E04, [report](../reports/04-visa-development.md)) selected
 PatchCore at 640 px with a memory bank fixed at 10,000 entries, and produced three claims worth
 confirming: resolution is the dominant factor; at that resolution PatchCore beats a linear floor;
 and the conservative rank threshold holds its false-alarm bound except where the normal upper
@@ -302,7 +302,7 @@ tail is not exchangeable (`pcb1`). Everything about them was chosen on `pcb1`, `
    code: `git diff 469e9b3 -- src/` touches only the presentation modules and the
    implementation-id function itself, which now normalizes line endings (a CRLF worktree and an
    LF working tree had produced different ids for identical sources). The analysis is frozen too:
-   [`scripts/confirmation_analysis.py`](../scripts/confirmation_analysis.py), smoke-tested on the
+   [`scripts/visa_e12_confirmation_analysis.py`](../scripts/visa_e12_confirmation_analysis.py), smoke-tested on the
    development categories only.
 2. **Comparators, run once each with `role = confirmation`:** the same recipe at 320 px
    ([`confirmation-v1-patchcore-320.yaml`](../configs/recipes/confirmation-v1-patchcore-320.yaml),
@@ -373,7 +373,7 @@ supplied by hand and its licence is not stated; no MPDD image or derived figure 
 **Erratum (2026-10-11).** Two statements above were wrong, and neither touches the protocol. The
 licence *is* stated: the authors' repository ships a CC BY-NC-SA 4.0 `LICENSE`, the same terms
 as MVTec AD (attribution in [ATTRIBUTION.md](../ATTRIBUTION.md)). And the shared folder can be
-fetched by script through SharePoint's guest API (`scripts/fetch_mpdd.py`, with a SHA-256
+fetched by script through SharePoint's guest API (`scripts/data_fetch_mpdd.py`, with a SHA-256
 manifest). The no-publication rule for MPDD images and derived figures stays as decided.
 
 ### ADR-13 — Confirmation v2: candidate recipe v2 against v1 on MVTec AD 2
@@ -391,7 +391,7 @@ loaded an AD 2 image, so AD 2 shaped nothing: it can confirm or refute v2.
 **Decision.**
 
 1. **Data.** All eight categories — `can`, `fabric`, `fruit_jelly`, `rice`, `sheet_metal`,
-   `vial`, `wallplugs`, `walnuts` — fetched by `scripts/fetch_mvtec_ad2.py` (SHA-256 manifest).
+   `vial`, `wallplugs`, `walnuts` — fetched by `scripts/data_fetch_mvtec_ad2.py` (SHA-256 manifest).
    Each recipe is fitted on the category's `train/good`, calibrated on the provided
    `validation/good` (nothing carved), and evaluated once on `test_public`, the split with pixel
    ground truth. The private splits are read only for §6. Data config
@@ -405,7 +405,7 @@ loaded an AD 2 image, so AD 2 shaped nothing: it can confirm or refute v2.
    on a Kaggle T4 and the venue recorded. A category whose arms are incomplete is reported as
    missing and counts as not significant.
 3. **Confirmatory hypotheses**, analysed by
-   [`scripts/ad2_confirmation_analysis.py`](../scripts/ad2_confirmation_analysis.py) (committed
+   [`scripts/ad2_e13_confirmation_analysis.py`](../scripts/ad2_e13_confirmation_analysis.py) (committed
    with this ADR, dry-run on the E8 development runs only):
    - **H3, detection.** Per category, mean image AUROC over seeds 0–2 of v2 minus that of v1,
      paired class-stratified image bootstrap (10,000 resamples), two-sided (count + 1)/(n + 1)
@@ -439,7 +439,7 @@ nothing. (−) ~30 GB, fetched one category at a time. (−) Small validation se
 point loose (2.0–5.0% bounds). (−) CC BY-NC-SA 4.0: non-commercial, and no AD 2 image or derived
 figure is published here.
 
-**Outcome (2026-10-12, [E13](../reports/E13-confirmation-v2-mvtec-ad2.md)):** 64 runs, none
+**Outcome (2026-10-12, [E13](../reports/11-ad2-confirmation.md)):** 64 runs, none
 failed. H3 does not hold (1 category significantly positive, 1 negative; macro +0.004) and H3b
 does not hold (v2 higher AU-PRO on 6 of 8). **v2 is not confirmed; v1 stays.** Both recipes'
 operating points fail on AD 2 (160 and 195 false alarms against 29.2 expected), and `test_public`
@@ -466,7 +466,7 @@ the owner's upload.
    with `long_side: 1280` (and `batch_size: 1`, which changes no computed value).
 2. **E20, development gate.** v3, seed 0, on the five categories E19 did not run (`can`,
    `fruit_jelly`, `vial`, `wallplugs`, `walnuts`); with E19's three, all eight against E18-ref
-   (v1, 640 px) at the same implementation (`5ab1a8956c23`), analysed by `scripts/e19_analysis.py`
+   (v1, 640 px) at the same implementation (`5ab1a8956c23`), analysed by `scripts/ad2_e19_resolution.py`
    extended to the eight categories. v3 goes to the server if **no category is significantly
    worse in image AUROC** (object bootstrap, Holm over 8) **and macro AU-PRO@0.05 is higher** than
    v1's. Development evidence only; its purpose is to keep a regression off the server.
@@ -476,7 +476,7 @@ the owner's upload.
    submission each.
 4. **H4, held-out.** From the server's per-category numbers, transcribed into
    `reports/studies/ad2-server/server_results.csv` and analysed by
-   [`scripts/ad2_server_analysis.py`](../scripts/ad2_server_analysis.py) (committed with this ADR):
+   [`scripts/server_h4_analysis.py`](../scripts/server_h4_analysis.py) (committed with this ADR):
    v3's AU-PRO@0.05 on `test_private` exceeds v1's on **at least 7 of 8** categories (one-sided
    exact sign test, p = 0.035). *Confirmed* if it holds: v3 then replaces v1 for AD 2-like parts
    (large images, thin defects); *not confirmed* otherwise, and v1 stays. SegF1, the
@@ -489,14 +489,14 @@ was designed for. (+) The `test_private` vs `test_private_mixed` comparison meas
 change on data that shaped nothing. (−) Two of the owner's evaluation budget. (−) 1280 px doubles
 fit time and host memory; still within the laptop.
 
-**Outcome (2026-10-13, [E14–E20](../reports/E14-E15-ad2-development.md) §2):** the gate **fails**:
+**Outcome (2026-10-13, [E14–E20](../reports/12-ad2-lighting-and-resolution.md) §2):** the gate **fails**:
 `vial` is significantly worse (−0.142, Holm p 0.028) although macro image AUROC rises 0.676 →
 0.731 and macro AU-PRO@0.05 0.351 → 0.473 (higher on all eight categories). v3 is not exported,
 H4 is not tested, and v1 remains the recipe; S1 is the only submission.
 
 **S1 result (2026-10-13, owner's upload):** v1 AU-PRO@0.05 37.64 / 35.11, SegF1 26.42 / 23.01,
 ClassF1 73.91 / 76.21 on `test_private` / `test_private_mixed` (server means; per-category numbers
-not displayed). ([report](../reports/E14-E15-ad2-development.md), S1.)
+not displayed). ([report](../reports/12-ad2-lighting-and-resolution.md), S1.)
 
 ---
 
@@ -511,7 +511,7 @@ the challenge systems (VAND 3.0 winner ISVL 53.81 / 51.43 SegF1; SuperADD, VAND 
 54.35). E21 (development, `test_public`) rebuilt the localization pipeline from the published
 training-free methods (SuperAD, SuperADD) and measured each server metric separately, with a proxy
 that reproduces the server's numbers for v1 within −1.2 to +3.2 points
-(`scripts/mask_rule_study.py`; `regular` captures for the private split, all captures for the
+(`scripts/ad2_e21_mask_rules.py`; `regular` captures for the private split, all captures for the
 mixed one).
 
 **Decision.**
@@ -535,7 +535,7 @@ mixed one).
    own setting. Chosen on `test_public`: ViT-L over ViT-H+ (four-category screen: AU-PRO 0.595
    vs 0.581, half the cost), max fusion over DINOv3 alone (AU-PRO 0.500 → 0.564) and over mean
    fusion, the gain and the mark from grids.
-5. **Export** with `scripts/export_ad2_submission.py` from a clean worktree at this commit,
+5. **Export** with `scripts/server_export_submission.py` from a clean worktree at this commit,
    checked with MVTec's `check_and_prepare_data_for_upload.py`; the owner uploads it once.
 6. **H5, pre-registered predictions** on the server's means (development estimates in brackets,
    private / mixed: AU-PRO 58.1 / 56.4, SegF1 59.5 / 57.1, ClassF1 — / 80.6):
@@ -598,7 +598,7 @@ result). Over all eight categories, on `test_public`:
 |---|---|
 | v5's rule, full banks (what v5 submits) | 0.567 / 0.555 |
 | five-input head, seven-eighths banks | 0.647 / 0.624 |
-| two-input head on the full-bank maps, built as the v6 build builds them (`scripts/hybrid_maps_check.py`) | **0.607 / 0.587** |
+| two-input head on the full-bank maps, built as the v6 build builds them (`scripts/ad2_e23_hybrid_check.py`) | **0.607 / 0.587** |
 
 The five-input hybrid misses its bar on the per-category guard (`vial` −0.055 on all captures
 against −0.05 allowed); the two-input hybrid meets its rule (higher macro AU-PRO on both
@@ -608,12 +608,12 @@ keeps v5's masks.
 **Decision.**
 
 1. v6 = v5's submission with `anomaly_images` replaced: per category, the two-input logistic
-   head (`fusion_head_study.category_heads`, kind `lr2`, seed 0, trained on the E23 features of
+   head (`ad2_e23_fusion_head.category_heads`, kind `lr2`, seed 0, trained on the E23 features of
    held-out training images and three synthetic defects each) applied to the two component maps
    the v5 export kept (each `quarter(native map) / its validation P95`), the probability written
    at native resolution. `anomaly_images_thresholded` is copied from v5 unchanged, so SegF1 and
    ClassF1 are v5's (development proxies 0.620 / 0.609 and 0.802).
-2. Built by `scripts/export_hybrid_from_components.py` from a clean worktree at this commit,
+2. Built by `scripts/server_export_v6_hybrid.py` from a clean worktree at this commit,
    checked with MVTec's `check_and_prepare_data_for_upload.py`, uploaded once by the owner.
 3. H5 applies unchanged (AU-PRO ≥ v1 + 10, SegF1 ≥ v1 + 20, ClassF1 not below v1, both splits).
    Expected from development: AU-PRO about 4 points above what v5's maps would score.
@@ -633,7 +633,7 @@ SegF1 8.2 / 9.2 points lower, where v1's untuned 3σ masks had come out 3.2 / 2.
 likeliest reason is that v5's mask rule (threshold gain, mark, shape) was selected on
 `test_public`. The head's share of the AU-PRO cannot be separated on the server (v5 was not
 uploaded); in development it is +3.9 [+1.8, +6.3] / +3.2 [+1.5, +5.1] points
-(`reports/studies/fusion-head/hybrid_bootstrap.json`). ([report](../reports/E21-ad2-localization.md) §12.)
+(`reports/studies/fusion-head/hybrid_bootstrap.json`). ([report](../reports/13-ad2-localization-and-server.md) §12.)
 
 ---
 

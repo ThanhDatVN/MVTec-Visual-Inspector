@@ -28,4 +28,4 @@ model:
   feature_dtype: float16
 
 preprocess:
-  long_side: 320                # host-RAM bound; see reports/P3-visa-findings.md
+  long_side: 320                # host-RAM bound; see reports/02-first-visa-runs-protocol-v1.md

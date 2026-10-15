@@ -49,7 +49,7 @@ robustness evaluation; model-generated anomaly heatmaps are overlaid on some ima
 > **Licence discrepancy, resolved.** Some third-party documentation states CC BY-NC-SA 4.0.
 > The archive `VisA_20220922.tar` ships a `LICENSE-DATASET` file containing the CC BY 4.0
 > text, which agrees with the AWS Open Data registry and the source paper; see
-> [reports/P3-visa-findings.md](reports/P3-visa-findings.md) §0. The project still redistributes
+> [reports/02-first-visa-runs-protocol-v1.md](reports/02-first-visa-runs-protocol-v1.md) §0. The project still redistributes
 > no images, so the repository guard needs no dataset-specific exception.
 
 **No VisA images are redistributed in this repository.**

@@ -2,8 +2,8 @@
 
 This is the original phase plan. For the implemented layout and CI, see
 [engineering](06-engineering-mlops-and-testing.md); for completed experiments, see the
-[development](../reports/E00-E04-development-findings.md) and
-[confirmation](../reports/E12-confirmation-v1.md) reports.
+[development](../reports/04-visa-development.md) and
+[confirmation](../reports/09-visa-confirmation.md) reports.
 
 **Planning assumption:** ~12–15 focused hours per week over 12 weeks (~160 hours total).
 A compressed 8-week lane is given in §4. Adjust the calendar, keep the gate order.
@@ -250,7 +250,7 @@ grade evidence about a practice the field relies on.
 
 **Gate G8**
 - [ ] Every Tier 5 technique has an explicit adopt/reject decision with its test statistic.
-- [ ] Rejected techniques are in `reports/negative-results.md` with configs tried.
+- [ ] Rejected techniques are in `reports/14-negative-results.md` with configs tried.
 - [ ] The final configuration is chosen by validation, and any test-selected element is labelled.
 - [ ] Comparator numbers come from *our* harness, not from quoted papers.
 
@@ -287,7 +287,7 @@ grade evidence about a practice the field relies on.
 | 10.3 | README rewrite with results and quickstart | `README.md` |
 | 10.4 | **Reproducibility audit**: fresh clone, fresh env, follow your own docs verbatim | `reports/repro_audit.md` |
 | 10.5 | License compliance check; attribution verified | — |
-| 10.6 | Negative results and limitations consolidated | `reports/negative-results.md` |
+| 10.6 | Negative results and limitations consolidated | `reports/14-negative-results.md` |
 
 **Gate G10**
 - [ ] A fresh clone reproduces the headline table (documented tolerance for stochastic rows).
@@ -340,7 +340,7 @@ interactive session (~9 h on commit) and a 20 GB working directory. The binding 
 7. Re-verify dataset hashes after any sync. Sync corruption is silent and costs a week if it goes
    unnoticed.
 
-See [12-running-the-notebooks.md](12-running-the-notebooks.md) for the operational detail.
+The notebooks are listed in the [README](../README.md#notebooks); their operational notes are kept locally.
 
 ---
 

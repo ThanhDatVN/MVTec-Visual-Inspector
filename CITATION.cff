@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this software or its results, please cite it as below."
+title: "MVTec Visual Inspector: one-class industrial defect detection and localization under a pre-registered protocol"
+type: software
+authors:
+  - name: "thanh"
+version: 1.0.0
+date-released: 2026-10-15
+license: MIT
+repository-code: "https://github.com/ThanhDatVN/MVTec-Visual-Inspector"
+keywords:
+  - anomaly detection
+  - industrial inspection
+  - one-class learning
+  - PatchCore
+  - DINOv3
+  - MVTec AD 2
+  - VisA
+abstract: >-
+  Defect detection and localization learned from normal images only, evaluated under a protocol
+  fixed before the results on VisA, MPDD and MVTec AD 2. The final system fuses a tiled DINOv3
+  ViT-H+ nearest-neighbour model with PatchCore (WRN50, 1280 px), thresholds the fused map with
+  one global mask rule, and uses a per-category logistic head trained on synthetic defects for
+  the continuous maps. On MVTec AD 2's held-out splits (MVTec's server) it scores AU-PRO@0.05
+  62.97 / 60.73 and SegF1 53.76 / 51.67.

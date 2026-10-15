@@ -49,7 +49,7 @@ def build_model(name: str, transform=None, **kwargs) -> AnomalyModel:
 
         return TiledKNN(transform, **kwargs)
     if name == "anomalib_patchcore":
-        from .anomalib_ref import AnomalibPatchCore
+        from .anomalib_patchcore import AnomalibPatchCore
 
         return AnomalibPatchCore(transform, **kwargs)
     raise KeyError(

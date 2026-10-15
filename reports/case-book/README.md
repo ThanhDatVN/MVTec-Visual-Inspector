@@ -5,7 +5,7 @@ the images, the run, the mechanism, the evidence, and what it changed in the pro
 contain dataset pixels, so they are not committed; every panel is reproducible locally:
 
 ```bash
-python scripts/case_book.py --data-root <VisA root> --run <run id> --ids <image ids...> \
+python scripts/visa_case_book.py --data-root <VisA root> --run <run id> --ids <image ids...> \
     --out artifacts/case-book/<name>.png
 ```
 
@@ -23,7 +23,7 @@ paths relative to the VisA root.
 | Observed | 4–6 of 100 test normals exceed the threshold, against a 0.73% bound |
 | Mechanism | The map peaks on the black felt, not on the board: a white fibre (`0214`) and **one dark hook-shaped object that appears in three images** (`0694`, `0920`, `0306`) — a single piece of debris in one capture session. The highest-scoring *validation* normals are debris too (fibres, tape residue), so the threshold itself is set by background, not by the part |
 | Evidence | Bulk of test vs validation normal scores not shifted (AUROC 0.53, p ≥ 0.3); upper tail is (exact permutation p 0.005–0.03); a threshold from held-out *test* normals hits its bound, so the rank rule is sound; model-free pixel proximity to training images shows no difference |
-| Consequence | The false-alarm guarantee's exchangeability assumption fails at the session level, which VisA does not annotate. Scoring only the object region recovers recall (0.46 → 0.81 at 320 px) but not calibration: the hook lies within the margin of the board. See [development report](../E00-E04-development-findings.md) §4–§5 |
+| Consequence | The false-alarm guarantee's exchangeability assumption fails at the session level, which VisA does not annotate. Scoring only the object region recovers recall (0.46 → 0.81 at 320 px) but not calibration: the hook lies within the margin of the board. See [development report](../04-visa-development.md) §4–§5 |
 | Nearest normal (`/predict?explain=true`, 640 px artifact) | For `0214` the closest stored normal patch is **also a white fibre on the felt** (training image `0134`), at distance 1.76 against a threshold of 1.54: debris exists in the training set, but a 10k coreset keeps too few examples of its variety for a new fibre to land close. For a defective image with bent pins (`Anomaly/005`) the nearest normal patch is a row of *straight* pins (`0817`) — the explanation a person reads at a glance |
 
 ## 2. The same mechanism on a held-out category — `pipe_fryum`
@@ -34,7 +34,7 @@ paths relative to the VisA root.
 | Images | `pipe_fryum/Data/Images/Normal/245.JPG`, `337.JPG` (same curved fibre on the background), `467.JPG` (a speck at the frame corner), `352.JPG` (the part's own deformed rim, flagged in every seed and at 320 px) |
 | Observed | 2 / 1 / 4 of 50 test normals flagged across seeds, bound 1.45% |
 | Evidence | Calibration from validation gives 7.6% FPR on a held-out half of test normals; from the other test half, 3.89% against a 3.85% bound |
-| Consequence | Found on a category that played no part in discovering case 1 — the debris/session mechanism is a property of the capture setup, not of `pcb1`. See [confirmation report](../E12-confirmation-v1.md) |
+| Consequence | Found on a category that played no part in discovering case 1 — the debris/session mechanism is a property of the capture setup, not of `pcb1`. See [confirmation report](../09-visa-confirmation.md) |
 
 ## 3. A reconstruction model scoring a normal texture — CAE-SSIM on `pcb1`
 

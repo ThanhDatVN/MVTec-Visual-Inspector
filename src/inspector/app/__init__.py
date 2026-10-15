@@ -1,1 +1,1 @@
-"""Placeholder package; implemented in a later phase."""
+"""Interactive demo over one exported artifact."""

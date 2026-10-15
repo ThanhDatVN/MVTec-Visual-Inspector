@@ -25,8 +25,8 @@ from typing import Any
 import numpy as np
 
 from ..data.transforms import ImageTransform
+from .backbone import resolve_device
 from .base import AnomalyModel
-from .features import resolve_device
 
 
 def _build_network(in_channels: int, base: int, depth: int, latent: int):
@@ -343,7 +343,7 @@ class ConvAutoencoder(AnomalyModel):
 
         anomaly_map = residual[0, 0].cpu().numpy().astype(np.float64)
         # Max, not mean: a small defect barely moves an image-wide mean, which
-        # is the aggregation failure documented in reports/P2-tier0-findings.md.
+        # is the aggregation failure documented in reports/01-evaluation-apparatus.md.
         # Top-k mean is the ablation to run against this.
         return float(anomaly_map.max()), anomaly_map
 

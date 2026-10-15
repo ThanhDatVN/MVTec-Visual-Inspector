@@ -77,3 +77,11 @@ Desktop.ini
 
 # local executions of the Kaggle notebook
 notebooks/kaggle_local/
+
+# ---------------------------------------------------------------------------
+# Internal reading, kept on the owner's machine: the Vietnamese guides and the
+# operational how-to for the notebooks. The research documents in docs/ are
+# published.
+# ---------------------------------------------------------------------------
+docs/vi/
+docs/12-running-the-notebooks.md

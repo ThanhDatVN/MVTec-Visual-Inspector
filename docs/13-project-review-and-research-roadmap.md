@@ -2,7 +2,7 @@
 
 **Historical review:** this describes the September 2026 snapshot identified below. The F01–F11
 repairs and later confirmation are documented in the [decision log](07-risks-and-decisions.md)
-and [E12 report](../reports/E12-confirmation-v1.md).
+and [E12 report](../reports/09-visa-confirmation.md).
 
 **Review dates:** 23–24 September 2026  
 **Audience:** Junior ML Engineer, AI Engineer, and Data Scientist candidates  
@@ -122,7 +122,7 @@ The wrapper defaults to `strict=False`; the pipeline does not export these targe
 
 ### F04 — P0: Results and resume keys do not fully identify an experiment
 
-**Verified.** The notebook `execute` helper in [build_notebooks.py](../scripts/build_notebooks.py), around line 645, appends pipeline results without attaching resolved configuration or git provenance. Default empty hashes reach the VisA CSV. Human-readable checkpoint keys omit some effective parameters, so changing a default can incorrectly reuse a completed run. A skipped run returns `None`, so resumed-session summaries omit previously completed results.
+**Verified.** The notebook `execute` helper in [report_build_notebooks.py](../scripts/report_build_notebooks.py), around line 645, appends pipeline results without attaching resolved configuration or git provenance. Default empty hashes reach the VisA CSV. Human-readable checkpoint keys omit some effective parameters, so changing a default can incorrectly reuse a completed run. A skipped run returns `None`, so resumed-session summaries omit previously completed results.
 
 The CLI has another issue: it hashes the original `cfg`, while `--methods`, `--categories`, and `--seeds` can change the actual run without being written back into that configuration.
 
@@ -146,7 +146,7 @@ Keep the old CSV as exploratory historical evidence. Rerun with new metadata; do
 
 **Verified by inspection.** Four allocations deserve separate measurements:
 
-- [features.py](../src/inspector/models/features.py), line 178, concatenates all extracted patch chunks before subsampling, temporarily retaining both chunks and the combined array.
+- [features.py](../src/inspector/models/backbone.py), line 178, concatenates all extracted patch chunks before subsampling, temporarily retaining both chunks and the combined array.
 - [patchcore.py](../src/inspector/models/patchcore.py), line 60, transfers the entire coreset candidate matrix to the GPU in float32; tiling the distance calculation does not remove that allocation.
 - Its inference path builds the complete query-patch × bank distance matrix and transfers/converts the bank for each image.
 - [pipeline.py](../src/inspector/pipeline.py), lines 241–253, materializes all maps and masks; [aupro.py](../src/inspector/metrics/aupro.py), line 153, concatenates all negative pixels before sampling them.
@@ -163,7 +163,7 @@ The recorded native-resolution host-memory concern is credible, but extracting o
 
 ### F09 — P1: Robustness and clean AU-PRO use different negative populations
 
-**Verified by inspection.** The generated notebook's `robustness_row`, around line 893 in [build_notebooks.py](../scripts/build_notebooks.py), collects maps only for anomalous images. The main pipeline includes normal-image maps. Both results are named `aupro_005`, although their FPR denominators differ.
+**Verified by inspection.** The generated notebook's `robustness_row`, around line 893 in [report_build_notebooks.py](../scripts/report_build_notebooks.py), collects maps only for anomalous images. The main pipeline includes normal-image maps. Both results are named `aupro_005`, although their FPR denominators differ.
 
 **Repair:** use the same evaluator and include normal images with zero masks. Assert that severity-zero corruption reproduces clean metrics within numerical tolerance. Define corruption seeds per image and transformation; reusing seed 0 independently for every image can induce a shared noise pattern.
 
@@ -608,7 +608,7 @@ The following paths are **proposed deliverables**, not files claimed to exist to
 | Main research report | `reports/research-study.md` | Question, protocol, related work, methods, results, ablations, limitations |
 | Reference reproduction | `reports/reference-reproduction.md` | Matched settings, prediction differences, reproduction tolerance |
 | Error case book | `reports/casebook/` | Inputs where permitted, masks, fixed-scale maps, nearest-normal retrieval, diagnoses |
-| Negative results | `reports/negative-results.md` | Failed hypotheses, run IDs, effects, costs, stopping decisions |
+| Negative results | `reports/14-negative-results.md` | Failed hypotheses, run IDs, effects, costs, stopping decisions |
 | Experiment registry | `reports/runs/` | Resolved specifications, provenance, results, status, artifact pointers |
 | Figures | `reports/figures/` | Regenerable plots with machine-readable source data |
 | Research model card | `reports/model-card.md` | Intended research use, training data, assumptions, thresholds, resources, failure modes |
@@ -681,7 +681,7 @@ python -m inspector.cli run -c configs/data/visa_pcb1.yaml --methods patchcore -
 
 Outcomes: Python 3.11.9; 243 tests passed; ruff passed; mypy was blocked by Windows Application Control; the PatchCore CLI command failed at method validation before fitting. Small inline Python diagnostics additionally checked threshold ranks/ties, `k` invariance, AE output shape, CSV provenance, and the recorded category means. No real-data models were retrained, no new ablation results were produced, and no reference library was installed or benchmarked in this review.
 
-Key repository evidence for the reviewed snapshot: [P3 findings](../reports/P3-visa-findings.md), [archived VisA results](../reports/archive/results_visa_exploratory_v1.csv), [experiment register](11-experiment-plan.md), [method ladder](03-method-ladder-and-matrix.md), [protocol](01-charter-and-protocol.md), [model code](../src/inspector/models/patchcore.py), [pipeline](../src/inspector/pipeline.py), and [notebook builder](../scripts/build_notebooks.py).
+Key repository evidence for the reviewed snapshot: [P3 findings](../reports/02-first-visa-runs-protocol-v1.md), [archived VisA results](../reports/archive/results_visa_exploratory_v1.csv), [experiment register](11-experiment-plan.md), [method ladder](03-method-ladder-and-matrix.md), [protocol](01-charter-and-protocol.md), [model code](../src/inspector/models/patchcore.py), [pipeline](../src/inspector/pipeline.py), and [notebook builder](../scripts/report_build_notebooks.py).
 
 ## Appendix B. Reading order and source use
 

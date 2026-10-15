@@ -111,7 +111,7 @@ human-in-the-loop use, and the operating point deliberately favours `<recall | p
 - `test_public` was used for development; reported numbers carry an optimism bias of unknown size.
 - `<Any Tier 4 comparator run at default hyperparameters — its number is not that method's ceiling.>`
 - `<Compute constraints: which configurations could not be evaluated, and what that leaves unknown.>`
-- `<Every finding from reports/negative-results.md that bounds the claims made here.>`
+- `<Every finding from reports/14-negative-results.md that bounds the claims made here.>`
 
 ## Attribution
 

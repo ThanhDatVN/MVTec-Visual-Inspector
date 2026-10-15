@@ -305,7 +305,7 @@ class ResolutionDecision:
 #: 23,584 patches per image, so 768 training images produce 18.1 M patches —
 #: 37 GB in fp16, beyond both this laptop (16 GB) and a Kaggle session (~30 GB).
 #: Native-resolution PatchCore therefore requires per-image patch subsampling
-#: *during* extraction, not after it. See reports/P3-visa-findings.md.
+#: *during* extraction, not after it. See reports/02-first-visa-runs-protocol-v1.md.
 DEFAULT_SINGLE_PASS_MEGAPIXELS = 3.0
 
 

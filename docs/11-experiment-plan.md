@@ -110,7 +110,7 @@ oracle (`tests/reference/`), agree with ours on identical tensors: patch scores 
 `rtol 1e-4, atol 1e-3` (the float32 error of anomalib's distance expansion), image scores within
 `1e-4`, for support sizes 1, 3 and 9 (`tests/models/test_reference_agreement.py`). The coreset
 matches its greedy order except that anomalib does not return its random start point — recorded
-in the difference ledger. **C2 done ([report](../reports/K1-kaggle-development.md) §4):** anomalib
+in the difference ledger. **C2 done ([report](../reports/07-kaggle-studies.md) §4):** anomalib
 v2.3.0's own pipeline, vendored, at 320 px, 3 seeds. As shipped it is not distinguishable from ours
 on any category after Holm correction (+0.001 / +0.020 / +0.065 image AUROC); its pipeline and its
 backbone weights each move AUROC by up to ±0.06 in category-dependent directions, at about five
@@ -130,7 +130,7 @@ All at a common 320 px long side, so the comparison is not also a resolution com
 bound. The seed spread is the noise floor below which no Stage E difference is called real.
 
 *Status: done (45 runs, commit `c53e7f6`).* Results and paired comparisons:
-[reports/E00-E04-development-findings.md](../reports/E00-E04-development-findings.md) §2. The CAE
+[reports/04-visa-development.md](../reports/04-visa-development.md) §2. The CAE
 never triggered early stopping in 60 epochs; its rung is budget-limited, not measured at its best.
 
 ### Stage D′ — Aggregation and calibration on stored predictions (E02, E03; laptop, no refits)
@@ -141,7 +141,7 @@ never triggered early stopping in 60 epochs; its rung is budget-limited, not mea
 | D′2 | E03: rank rule vs mean+3σ vs median+3·MAD, on calibration subsets of 20/40/80 normals and the full pool, at 1/2/5% targets | Distribution of threshold, realized FPR and recall per rule and size; which targets a given `n` can support |
 | D′3 | Exchangeability diagnostic | Are validation and test normals exchangeable? AUROC of validation-vs-test-normal scores (0.5 under exchangeability) and a Mann-Whitney p; a realized FPR far above the bound with a shift here is a split problem, not a threshold bug |
 
-Both reuse the registry's predictions (`inspector.analysis`), so they cost minutes, not GPU-hours.
+Both reuse the registry's predictions (`inspector.studies`), so they cost minutes, not GPU-hours.
 
 *Status: done.* Added along the way, because the `pcb1` operating point overshot its bound: an
 exact tail-exchangeability test, a calibration-source control, a model-free train-proximity
@@ -166,7 +166,7 @@ Native resolution is open; it needs a smaller candidate fraction or tiling to st
 |---|-----|---|---------|
 | D‴1 | The frozen recipe fitted on nested subsets of 10 / 25 / 50 / 100 / 200 training normals × 3 subset seeds; calibration and test unchanged | 45 | How much normal data the recipe needs, with fit shots and calibration counts reported separately (docs/13 E09) |
 
-*Status: done — [report](../reports/E09-data-efficiency.md).* No plateau before the full training
+*Status: done — [report](../reports/06-data-efficiency.md).* No plateau before the full training
 set on image AUROC (gap at 200 images 0.02 / 0.055 / 0.02); localization saturates earlier; ten
 images at 640 px match or exceed the full training set at 320 px on `macaroni2` and `capsules`.
 The patches-per-image contrast at a fixed bank was not run.
@@ -193,7 +193,7 @@ together (~12 runs). One interaction, chosen by evidence rather than guessed in 
 **Gate E.** Every axis has a written one-paragraph conclusion. Winners re-run at 3 seeds before
 any adoption decision.
 
-*Status: E1–E6b and the resolution axis (960, 1280 px) done — [report](../reports/K1-kaggle-development.md)
+*Status: E1–E6b and the resolution axis (960, 1280 px) done — [report](../reports/07-kaggle-studies.md)
 §2, 51 runs, Holm over 51.* Resolution keeps paying past 640 px on `macaroni2`/`capsules` (+0.06 to
 +0.08) and `layer2` alone beats `layer2+layer3` at no cost; bank size, k-NN averaging, re-weighting
 and projection are flat; `layer4` and `layer3`-only are catastrophic. The 3-seed reruns and E7 are
@@ -217,7 +217,7 @@ image-AUROC difference is significantly positive after Holm on ≥ 2 categories 
 negative on none; (3) no latency budget is set for this phase (docs/04), so latency is reported,
 not gated; (4) peak inference VRAM < 3.5 GB. (1), (2) and (4) → adopted as a development result;
 (1) and (2) without (4) → accuracy-only variant; otherwise not adopted. Computed by
-`scripts/kaggle_studies.py` (`followup.csv`, `followup_decisions.csv`). Expected from the screen:
+`scripts/visa_k1_kaggle_studies.py` (`followup.csv`, `followup_decisions.csv`). Expected from the screen:
 960 px peaks at 4.1–4.4 GB of inference VRAM on a T4 and can at best be an accuracy-only variant.
 A development adoption does not change the recipe frozen in ADR-11: the confirmation categories
 and MPDD are spent, so a claim on held-out data needs data that shaped nothing (MVTec AD 2).
@@ -231,12 +231,12 @@ cannot be taken from the runner's VRAM records. Until the fix in `FeatureExtract
 hooks closed over the extractor — a reference cycle), every finished run kept its backbone on the
 GPU until Python's cycle collector ran; within a session the recorded peaks climb by ≈ 280 MB a
 run and fall back when the collector runs. The 4.1–4.4 GB expected above for 960 px came from such
-records. (4) is evaluated instead with `scripts/bench_inference.py`: each configuration fitted and
+records. (4) is evaluated instead with `scripts/deploy_bench_inference.py`: each configuration fitted and
 exported in its own process and measured in a fresh one on the laptop's 4 GB RTX 3050 (the
 deployment card), `pcb1`, peak allocated VRAM over 20 warm-up and 200 timed service-path
 predictions. The rule is unchanged; only its measurement is.
 
-*Status: done — [report](../reports/E8-gate-e-followup.md).* `layer2` only, 960 px and `layer2` at
+*Status: done — [report](../reports/08-gate-e-followup.md).* `layer2` only, 960 px and `layer2` at
 960 px are **adopted (development)** — e.g. `macaroni2` 0.887 → 0.979 image AUROC with both — at
 0.57–0.75 GB inference VRAM; timm's `racm_in1k` weights are not (−0.055 on `macaroni2`).
 Candidate recipe v2: `configs/recipes/candidate-v2-patchcore-layer2-960.yaml`, unconfirmed. Gate E
@@ -254,15 +254,15 @@ closed.
 **Gate F.** The headline comparison — what the pretrained prior bought, in points, per category —
 is computed and written down, including any category where it bought nothing.
 
-*Status: F1 done at one seed per loss — [report](../reports/K1-kaggle-development.md) §3. At 640 px
+*Status: F1 done at one seed per loss — [report](../reports/07-kaggle-studies.md) §3. At 640 px
 and 150 epochs (no run triggered early stopping) the CAE reaches image AUROC 0.31–0.75; PatchCore is
 ahead by +0.17 to +0.67 on every run. Rung closed as a negative result; F2/F3 not run.*
 
 ### Stage G — Robustness (laptop for inference, ~6 h wall-clock)
 
-*Status: G1 and G4 done — [report](../reports/E08-robustness.md) (G4 in its own section). G2 dropped:
+*Status: G1 and G4 done — [report](../reports/05-robustness.md) (G4 in its own section). G2 dropped:
 the autoencoder rung closed without a model worth stress-testing (Stage F). Run on the laptop with the ADR-11 recipe (640 px, fixed 10 k bank) on the three
-development categories — `scripts/robustness_study.py`, output `reports/studies/e08/`. The
+development categories — `scripts/visa_e08_robustness.py`, output `reports/studies/e08/`. The
 confirmation categories are spent, so this stage is development evidence.*
 
 Models are fitted once on clean data and **never re-thresholded**. Re-thresholding under
@@ -296,7 +296,7 @@ and its absence is a real limitation of a VisA-only study.
 **Gate H.** One paragraph. Tuning on MPDD would turn three study categories into nine and is
 exactly the scope creep R7 exists to prevent.
 
-*Status: done as pre-registered in ADR-12 — [report](../reports/H1-mpdd-transfer.md).* Unchanged
+*Status: done as pre-registered in ADR-12 — [report](../reports/10-mpdd-transfer.md).* Unchanged
 recipe, 6 categories × 3 seeds: macro image AUROC 0.943, AU-PRO@0.05 0.861 (pixel PCA 0.729); the
 recipe beats pixel PCA on 4/6. The 1% operating point is unreachable with 8–43 calibration normals;
 pooled false alarms 31 against 28.4 expected at the relaxed bounds, no exceedance significant.
@@ -307,7 +307,7 @@ pooled false alarms 31 against 28.4 expected at the relaxed bounds, no exceedanc
 |---|-----|---|---------|
 | H′1 | The frozen recipe on the nine confirmation categories (ADR-10), `role = confirmation`, 3 seeds where stochastic | 27 per method | Does the development conclusion hold on categories that shaped nothing? |
 
-*Status: done ([report](../reports/E12-confirmation-v1.md)).* Pre-registered in ADR-11 (`4ff5a6f`);
+*Status: done ([report](../reports/09-visa-confirmation.md)).* Pre-registered in ADR-11 (`4ff5a6f`);
 63 runs. H2 confirmed 9/9; H1 not confirmed (4/9 against a rule of 6/9); calibration holds on 8/9.
 
 **Gate H′.** The recipe and `implementation_id` are recorded *before* the first confirmation
@@ -323,7 +323,7 @@ point starts a new development cycle.
 | H″2 | Pixel PCA and the colour histogram, 320 px, seed 0 | 16 | Floors |
 | H″3 | Optional: the selected recipe's `test_private` / `test_private_mixed` maps for benchmark.mvtec.com | — | Official numbers, and real lighting shift (G5) |
 
-*Status: done — [report](../reports/E13-confirmation-v2-mvtec-ad2.md).* 64 runs. **Not confirmed:** H3 1/8 positive, 1/8 negative (macro +0.004); H3b 6/8 (rule 7). v1 stays. H″3 (server submission) not yet made.
+*Status: done — [report](../reports/11-ad2-confirmation.md).* 64 runs. **Not confirmed:** H3 1/8 positive, 1/8 negative (macro +0.004); H3b 6/8 (rule 7). v1 stays. H″3 (server submission) not yet made.
 
 ### Stage H‴ — Development on MVTec AD 2 after E13 (E14; laptop)
 
@@ -339,7 +339,7 @@ Written down before any E14 run (2026-10-12):
 
 | # | Run | n | Addresses |
 |---|-----|---|-----------|
-| E14a | Aggregation rules and object-region scoring on the stored E13 maps (`inspector.analysis`, no refit) | 0 | A |
+| E14a | Aggregation rules and object-region scoring on the stored E13 maps (`inspector.studies`, no refit) | 0 | A |
 | E14-ref | Recipe v1, seed 0, rerun at the E14 implementation | 8 | must reproduce E13's seed-0 predictions |
 | E14b | v1 + per-image gain normalization (`preprocess.normalize: gain`) | 8 | B: global exposure |
 | E14c | v1 + per-image standardization (`preprocess.normalize: standardize`) | 8 | B: exposure and contrast |
@@ -357,11 +357,11 @@ categories. No variant carried: gain 47 → 73 pooled false alarms, 1 gain / 1 l
 47 → 64, 1 / 2; exposure-augmented bank 47 → 49, 2 / 0. E14d first failed at its turn (a `--set`
 of a key no config has) and was rerun from an overlay at the same implementation. E14a: top-k
 aggregation +0.01–0.02 macro, no rule repairs `can`, `rice`, `wallplugs`. Report:
-[E14–E15](../reports/E14-E15-ad2-development.md).
+[E14–E15](../reports/12-ad2-lighting-and-resolution.md).
 
 ### Stage H⁗ — Lighting remedies on MVTec AD 2 (E15; laptop)
 
-*Diagnosis (2026-10-13, `scripts/ad2_condition_study.py` on the stored E13 predictions).*
+*Diagnosis (2026-10-13, `scripts/ad2_e14_capture_conditions.py` on the stored E13 predictions).*
 `test_public` shows every object under several captures, `<object>_<condition>.png`: `regular`,
 `overexposed`, `underexposed` and `shift_1`..`shift_k`. Train and validation hold `regular` only.
 Against the `regular` capture of the same object, over- and under-exposure are a pure global gain
@@ -392,7 +392,7 @@ script on the partial E14 `gain` runs (2026-10-13):
 | E15a | v1 + flat-field normalization (`preprocess.normalize: flatfield`: each channel divided by its blur at σ = 0.1 × long side) | 8 | smooth shading and colour casts, removed |
 | E15b | v1 + relit bank (`model.bank_relight: 2`: two copies of each training image under a random smooth light field, gain 0.6–1.2 and colour cast, `transforms.relight`) | 8 | the same, covered in the bank |
 
-*Screen → 3 seeds* (`scripts/e15_analysis.py`). Against E15-ref, all eight categories, seed 0: a
+*Screen → 3 seeds* (`scripts/ad2_e15_lighting_screen.py`). Against E15-ref, all eight categories, seed 0: a
 variant goes to seeds 1–2 if the pooled false alarms among `shift` normals fall by at least half
 with no category significantly worse in image AUROC, **or** image AUROC is significantly better on
 ≥ 3 categories and worse on none — significance by the paired, class-stratified **object**
@@ -408,7 +408,7 @@ category significantly changed. The conditional follow-ups (combination, v2 scre
 
 **E16 — few-shot adaptation to changed lighting (R11).** Written down before any E16 fit
 (2026-10-13), after E15's outcome. What a line does when its lighting changes is photograph a
-few good parts under it and add them to the bank. Protocol (`scripts/e16_adaptation.py`): per
+few good parts under it and add them to the bank. Protocol (`scripts/ad2_e16_fewshot_adaptation.py`): per
 category, the `test_public` objects are split into two folds by a seeded permutation (seed 0),
 separately for normal and anomalous objects. For fold f, recipe v1 (seed 0) is fitted on
 `train/good` plus every capture of n normal objects of the other fold — n = 1, and n = all of
@@ -424,7 +424,7 @@ recipe change; 32 fits.
 41 → 28 of 187, does not work. One fold's objects (2–6): 41 → 19, no category significantly worse —
 **works**, narrowly, and almost entirely on `can` (35 → 13). Macro AUROC 0.676 → 0.688; macro
 recall at the unchanged operating point 0.239 → 0.195. Report:
-[E14–E16](../reports/E14-E15-ad2-development.md).
+[E14–E16](../reports/12-ad2-lighting-and-resolution.md).
 
 ### Stage J — After E16 (laptop; owner for the server)
 
@@ -434,7 +434,7 @@ E19 if E18 leaves the image-score problem open.
 | # | Run | n | Addresses |
 |---|-----|---|-----------|
 | S1 | Recipe v1 exported for MVTec's server (`test_private`, `test_private_mixed`; ADR-13 §6, 3σ masks) | 8 fits | the held-out lighting shift, measured once — **upload is the owner's** |
-| E17 | Recalibration under the new lighting, with and without an adapted bank (`scripts/e17_recalibration.py`) | 16 fits | B1: E16's threshold no longer bounds false alarms under the new lighting |
+| E17 | Recalibration under the new lighting, with and without an adapted bank (`scripts/ad2_e17_recalibration.py`) | 16 fits | B1: E16's threshold no longer bounds false alarms under the new lighting |
 | E18-ref | Recipe v1, seed 0, at the E18 implementation | 8 | must reproduce E13's seed-0 predictions |
 | E18a | v1 with DINOv2 ViT-S/14 features (`backbone: vit_small_patch14_dinov2`, `weights: timm:lvd142m`, blocks 8 + 11 after the final norm, no channel projection, 672 px) | 8 | R8: A1, A5, and lighting robustness |
 | E18b | the same with DINOv2 ViT-B/14 | 8 | R8 |
@@ -450,9 +450,9 @@ pooled false alarms no higher.
 *E17 outcome (2026-10-13).* 16 fits, pinned worktree (`e781cd2`, implementation `67985a22598d`).
 R+cal: 17 false alarms against 7.6 expected (limit 13.1) — the bound is **not** restored. A+cal −
 R+cal macro recall −0.014 [−0.034, +0.003] — adaptation does **not** pay at a valid operating
-point. Report: [E14–E17](../reports/E14-E15-ad2-development.md).
+point. Report: [E14–E17](../reports/12-ad2-lighting-and-resolution.md).
 
-*E18 screen → 3 seeds* (`scripts/e15_analysis.py`, its variant label extended by the backbone).
+*E18 screen → 3 seeds* (`scripts/ad2_e15_lighting_screen.py`, its variant label extended by the backbone).
 Against E18-ref, all eight AD 2 categories, seed 0: a variant goes to seeds 1–2 if image AUROC
 is significantly better on ≥ 3 categories and worse on none, **or** the false alarms among
 `shift` normals fall by at least half with none worse — object bootstrap, Holm over 8. A carried
@@ -493,7 +493,7 @@ After S1 (2026-10-13). E21 is development exploration on `test_public`, not a pr
 screen: a tiled DINOv3 nearest-neighbour model after SuperADD, mask rules measured per server
 metric with a proxy calibrated on S1, a ViT-H+ screen on four categories, and map fusion with
 WRN50 at 1280 px. Its output is one frozen candidate, v4, whose held-out test was written down
-before its export: ADR-15 (H5). Report: [E21](../reports/E21-ad2-localization.md).
+before its export: ADR-15 (H5). Report: [E21](../reports/13-ad2-localization-and-server.md).
 
 ### Stage K′ — A learned fusion head (E23; before the last upload)
 
@@ -501,7 +501,7 @@ Written down on 2026-10-14, before any E23 feature is computed; v5 is exported a
 (ADR-16) and not uploaded. Both v5 components are refitted on seven eighths of `train/good`; the
 held-out eighth, with three synthetic defects painted on each image
 (`inspector.data.synthetic_defects`), trains a per-category head on the five per-pixel distances
-and their local maxima (`scripts/head_features.py`, `scripts/fusion_head_study.py`). No test
+and their local maxima (`scripts/ad2_e23_head_features.py`, `scripts/ad2_e23_fusion_head.py`). No test
 image or label enters training.
 
 *Decision rule.* The head replaces v5's fixed fusion only if, on the same seven-eighths banks and
@@ -535,7 +535,7 @@ the one with the higher macro AU-PRO is taken. The extra export costs about ten 
 *Outcome (2026-10-14).* Five-input head: macro AU-PRO 0.647 / 0.624 (+0.062 / +0.061 over the
 seven-eighths rule, +0.080 / +0.069 over the full-bank rule) but `vial` −0.055 on all captures
 — the guard fails. Two-input head on the full-bank maps: 0.607 / 0.587 against 0.567 / 0.555 —
-qualifies; reproduced by the exact build pipeline (`scripts/hybrid_maps_check.py`). Heads' own
+qualifies; reproduced by the exact build pipeline (`scripts/ad2_e23_hybrid_check.py`). Heads' own
 masks: SegF1 0.37 against the rule's 0.61. Decision: ADR-17 (v6 = two-input hybrid).
 
 ### Stage I — Explainability and reporting (laptop, ~8 h)
@@ -546,7 +546,7 @@ masks: SegF1 0.37 against the rule's 0.61. Decision: ADR-17 (v6 = two-input hybr
 | I2 | Nearest-normal retrieval panels | The most convincing explanation a memory-based model offers |
 | I3 | Pareto figure | Accuracy vs p95 latency vs memory-bank size, with the 4 GB feasibility boundary marked |
 | I4 | Failure taxonomy counts | Turns a scalar into an actionable profile |
-| I5 | Negative results | `reports/negative-results.md`, one entry per abandoned line |
+| I5 | Negative results | `reports/14-negative-results.md`, one entry per abandoned line |
 
 ---
 
@@ -590,7 +590,7 @@ are all shown. Where a method wins on one category and loses on another, that di
 finding.
 
 **DR-3, stopping.** After its budgeted hours, a line that has met DR-1 on no category is
-abandoned and written into `reports/negative-results.md` with configs tried.
+abandoned and written into `reports/14-negative-results.md` with configs tried.
 
 **DR-4, the headline table.** One row per method at its best *validation-selected* configuration.
 Anything test-selected is marked `(test-selected)` and read as an upper bound.

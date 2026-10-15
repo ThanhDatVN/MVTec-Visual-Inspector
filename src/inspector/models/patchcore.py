@@ -41,8 +41,8 @@ from typing import Any, Literal
 import numpy as np
 
 from ..data.transforms import ImageTransform
+from .backbone import FeatureExtractor, FeatureSpec, batched, resolve_device
 from .base import AnomalyModel
-from .features import FeatureExtractor, FeatureSpec, batched, resolve_device
 
 PatchReduction = Literal["nearest", "mean", "kth"]
 
@@ -128,7 +128,7 @@ def _squared_distances(data, squared_norms, centre, tile: int):
 #: Settings added after runs were registered, with their defaults. `hparams()` omits each one
 #: at its default, so every configuration registered before it existed keeps its identity and
 #: the frozen analyses that match recipes by their hyperparameters keep matching (adding
-#: `bank_exposures` unconditionally broke `scripts/ad2_confirmation_analysis.py`).
+#: `bank_exposures` unconditionally broke `scripts/ad2_e13_confirmation_analysis.py`).
 LATE_SETTINGS: dict[str, Any] = {"bank_exposures": [], "bank_relight": 0}
 
 

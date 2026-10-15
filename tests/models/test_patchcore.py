@@ -275,7 +275,7 @@ def test_exposure_variants_enter_the_bank_but_keep_the_source_index(fitted):
 
 #: The hyperparameter keys of a default PatchCore before E14. A new setting must stay out of
 #: `hparams()` at its default, or every earlier run's identity and the frozen recipe matching
-#: of `scripts/ad2_confirmation_analysis.py` break (as `bank_exposures` once did).
+#: of `scripts/ad2_e13_confirmation_analysis.py` break (as `bank_exposures` once did).
 DEFAULT_HPARAM_KEYS = {
     "backbone", "weights", "layers", "patch_pool", "projection_dim", "dtype",
     "candidate_fraction", "bank_ratio", "bank_size", "coreset_projection_dim", "patch_neighbors",

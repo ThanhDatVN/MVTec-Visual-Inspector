@@ -148,7 +148,7 @@ def cmd_eda(args) -> int:
     """
     from .data import ensure_validation, load_category
     from .eda import analyse_category
-    from .report import write_eda_report
+    from .eda_report import write_eda_report
 
     cfg = _resolve(args)
     data: dict = cfg["data"]
@@ -279,7 +279,7 @@ def cmd_results(args) -> int:
 def cmd_study(args) -> int:
     """E02 aggregation, E03 calibration and the exchangeability diagnostic,
     computed from stored predictions — no model is refitted."""
-    from .analysis import render_studies, run_studies
+    from .studies import render_studies, run_studies
 
     study = run_studies(
         args.registry,
