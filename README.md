@@ -194,12 +194,16 @@ category it costs `vial` 0.14, so the pre-registered gate kept it off the server
 challenge system RoBiS (67.3 / 51.0). ClassF1 (73.9 / 76.2) sits near the trivial reject-all floor,
 as RoBiS's does. [Report](reports/E14-E15-ad2-development.md).
 
-**Candidate v5 for the server (E21, ADR-16):** a tiled DINOv3 ViT-H+ nearest-neighbour model
-(after the training-free VAND 4.0 winner SuperADD, reimplemented) fused with WRN50 at 1280 px,
-masks tuned per server metric with one global rule (per-category thresholds lost out of sample).
-On `test_public` (development, server-style scoring, mixed-lighting proxy): AU-PRO 0.351 → 0.555,
-SegF1 0.205 → 0.609, ClassF1 0.776 → 0.802. Frozen and pre-registered before its export; the server
-result is pending. [Report](reports/E21-ad2-localization.md).
+**Second and last submission (S2, v6; E21–E23, ADR-16 and ADR-17):** a tiled DINOv3 ViT-H+
+nearest-neighbour model (after the training-free VAND 4.0 winner SuperADD, reimplemented) fused
+with WRN50 at 1280 px; masks from one global rule tuned per server metric (per-category thresholds
+lost out of sample); continuous maps from a two-input logistic head trained per category on
+synthetic defects. MVTec's server: AU-PRO@0.05 **62.97 / 60.73**, SegF1 **53.76 / 51.67**, ClassF1
+79.28 / 79.45 (`test_private` / `test_private_mixed`): +25 AU-PRO and +27–29 SegF1 points over v1,
+SegF1 level with the VAND 3.0 winner ISVL (53.81 / 51.43) and 3.7 / 2.7 points below SuperADD
+(57.42 / 54.35), with the smallest SegF1 loss to the mixed lighting among them (−2.1). The development proxy
+predicted AU-PRO within 2.3 points and overstated SegF1 by 8–9 (the mask rule was chosen on
+`test_public`). [Report](reports/E21-ad2-localization.md) §12.
 The image-score failure is separate: it persists under the training lighting. The captures of one
 object are one sample, so AD 2 intervals are computed over objects from here on.
 [Report](reports/E14-E15-ad2-development.md).

@@ -97,5 +97,18 @@
   "maps": 4090,
   "masks": 4090
  },
- "upload": "pending (owner): the last submission the protocol allows; v5 is not uploaded"
+ "upload": "uploaded once by the owner; scored 2026-10-15",
+ "server_result": {
+  "test_private": {
+   "aupro_005": 62.97,
+   "classf1": 79.28,
+   "segf1": 53.76
+  },
+  "test_private_mixed": {
+   "aupro_005": 60.73,
+   "classf1": 79.45,
+   "segf1": 51.67
+  },
+  "source": "reports/studies/ad2-server/server_means.csv"
+ }
 }

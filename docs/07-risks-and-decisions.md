@@ -624,6 +624,17 @@ the head was trained on synthetic defects, so its gain is the least transferable
 (−) The map and the mask of an image now come from different rules; the server scores them
 separately, which is what this exploits.
 
+**Outcome (2026-10-15, owner's upload; server means, per-category numbers not displayed):** v6
+scores AU-PRO@0.05 62.97 / 60.73, SegF1 53.76 / 51.67 and ClassF1 79.28 / 79.45 on `test_private`
+/ `test_private_mixed`. **H5 holds on both splits:** AU-PRO +25.3 / +25.6 over v1 (bar +10),
+SegF1 +27.3 / +28.7 (bar +20), ClassF1 +5.4 / +3.2 (bar 0). Against the development proxies,
+AU-PRO came out 2.3 / 2.0 points higher (as v1's did, +1.2 / 0.0) and ClassF1 within a point, but
+SegF1 8.2 / 9.2 points lower, where v1's untuned 3σ masks had come out 3.2 / 2.5 higher: the
+likeliest reason is that v5's mask rule (threshold gain, mark, shape) was selected on
+`test_public`. The head's share of the AU-PRO cannot be separated on the server (v5 was not
+uploaded); in development it is +3.9 [+1.8, +6.3] / +3.2 [+1.5, +5.1] points
+(`reports/studies/fusion-head/hybrid_bootstrap.json`). ([report](../reports/E21-ad2-localization.md) §12.)
+
 ---
 
 ### Open decisions (resolve before the stated gate)

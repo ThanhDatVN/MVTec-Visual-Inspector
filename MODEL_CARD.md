@@ -71,6 +71,11 @@ validation mean + 3σ of the map (`OP-3SIGMA`).
 | MVTec AD 2 `test_public`, 8 categories, pre-registered (ADR-13) | **0.685** macro (0.48–0.90) | 0.357 | 160 / 29.2 at relaxed bounds (2.0–5.0%) | [E13](reports/E13-confirmation-v2-mvtec-ad2.md) |
 | MVTec AD 2 `test_private` / `test_private_mixed`, MVTec's server, seed 0 | — (server reports localization) | **0.376 / 0.351**; SegF1 0.264 / 0.230 | — | [S1](reports/E14-E15-ad2-development.md) |
 
+The second and last server submission is a different model, developed on AD 2 `test_public`
+(v6: tiled DINOv3 ViT-H+ fused with WRN50, learned-head maps; ADR-16, ADR-17): AU-PRO@0.05
+**0.630 / 0.607**, SegF1 0.538 / 0.517, ClassF1 0.793 / 0.795 on the same splits
+([E21](reports/E21-ad2-localization.md) §12).
+
 ### Performance across conditions
 
 Synthetic corruptions of the test split, threshold frozen on clean data, seed 0

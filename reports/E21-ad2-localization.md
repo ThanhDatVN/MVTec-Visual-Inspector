@@ -7,7 +7,8 @@ published systems do, rebuilds the pipeline where the evidence says the loss is,
 result as candidate v4 for the project's second and last submission
 ([ADR-15](../docs/07-risks-and-decisions.md)). v4 was superseded before any upload by v5
 (ViT-H+, ADR-16, §8) and v5's maps by the learned fusion head of E23 (v6, ADR-17, §11), which is
-what was submitted.
+what was submitted. The server scored v6 at AU-PRO@0.05 62.97 / 60.73, SegF1 53.76 / 51.67 and
+ClassF1 79.28 / 79.45 (§12).
 
 Everything below is development evidence on `test_public`, seed 0, scored as the server scores
 (all pixels of a category pooled, normal images included; ClassF1 from mask emptiness), with
@@ -209,6 +210,48 @@ intervals); no resample had v6 at or below v5. Per category the interval is abov
 below zero for `fruit_jelly` (−0.19 to −0.02). It measures object sampling only: the private
 split's objects are new, and the choice between two heads was made on these same images. Candidate v6 (ADR-17) is v5's
 submission with these maps; its masks, and so its SegF1 and ClassF1, are v5's.
+
+## 12. The server's verdict on v6 (S2, 2026-10-15)
+
+Uploaded once by the owner; MVTec's server shows means over the eight categories
+([studies/ad2-server/server_means.csv](studies/ad2-server/server_means.csv)).
+
+| system | SegF1 private / mixed | AU-PRO@0.05 private / mixed | ClassF1 private / mixed |
+|---|---|---|---|
+| SuperADD (VAND 4.0, 2026) | 57.42 / 54.35 | — | — |
+| ISVL (VAND 3.0 winner) | 53.81 / 51.43 | — | — |
+| **v6 (S2, this project)** | **53.76 / 51.67** | **62.97 / 60.73** | 79.28 / 79.45 |
+| RoBiS (VAND 3.0, 2nd) | 51.00 / 46.52 | 67.25 / 59.65 | 79.62 / 79.86 |
+| SuperAD (VAND 3.0, 4th) | 47.75 / 43.19 | 60.51 / 58.37 | — |
+| v1 (S1, this project) | 26.42 / 23.01 | 37.64 / 35.11 | 73.91 / 76.21 |
+
+1. **H5 holds on both splits** (ADR-17): AU-PRO +25.3 / +25.6 over v1, SegF1 +27.3 / +28.7,
+   ClassF1 +5.4 / +3.2, against bars of +10, +20 and 0.
+2. **Among the published systems**, v6's SegF1 is level with the VAND 3.0 winner ISVL (−0.05 /
+   +0.24), above RoBiS and SuperAD, and 3.7 / 2.7 points below SuperADD, whose DINOv3 model v5's
+   main component reimplements; the source of that gap was not measured. Its AU-PRO lies between
+   SuperAD and RoBiS on the private split and above both on the mixed one.
+3. **The mixed lighting costs v6 the least SegF1 in the table** (−2.1 points; ISVL −2.4, SuperADD
+   −3.1, RoBiS −4.5, SuperAD −4.6) and 2.2 AU-PRO points (RoBiS −7.6).
+4. **The development proxy, checked a second time:**
+
+   | | v1 proxy → server | v6 proxy → server |
+   |---|---|---|
+   | AU-PRO private / mixed | 36.4 → 37.64, 35.1 → 35.11 | 60.7 → 62.97, 58.7 → 60.73 |
+   | SegF1 private / mixed | 23.2 → 26.42, 20.5 → 23.01 | 62.0 → 53.76, 60.9 → 51.67 |
+   | ClassF1 private / mixed | 77.0 → 73.91, 77.7 → 76.21 | 79.4 → 79.28, 80.2 → 79.45 |
+
+   The threshold-free metric transferred both times, slightly conservatively. SegF1 did not: v1's
+   masks used a fixed 3σ rule and came out higher than predicted, v6's mask rule was chosen on
+   `test_public` and came out 8–9 points lower. Selection on `test_public` is the likeliest cause;
+   a held-out split of `test_public` for mask selection would have measured it in advance.
+5. **ClassF1 still sits at the floor of rejecting every image** (79.4 on `test_public`), as
+   RoBiS's does: v6's masks are non-empty on 75% / 80% of the private images, and on
+   `test_public` the same rule rejects 62–66% of the normal ones.
+6. **What the server cannot tell:** one seed and one submission; means only, so neither
+   `fruit_jelly`'s predicted AU-PRO loss nor `can`'s near-zero SegF1 can be checked; and the
+   head's share of the AU-PRO cannot be separated from v5's maps (development: +3.9 / +3.2 points).
+   The published numbers are as reported by their authors, not re-run here.
 
 ## 7. What remains weak
 
