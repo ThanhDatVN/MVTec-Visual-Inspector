@@ -416,6 +416,64 @@ published systems. Two design choices are the likely reasons: brightness augment
 DINOv3 bank, and scaling each component by its own validation P95. Neither was isolated on the
 server.
 
+### 6.6 Each component against the basic technique and the alternatives
+
+Each design choice in v6 replaced a simpler or a more common technique. The table states what was
+replaced, and the evidence from this project. Numbers are development results unless they come from
+the server.
+
+| component | basic technique | common alternatives | v6 | evidence here |
+|---|---|---|---|---|
+| Learning paradigm | Supervised classifier or segmenter trained on labelled defects | Reconstruction (autoencoders, DRAEM, RD / RD++, INP-Former); normalizing flows (MSFlow, FastFlow); student–teacher (EfficientAD); synthetic-anomaly discriminators (CutPaste, SimpleNet); zero-shot vision–language models (WinCLIP) | Memory-bank retrieval on frozen backbones; the only trained part is a 5-parameter logistic head | The from-scratch autoencoder stayed 0.17–0.67 AUROC behind PatchCore (K1). The AD 2 paper's trained baselines (RD, RD++, EfficientAD, MSFlow, SimpleNet, DSR) score 11.9–30.8 AU-PRO at 256 px, below v1's 35–38 |
+| Features | One ImageNet CNN layer | Multi-layer CNN features (PaDiM, PatchCore); DINOv2; CLIP | WRN50 `layer2+3` **and** four DINOv3 ViT-H+ blocks | `layer2+3+4` lost 0.10–0.47 AUROC on VisA. DINOv2 doubled the shift false alarms (E18). DINOv3 alone scores 0.000 AU-PRO on `can` |
+| Resolution | Whole image resized to 256 × 256 (the AD 2 paper) | One larger resize; random crops; native resolution | Each component at its own scale: WRN50 at 1280 px; DINOv3 on overlapping 640 px tiles of the image × 0.625 | At 256 px, 100% of `sheet_metal` defects fall below one pixel. Native-scale DINOv3 cost 2.5× for +0.01 AU-PRO after fusion |
+| Memory bank | Store every patch (SPADE) or fit a Gaussian per position (PaDiM) | Random subsample; greedy coreset (PatchCore) | Coreset of 10k (WRN50); density subsampling to 100k per block, plus brightness copies (DINOv3) | Banks of 20k–40k were no better than 10k. Per-position statistics need registered parts, which AD 2 lacks (R2) |
+| Patch score | Distance to the nearest neighbour | Mean of k neighbours; Mahalanobis distance; flow likelihood; reconstruction error | 1-NN distance, averaged over four blocks | Averaging over k = 3 or 9 neighbours was flat (K1) |
+| Putting maps on one scale | Min–max per image, or using test statistics (a leak, rule L3) | z-score; rank transform | Divide by the validation P95 | z-score lost 0.03 AU-PRO (E22) |
+| Fusion | One model | Mean; product; learned ensemble | Maximum for the masks; logistic head for the maps | Mean lost 0.03 AU-PRO. A third model made SegF1 unstable |
+| Image threshold | Percentile of validation scores | Mean + kσ; F1-max chosen on test (an oracle) | Conservative rank `k = floor(α(n+1))`, strict `>`, relaxed to `1/(n+1)` and flagged when α is unattainable | A plain percentile delivers up to 5× the promised rate at n = 19 |
+| Pixel threshold | Mean + 3σ of validation pixels (the AD 2 paper's SegF1 rule) | Per-category tuning on test (SuperAD); per-image adaptive binarization (MEBin, RoBiS); learned threshold (ISVL++) | One global gain × the validation P95 | 3σ collapses on skewed maps (`fruit_jelly` SegF1 0.001, B3). Per-category thresholds lost 0.024 SegF1 out of sample |
+| Mask shape | Raw threshold | Square-kernel opening and closing; CRF; SAM refinement (RoBiS) | 16-orientation line closing, hysteresis at 0.8, hole filling, 1 px erosion | Shape variants all within ±0.01. Line closing bridges 1 px scratches between sampled angles |
+| Image decision | Map maximum above a threshold | Mean of the top k% of the map; emptying masks below an image threshold | Non-empty mask, plus the image mark | Top-5% mean traded categories (+0.026 / −0.067). The gate cut ClassF1 from 0.777 to 0.344. The mark raised ClassF1 from 0.749 to 0.806 at no SegF1 cost |
+| Synthetic anomalies | Cut-and-paste patches (CutPaste) | Perlin masks filled with external textures (DRAEM); noise in feature space (SimpleNet). All three train the whole network | Value-noise blobs filled with the image's own displaced texture, plus thin strokes. They train only the 5-parameter head | The head gains +3.9 AU-PRO; `fruit_jelly` loses 10. The head's own masks lose (SegF1 0.23) |
+| Lighting shift | Nothing | Per-image photometric normalization; relit banks; few-shot adaptation; transductive test-time scoring (MuSc) | Brightness copies in the DINOv3 bank and per-component P95 scaling; input guards in deployment | Five photometric remedies negative (E14–E15); few-shot adaptation a trade (E16–E17). v6 has the smallest SegF1 lighting drop among the published systems (−2.1) |
+
+The pattern: v6 takes no learned capacity where a fixed rule calibrated on normal images works, and
+avoids every choice tuned per category on test data. Training is used only in the one place where
+labels can be manufactured (synthetic defects) and where the server scores the result separately.
+
+### 6.7 v6 against the published systems
+
+| system | model | trained? | input | threshold and masks | SegF1 private / mixed |
+|---|---|---|---|---|---|
+| ISVL++ (VAND 4.0, 2nd) | INP-Former on DINOv3, plus a segmentation head trained on synthetic anomalies | yes | — | Learned by the head | 58.31 / 53.75 |
+| SuperADD (VAND 4.0, 1st) | DINOv3 ViT-H+/16 tiled kNN, per-block banks | no | 640 px tiles at 0.625 | P95 × 1.42, line closing, hole filling | 57.42 / 54.35 |
+| ISVL (VAND 3.0, 1st) | INP-Former + cascade patch retrieval (CPR) | yes | tiles | Morphological post-processing | 53.81 / 51.43 |
+| **v6 (this project)** | DINOv3 ViT-H+ tiled kNN + WRN50 PatchCore at 1280 px; logistic head for the maps | head only | tiles + 1280 px | P95 × 1.3, one global gain; line closing, hysteresis, image mark | **53.76 / 51.67** |
+| RoBiS (VAND 3.0, 2nd) | INP-Former on DINOv2-R ViT-B, 200 epochs | yes | 1024 px crops resized to 518 | MEBin per-image binarization, SAM refinement | 51.00 / 46.52 |
+| SuperAD (VAND 3.0, 4th) | DINOv2-L kNN, 16 reference images | no | — | Tuned on `test_public` | 47.75 / 43.19 |
+| EfficientAD (AD 2 paper) | Student–teacher + autoencoder | yes | 256 × 256 | Mean + 3σ | 15.4 / 8.0 |
+| PatchCore (AD 2 paper) | WRN101 / ResNeXt101 / DenseNet201 ensemble | no | 256 × 256 | Mean + 3σ | 3.7 / 3.4 |
+
+What the top systems share:
+
+- DINO-family features;
+- tiles or high resolution;
+- morphological post-processing of the masks.
+
+The AD 2 paper's own PatchCore had none of these, and its SegF1 is 3.7.
+
+v6 differs from the systems around it in four ways:
+
+1. **Almost no training.** It is closest to SuperADD; ISVL, ISVL++ and RoBiS train a model.
+2. **A high-resolution CNN component.** It recovers the thin defects that DINOv3 tokens dissolve.
+3. **One global threshold** from normal images only. SuperAD tuned its thresholds on `test_public`.
+4. **Maps and masks from different rules.** The hybrid exploits the fact that the server scores
+   them separately.
+
+The 3–4 SegF1 points to SuperADD are not explained by the backbone, because both use the same
+DINOv3. The likeliest places are the threshold gain and the fusion (§8).
+
 ## 7. What did not work
 
 [14-negative-results.md](14-negative-results.md) lists 41 entries, each with what was tried, on what
