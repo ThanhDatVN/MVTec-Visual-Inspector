@@ -4,7 +4,7 @@ title: "MVTec Visual Inspector: one-class industrial defect detection and locali
 type: software
 authors:
   - name: "thanh"
-version: 1.0.0
+version: 1.0.1
 date-released: 2026-10-15
 license: MIT
 repository-code: "https://github.com/ThanhDatVN/MVTec-Visual-Inspector"

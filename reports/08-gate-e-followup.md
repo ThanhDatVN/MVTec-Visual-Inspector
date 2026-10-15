@@ -7,7 +7,7 @@ checkout: the 3-seed reference and four variants × 3 categories × 3 seeds. See
 AUROC is compared with the reference on the same test images (paired, class-stratified bootstrap,
 10,000 resamples), Holm over the 12 comparisons; **bold** survives it. Raw tables:
 [studies/kaggle_e8/](studies/kaggle_e8/) and [studies/bench/](studies/bench/), from
-`scripts/visa_k1_kaggle_studies.py --implementation fc9dbe93129d --vram-csv studies/bench/latency.csv`
+`scripts/visa_k1_analysis.py --implementation fc9dbe93129d --vram-csv studies/bench/latency.csv`
 and `scripts/deploy_bench_inference.py`.
 
 Dataset: VisA © Amazon, CC BY 4.0 — see [ATTRIBUTION.md](../ATTRIBUTION.md).

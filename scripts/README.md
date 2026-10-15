@@ -38,7 +38,8 @@ the folder stays flat.
 | `visa_e08_robustness.py` | E08: seven corruptions (and translation) × five severities, threshold frozen on clean data | `robustness_study.py` |
 | `visa_e08b_input_guards.py` | E08b: do the exposure / focus guards catch what breaks the operating point? | `guard_study.py` |
 | `visa_g4_translate_border.py` | G4: is the translation failure the shift or the replicated border strip? | `translate_border_study.py` |
-| `visa_k1_kaggle_studies.py` | K1 and E8: Kaggle sweep, Gate E follow-up, autoencoder, anomalib comparison (C2), MPDD | `kaggle_studies.py` |
+| `visa_k1_experiments.py` | K1 and E8 runs: reference, ablation sweep, Gate E follow-up, autoencoder, anomalib comparison (C2), MPDD; resumable, `--dry-run` lists the plan | the Kaggle notebook `02_kaggle_experiments.ipynb` |
+| `visa_k1_analysis.py` | Analysis of those runs: paired comparisons, Holm, the pre-registered DR-1 decision of the follow-up *(stored)* | `kaggle_studies.py` |
 | `visa_e12_confirmation_analysis.py` | **E12**: the pre-registered confirmation of the frozen v1 recipe (ADR-11) | `confirmation_analysis.py` |
 | `visa_pareto_figure.py` | Accuracy against latency and memory (`reports/figures/pareto.*`) | `pareto_figure.py` |
 | `visa_case_book.py` | Case-book panels, rendered locally (they contain dataset pixels and are never committed) | `case_book.py` |
@@ -90,7 +91,7 @@ never run. It is in the git history as `scripts/export_head_maps.py` (commit `1a
 |---|---|---|
 | `deploy_bench_inference.py` | Latency (p50 / p95 / p99) and peak memory, one process per measurement | `bench_inference.py` |
 | `report_figures.py` | `reports/figures/fig1`–`fig8`, the figures of the final report (metrics only, no dataset pixels) | — |
-| `report_build_notebooks.py` | `notebooks/*.ipynb`, generated and never hand-edited | `build_notebooks.py` |
+| `report_build_notebooks.py` | `notebooks/01`–`04` (data and EDA, VisA GPU experiments, MVTec AD 2 pipeline, results), generated and never hand-edited | `build_notebooks.py` |
 
 Records written before the renaming, such as the run registry and the submission JSON files, name
 the scripts as they were called then. Each record also stores its git SHA.

@@ -1,4 +1,4 @@
-"""Analysis of the Kaggle sessions (sweep, Gate E follow-up, CAE, C2, MPDD) at one implementation id.
+"""Analysis of the K1 runs (sweep, Gate E follow-up, CAE, C2, MPDD) at one implementation id.
 
 Reads the registry only (`reports/runs`), never the images. Image-AUROC differences are paired
 on the same test images with a class-stratified bootstrap; for the sweep (single seed) the
@@ -9,7 +9,7 @@ Variants run at three seeds on every category form the Gate E follow-up family (
 E8): seed-averaged paired comparisons with the reference, Holm over that family, and the DR-1
 decision exactly as it was written down before the runs.
 
-    python scripts/visa_k1_kaggle_studies.py --implementation e53218f1371e --out reports/studies/kaggle
+    python scripts/visa_k1_analysis.py --implementation e53218f1371e --out reports/studies/kaggle
 
 DR-1's VRAM criterion should come from `--vram-csv` (scripts/deploy_bench_inference.py, one fresh
 process per configuration): until the FeatureExtractor fix, the runner's per-run VRAM peaks include the

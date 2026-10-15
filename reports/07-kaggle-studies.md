@@ -3,9 +3,10 @@
 **Development evidence.** Three development categories (`pcb1`, `macaroni2`, `capsules`), 126 runs
 on a Tesla T4 in three Kaggle sessions, all at implementation `e53218f1371e` (commit `86300d2`),
 clean checkouts. Raw tables: [studies/kaggle/](studies/kaggle/), produced by
-`python scripts/visa_k1_kaggle_studies.py --implementation e53218f1371e`. Image-AUROC differences are
+`python scripts/visa_k1_analysis.py --implementation e53218f1371e`. Image-AUROC differences are
 paired on the same test images with a class-stratified bootstrap (10,000 resamples); **bold**
-marks a difference that survives Holm correction within its family.
+marks a difference that survives Holm correction within its family. The run definitions are
+`scripts/visa_k1_experiments.py` (groups `reference`, `sweep`, `cae`, `c2`).
 
 Dataset: VisA © Amazon, CC BY 4.0 — see [ATTRIBUTION.md](../ATTRIBUTION.md).
 

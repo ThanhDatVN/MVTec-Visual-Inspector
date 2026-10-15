@@ -8,7 +8,7 @@ histogram at 320 px as floors. ADR-12 attaches **no pass/fail rule**: the number
 
 Ran on Kaggle (Tesla T4) at implementation `e53218f1371e` (commit `86300d2`), 30 runs, clean
 checkout. Raw table: [studies/kaggle/mpdd.csv](studies/kaggle/mpdd.csv), from
-`scripts/visa_k1_kaggle_studies.py`. MPDD (Jezek et al., ICUMT 2021) is CC BY-NC-SA 4.0; no MPDD image or
+`scripts/visa_k1_analysis.py`. MPDD (Jezek et al., ICUMT 2021) is CC BY-NC-SA 4.0; no MPDD image or
 derived figure is published — see [ATTRIBUTION.md](../ATTRIBUTION.md).
 
 ## Results

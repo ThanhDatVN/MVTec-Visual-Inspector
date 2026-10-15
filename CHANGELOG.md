@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.0.1 — 2026-10-15
+
+- The Kaggle notebook (`02_kaggle_experiments.ipynb`) and the Kaggle upload paths are removed.
+  This covers the MPDD `--zip` archive, the repository-as-dataset option, and the private-dataset
+  instructions. The experiment definitions the notebook held are now
+  `scripts/visa_k1_experiments.py`, which runs the same groups through the shared runner on any
+  CUDA machine. Its analysis script is renamed `scripts/visa_k1_analysis.py`.
+- Four notebooks, generated, in project order:
+  - `01_laptop_data_and_eda`;
+  - `02_visa_gpu_experiments`, which replaces the Kaggle notebook and has no platform-specific code;
+  - `03_mvtec_ad2_pipeline`, from E13 to the v6 export;
+  - `04_results_and_figures`, which needs no data.
+
+  `python -m inspector` now runs the command line.
+- Final report §6.6–6.7: each component against the basic technique and the alternatives; v6
+  against the published systems.
+
 ## 1.0.0 — 2026-10-15
 
 Final release after the second and last MVTec AD 2 server submission (S2).

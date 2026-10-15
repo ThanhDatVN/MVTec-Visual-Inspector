@@ -24,7 +24,7 @@ import time
 from pathlib import Path
 
 RECIPE = ("configs/data/visa_pcb1.yaml", "configs/recipes/confirmation-v1-patchcore-640.yaml")
-#: label -> (config patch, model overrides, variant name as scripts/visa_k1_kaggle_studies.py prints it)
+#: label -> (config patch, model overrides, variant name as scripts/visa_k1_analysis.py prints it)
 CONFIGS = {
     "recipe": ({}, {}, ""),
     "layer2": ({}, {"layers": ["layer2"]}, "layers=['layer2']"),

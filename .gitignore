@@ -75,7 +75,8 @@ Thumbs.db
 Desktop.ini
 .DS_Store
 
-# local executions of the Kaggle notebook
+# local smoke executions of the notebook
+notebooks/local/
 notebooks/kaggle_local/
 
 # ---------------------------------------------------------------------------

@@ -8,4 +8,4 @@ are deliberately torch-free so the test suite runs in CI without a GPU or a
 (`inspector.api`) and the demo (`inspector.app`).
 """
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"

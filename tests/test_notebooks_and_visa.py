@@ -25,8 +25,12 @@ NOTEBOOKS = sorted((REPO / "notebooks").glob("*.ipynb"))
 def test_notebooks_exist():
     assert NOTEBOOKS, "no notebooks found; run scripts/report_build_notebooks.py"
     names = {p.name for p in NOTEBOOKS}
-    assert "01_laptop_data_and_eda.ipynb" in names
-    assert "02_kaggle_experiments.ipynb" in names
+    assert names == {
+        "01_laptop_data_and_eda.ipynb",
+        "02_visa_gpu_experiments.ipynb",
+        "03_mvtec_ad2_pipeline.ipynb",
+        "04_results_and_figures.ipynb",
+    }
 
 
 @pytest.mark.parametrize("path", NOTEBOOKS, ids=lambda p: p.name)

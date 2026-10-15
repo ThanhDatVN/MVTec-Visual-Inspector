@@ -1,4 +1,4 @@
-"""Fetch MPDD from the authors' shared folder, verify it, and optionally zip it for Kaggle.
+"""Fetch MPDD from the authors' shared folder and verify it.
 
 MPDD (Jezek et al., ICUMT 2021; CC BY-NC-SA 4.0) is distributed as a SharePoint folder linked
 from https://github.com/stepanje/MPDD. Following the share link gives a guest session; the
@@ -6,12 +6,10 @@ SharePoint REST API then lists the folder tree and serves each file. Every file 
 against the listed size, and a SHA-256 manifest is written. Re-running skips files already
 present with the right size.
 
-    python -I scripts/data_fetch_mpdd.py                                   # -> data/raw/MPDD
-    python -I scripts/data_fetch_mpdd.py --zip data/kaggle_upload/mpdd.zip # + an archive to upload
+    python -I scripts/data_fetch_mpdd.py          # -> data/raw/MPDD
 
-The archive holds `MPDD/<category>/...` plus a README with the citation and licence. Upload it
-as a **private** Kaggle dataset: the transfer probe (ADR-12) is evaluation only, and this
-repository publishes no MPDD image or derived figure.
+The transfer probe (ADR-12) is evaluation only; this repository publishes no MPDD image or derived
+figure.
 """
 
 from __future__ import annotations
@@ -23,7 +21,6 @@ import json
 import sys
 import urllib.parse
 import urllib.request
-import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -32,19 +29,6 @@ SHARE = ("https://vutbr-my.sharepoint.com/:f:/g/personal/xjezek16_vutbr_cz/"
 SITE = "https://vutbr-my.sharepoint.com/personal/xjezek16_vutbr_cz"
 ROOT = "/personal/xjezek16_vutbr_cz/Documents/MPDD"
 CATEGORIES = ("bracket_black", "bracket_brown", "bracket_white", "connector", "metal_plate", "tubes")
-
-README = """MPDD - Metal Parts Defect Detection dataset
-
-Source:  https://github.com/stepanje/MPDD (authors' shared folder)
-Licence: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
-         https://creativecommons.org/licenses/by-nc-sa/4.0/
-
-Stepan Jezek, Martin Jonak, Radim Burget, Pavel Dvorak, Milos Skotak. "Deep learning-based
-defect detection of metal parts: evaluating current methods in complex conditions."
-ICUMT 2021, pp. 66-71. DOI: 10.1109/ICUMT54235.2021.9631567
-
-Unmodified copy, repackaged as one archive for private use in a Kaggle notebook.
-"""
 
 _jar = http.cookiejar.CookieJar()
 _opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(_jar))
@@ -94,20 +78,10 @@ def _fetch(item: tuple[str, int], dest_root: Path) -> tuple[str, int, str]:
     raise RuntimeError(f"{rel}: {error}")
 
 
-def write_zip(dest_root: Path, rels: list[str], archive: Path) -> None:
-    archive.parent.mkdir(parents=True, exist_ok=True)
-    # PNG is already compressed; storing keeps the archive fast to build and to extract.
-    with zipfile.ZipFile(archive, "w", zipfile.ZIP_STORED) as zf:
-        zf.writestr("MPDD/README.txt", README)
-        for rel in sorted(rels):
-            zf.write(dest_root / rel, f"MPDD/{rel}")
-
-
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--out", default="data/raw", help="MPDD/ is created inside")
     ap.add_argument("--manifest", default="data/manifests/mpdd.sha256.json")
-    ap.add_argument("--zip", default=None, help="also write an archive for upload")
     ap.add_argument("--workers", type=int, default=8)
     args = ap.parse_args()
 
@@ -133,10 +107,6 @@ def main() -> int:
         "files": {r: {"bytes": s, "sha256": h} for r, s, h in sorted(rows)},
     }, indent=1), encoding="utf-8")
     print(f"verified: {len(rows)} files by size; manifest {manifest}")
-
-    if args.zip:
-        write_zip(dest_root, [r for r, _, _ in rows], Path(args.zip))
-        print(f"archive : {args.zip} ({Path(args.zip).stat().st_size / 1e9:.2f} GB)")
     return 0
 
 

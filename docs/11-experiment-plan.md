@@ -217,7 +217,7 @@ image-AUROC difference is significantly positive after Holm on ≥ 2 categories 
 negative on none; (3) no latency budget is set for this phase (docs/04), so latency is reported,
 not gated; (4) peak inference VRAM < 3.5 GB. (1), (2) and (4) → adopted as a development result;
 (1) and (2) without (4) → accuracy-only variant; otherwise not adopted. Computed by
-`scripts/visa_k1_kaggle_studies.py` (`followup.csv`, `followup_decisions.csv`). Expected from the screen:
+`scripts/visa_k1_analysis.py` (`followup.csv`, `followup_decisions.csv`). Expected from the screen:
 960 px peaks at 4.1–4.4 GB of inference VRAM on a T4 and can at best be an accuracy-only variant.
 A development adoption does not change the recipe frozen in ADR-11: the confirmation categories
 and MPDD are spent, so a claim on held-out data needs data that shaped nothing (MVTec AD 2).
