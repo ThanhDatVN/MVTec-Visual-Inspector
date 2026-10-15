@@ -364,7 +364,7 @@ def pixel_metrics(
         "pixel_fn": fn,
         "negative_sample_rate": rate,
         "pixel_fpr_requested": cfg.pixel_fpr,
-        "validation_pixel_fpr_valq": float(tau_q.params["effective_fpr"]),
+        "validation_pixel_fpr_valq": float((tau_q.params or {})["effective_fpr"]),
     }
     for name, c in counts.items():
         tp, fp, fn, tn = (int(x) for x in c)
